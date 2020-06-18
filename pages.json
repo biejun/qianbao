@@ -1,0 +1,245 @@
+
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationStyle": "custom",
+				"navigationBarTextStyle": "white",
+				"app-plus": {
+					"subNVues":[{
+						// 全局唯一标识
+						"id": "userCenterPopup", 
+						"path": "pages/index/subNvue/popup",
+						"type": "popup",
+						"style": {
+							"position": "absolute",
+							"dock": "left",
+							"width": "460rpx",
+							"background": "transparent"
+						}  
+					}]  
+				}
+			}
+		},
+		{
+		    "path" : "pages/index/coin/add",
+		    "style" : {
+				"navigationBarTitleText": "添加币种"
+			}
+		},
+		{
+		    "path" : "pages/index/coin/recharge",
+		    "style" : {
+				"navigationBarTitleText": "充币"
+			}
+		},
+		{
+		    "path" : "pages/index/coin/exchange",
+		    "style" : {
+				"navigationBarTitleText": "代币兑换",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue64a",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px"
+						}]  
+					}  
+				}
+			}
+		},
+		{
+		    "path" : "pages/index/coin/transaction",
+		    "style" : {
+				"navigationBarTitleText": "交易账户明细"
+			}
+		},
+		{
+		    "path" : "pages/index/coin/withdraw",
+		    "style" : {
+				"navigationBarTitleText": "提币"
+			}
+		},
+		{
+            "path" : "pages/user/profile",
+            "style" : {
+				"navigationBarTitleText": "个人资料"
+			}
+        },
+		{
+		    "path" : "pages/user/security",
+		    "style" : {
+				"navigationBarTitleText": "账号与安全"
+			}
+        },
+		{
+		    "path" : "pages/user/security/modifyPhone",
+		    "style" : {
+				"navigationBarTitleText": "修改手机号"
+			}
+		},
+		{
+		    "path" : "pages/user/security/modifyLoginPassword",
+		    "style" : {
+				"navigationBarTitleText": "修改登录密码"
+			}
+		},
+		{
+		    "path" : "pages/user/security/modifyPayPassword",
+		    "style" : {
+				"navigationBarTitleText": "修改支付密码"
+			}
+		},
+		{
+		    "path" : "pages/user/setting",
+		    "style" : {
+				"navigationBarTitleText": "设置"
+			}
+        },
+		{
+		    "path" : "pages/user/service",
+		    "style" : {
+				"navigationBarTitleText": "客服"
+			}
+        },
+		{
+		    "path" : "pages/user/notify",
+		    "style" : {
+				"navigationBarTitleText": "消息中心"
+			}
+		},
+        {
+            "path" : "pages/friends/friends",
+            "style" : {
+				"navigationBarTitleText": "密友",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue643",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px"
+						}]  
+					}  
+				}
+			}
+		},
+		{
+		    "path" : "pages/friends/apply",
+		    "style" : {
+				"navigationBarTitleText": "密友申请"
+			}
+		},
+        {
+            "path" : "pages/friends/add",
+            "style" : {
+				"navigationBarTitleText": "添加密友"
+			}
+        },
+        {
+            "path" : "pages/ecology/index",
+            "style" : {
+				"navigationBarTitleText": "生态"
+			}
+        },
+        {
+            "path" : "pages/ecology/lecai/index",
+			"style" : {
+				"navigationBarTitleText": "乐彩",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+            "path" : "pages/ecology/my/index",
+            "style" : {
+				"navigationBarTitleText": "游戏账号中心"
+			}
+        },
+		{
+		    "path" : "pages/ecology/bet/my",
+		    "style" : {
+				"navigationBarTitleText": "我的投注"
+			}
+		},
+		{
+            "path" : "pages/ecology/bet/index",
+            "style" : {
+				"navigationBarTitleText": "我要投注"
+			}
+        },
+        {
+            "path" : "pages/ecology/bet/select",
+            "style" : {
+				"navigationBarTitleText": "玩法选择"
+			}
+        },
+        {
+            "path" : "pages/ecology/bet/way",
+            "style" : {
+				"navigationBarTitleText": "玩法介绍"
+			}
+        },
+        {
+            "path" : "pages/login/login",
+            "style" : {
+				"navigationBarTitleText": "登录"
+			}
+        },
+		{
+			"path": "pages/login/loginzc",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path": "pages/login/forgetpassword",
+			"style": {
+				"navigationBarTitleText": "忘记密码"
+			}
+		}
+    ],
+	"tabBar": {
+		"color": "#FCA1A1",
+		"selectedColor": "#F1333D",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabbar/icon_qianbao@2x.png",
+				"selectedIconPath": "static/tabbar/icon_qianbaoxz@2x.png",
+				"text": "钱包"
+			},
+			// {
+			// 	"pagePath": "pages/friends/friends",
+			// 	"iconPath": "static/tabbar/icon_miyou@2x.png",
+			// 	"selectedIconPath": "static/tabbar/icon_miyouxz@2x.png",
+			// 	"text": "密友"
+			// },
+			{
+				"pagePath": "pages/ecology/index",
+				"iconPath": "static/tabbar/icon_shengtai@2x.png",
+				"selectedIconPath": "static/tabbar/icon_shengtaixz@2x.png",
+				"text": "生态"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "",
+		"borderStyle": "white",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#F8F8F8"
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "提币", //模式名称
+				"path": "pages/login/login", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
+	}
+}
