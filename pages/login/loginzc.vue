@@ -8,11 +8,11 @@
 				<u-cell-group>
 					<u-field v-model="mobile" placeholder="手机号码"></u-field>
 					<u-field v-model="code" placeholder="短信验证码">
-					<u-button size="mini" slot="button" type="success" @tap="getCode">{{codeText}}</u-button></u-field>
+					<u-button size="mini" slot="right" type="error" @tap="getCode">{{codeText}}</u-button></u-field>
 					<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
 				</u-cell-group>
 				<view class="btns">
-					<u-button type="success" @click="circledl" shape="circle" :class="{active:checken}">登录</u-button>
+					<u-button type="error" @click="circledl" shape="circle" :class="{active:checken}">登录</u-button>
 					<view class="btns-text" @click="chebtn">
 						<view class="iconfont iconcent" v-show="checken==true">&#xe633;</view>
 						<view class="iconfont iconcent" v-show="checken==false" style="color: #1296DB;">&#xe623;</view>
@@ -53,14 +53,15 @@
 			async circledl(){
 				if(this.checken == false){
 					let a ={"phone": this.mobile,"phoneCode": this.code}
-					let rest = await this.$u.api.getInfo(a).then(res => {
-						this.$u.vuex('vuex_token', res.token);
+					await this.$u.api.getInfo(a).then(res => {
+            console.log(res.data.token)
+						this.$u.vuex('vuex_token', res.data.token);
 						this.$u.vuex('vuex_hasLogin', true);
 						this.$u.vuex('vue_phone', this.mobile);
 						this.getGet()
-						if(res.user.isSetPassword==1){
+						if(res.data.user.isSetPassword==1){
 							uni.switchTab({
-								url:`/pages/puzzle/puzzle`
+								url:`/pages/index/index`
 							})
 						} else{
 							this.show=true
@@ -93,9 +94,12 @@
 						password:  md5Libs.md5(this.code2),
 					}
 					let rest = await this.$u.api.getsetPassword(prams).then(res => {
-						uni.switchTab({
-							url:`/pages/puzzle/puzzle`
-						})
+            this.$u.vuex('vuex_token', res.data.token);
+            setTimeout(() => {
+            	uni.switchTab({
+            		url:`/pages/index/index`
+            	})
+            }, 1000);
 					})
 				}else{
 					this.errorMessage='两次输入密码不一致'
@@ -103,16 +107,16 @@
 			},
 			 async getGet() {
 				let rest = await this.$u.api.getUser().then(res => {
-					this.$u.vuex('vuex_from.userName', res.nickName);
-					this.$u.vuex('vuex_img', res.avatar);
+					this.$u.vuex('vuex_from.userName', res.data.nickName);
+					// this.$u.vuex('vuex_img', res.avatar);
 				})
 			},
 			async getCode() {
+				console.log('xxx')
 				if(this.mobile !='' || this.mobile==null || this.mobile !==undefined){
 					if (this.$refs.uCode.canGetCode) {
 						// 模拟向后端请求验证码
-							this.$u.get('SMS/sendShortMessage/'+this.mobile, {
-									}).then(res => {
+							this.$u.get('SMS/sendShortMessage/'+this.mobile, {}).then(res => {
 										// res为服务端返回的数据
 							})
 						uni.showLoading({

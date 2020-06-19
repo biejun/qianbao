@@ -3,10 +3,10 @@
 			<u-cell-group>
 					<u-field v-model="phone"label="手机号"placeholder="11位手机号" :input-align="input" :label-width="lwh" :error-message="errorMessage"></u-field>
 					<u-field v-model="img" label="图形验证码" placeholder="图形验证码" :input-align="input" :label-width="lwh" :error-message="errorMessage1">
-						<view class="imgtext" slot="button" @tap="imgyzm">{{imgtext}}</view>
+						<view class="imgtext" slot="right" @tap="imgyzm">{{imgtext}}</view>
 					</u-field>
 					<u-field v-model="code" label="短信验证码" placeholder="短信验证码" :label-width="lwh" :input-align="input" :error-message="errorMessage2">
-						<u-button size="mini" slot="button" type="success" @tap="getCode">{{codeText}}</u-button>
+						<u-button size="mini" slot="right" type="success" @tap="getCode">{{codeText}}</u-button>
 					</u-field>
 					<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
 					<u-field v-model="password"label="新密码"placeholder="8-20位数字,字母组合" :input-align="input" :label-width="lwh" :error-message="errorMessage3" password></u-field>
@@ -45,7 +45,7 @@
 		methods:{
 			async imgyzm(){
 					let rest = await this.$u.api.getImage().then(res => {
-						this.imgtext = res
+						this.imgtext = res.data
 						console.log(res)
 					})
 			},
@@ -116,7 +116,7 @@
 			if (this.$refs.uCode.canGetCode) {
 						this.$u.get('SMS/sendShortMessage/'+this.phone, {}).then(res => {
 							// res为服务端返回的数据
-						this.codedata=res
+						this.codedata=res.data
 					})
 				uni.showLoading({
 					title: '正在获取验证码'

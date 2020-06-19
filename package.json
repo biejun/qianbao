@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "<1176987848@qq.com>",
   "license": "ISC",
   "dependencies": {
     "uview-ui": "^1.2.9"
-  }
+  },
+  "repository": "https://github.com/biejun/qianbao.git"
 }

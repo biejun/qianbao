@@ -45,16 +45,16 @@
 					let params = {
 						password: md5Libs.md5(this.code),
 						phone: this.mobile,
-						phoneCode: this.code
+						// phoneCode: this.code
 					}
 					let rest = await this.$u.api.getLog(params).then(res => {
-						this.$u.vuex('vuex_token', res.token);
+						this.$u.vuex('vuex_token', res.data.token);
 						this.$u.vuex('vuex_hasLogin', true);
 						this.$u.vuex('vue_phone', this.mobile);
 						this.getGet()
-						uni.switchTab({
-							url: `/pages/puzzle/puzzle`
-						})
+            uni.switchTab({
+              url:`/pages/index/index`
+            })
 					}, error => {
 						this.$u.toast(error.data.msg);
 					})
@@ -67,8 +67,8 @@
 			},
 			async getGet() {
 				let rest = await this.$u.api.getUser().then(res => {
-					this.$u.vuex('vuex_from.userName', res.nickName);
-					this.$u.vuex('vuex_img', res.avatar);
+					this.$u.vuex('vuex_from.userName', res.data.nickName);
+					this.$u.vuex('vuex_img', res.data.avatar);
 				})
 			},
 			note(key) {

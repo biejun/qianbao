@@ -40,7 +40,7 @@
 		{
 		    "path" : "pages/index/coin/exchange",
 		    "style" : {
-				"navigationBarTitleText": "代币兑换",
+				"navigationBarTitleText": "资产列表",
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{

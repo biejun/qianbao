@@ -1,53 +1,20 @@
 <template>
-	<view class="common-bg" :class="step === '3' ? 'whiteBg' : ''">
+	<view class="common-bg">
 		<view v-if="step == '1'">
 			<u-cell-group>
-				<u-cell-item title="当前手机号" :value="123456" :arrow="false"></u-cell-item>
-				<u-field v-model="captcha" 
-					label="图形验证码" 
-					placeholder="图形验证码" 
-					input-align="right" 
-					:label-width="150" 
-					:error-message="errorMessage1">
-					<view class="imgtext" slot="right" @tap="imgyzm">{{imgCode}}</view>
-				</u-field>
-				<u-field v-model="code" label="短信验证码" placeholder="短信验证码" password input-align="right" :label-width="150" 
-				 :error-message="errorMessage2">
-					<u-button size="mini" slot="right" type="success" @tap="getCode">{{codeText}}</u-button>
-				</u-field>
-				<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
-			</u-cell-group>
-			<view class="bottom-button">
-				<button type="warn" class="btn" @click="step = '2'">下一步</button>
-			</view>
-		</view>
-		<view v-if="step == '2'">
-			<u-cell-group>
+        <u-cell-item title="当前手机号" :value="vue_phone" :arrow="false"></u-cell-item>
 				<u-field v-model="newPhone" label="新手机号" input-align="right" :label-width="150" :error-message="errorMessage"></u-field>
-				<u-field v-model="captcha" 
-					label="图形验证码" 
-					placeholder="图形验证码" 
-					input-align="right" 
-					:label-width="150" 
-					:error-message="errorMessage1">
+				<u-field v-model="captcha" label="图形验证码" placeholder="图形验证码" input-align="right" :label-width="150" :error-message="errorMessage1">
 					<view class="imgtext" slot="right" @tap="imgyzm">{{imgCode}}</view>
 				</u-field>
 				<u-field v-model="code" label="短信验证码" placeholder="短信验证码" password input-align="right" :label-width="150" 
 				 :error-message="errorMessage2">
-					<u-button size="mini" slot="right" type="success" @tap="getCode">{{codeText}}</u-button>
+					<u-button size="mini" slot="right" type="error" @tap="getCode">{{codeText}}</u-button>
 				</u-field>
 				<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
 			</u-cell-group>
 			<view class="bottom-button">
 				<button type="warn" class="btn" shape="circle" @click="codeChangelist">确认修改</button>
-			</view>
-		</view>
-		<view v-if="step == '3'">
-			<view class="modify-success">
-				<view class="success-message">
-					<image src="../../../static/success.png" class="success-image"></image>
-					<view class="success-text">修改手机号码成功</view>
-				</view>
 			</view>
 		</view>
 		<u-toast ref="uToast" />
@@ -71,12 +38,13 @@
 				errorMessage: '',
 				errorMessage1: '',
 				errorMessage2: '',
-				step: '1'
+				step: '1',
+        codedata:'',
 			}
 		},
 		onLoad(options) {
 			this.step = options.step;
-			//this.imgyzm()
+			this.imgyzm()
 		},
 		methods: {
 			codeChange(text) {
@@ -84,19 +52,18 @@
 			},
 			async imgyzm(){
 				let rest = await this.$u.api.getImage().then(res => {
-					this.imgCode = res
+					this.imgCode = res.data
 				})
 			},
 			async codeChangelist(){
-				if(this.phone !=''){
-					if(this.$u.test.mobile(this.phone)==false){
-						console.log()
+				if(this.newPhone !=''){
+					if(this.$u.test.mobile(this.newPhone)==false){
 						this.errorMessage = "该手机号不存在 "
 						return
 					} else{
 						this.errorMessage=" "
 					}
-					if(this.img != this.imgCode){
+					if(this.captcha != this.imgCode){
 						this.errorMessage1 ="图形验证码不正确 "
 						return
 					} else{
@@ -109,7 +76,7 @@
 						this.errorMessage2=" "
 					}
 					let params = {
-						phone: this.phone,
+						phone: this.newPhone,
 						phoneCode: this.code
 					}
 					let rest = await this.$u.api.getphoneUrl(params).then(res => {
@@ -117,9 +84,12 @@
 							title: '修改成功',
 							type: 'success',
 						})
+            
+            setTimeout(() => {
 						uni.navigateTo({
 							url:'/pages/login/login'
 						})
+            }, 1000)
 					},error=>{
 						this.$refs.uToast.show({
 							title: '修改失败',
@@ -130,10 +100,11 @@
 			},
 
 			async getCode() {
-				if(this.phone !='' || this.phone==null || this.phone !==undefined){
+				if(this.newPhone !='' || this.newPhone==null || this.newPhone !==undefined){
 					if (this.$refs.uCode.canGetCode) {
-							this.$u.get('SMS/sendShortMessage/'+this.phone, {}).then(res => {
-								this.SMSCode=res
+							this.$u.get('SMS/sendShortMessage/'+this.newPhone, {}).then(res => {
+                this.codedata=res.data
+								// this.SMSCode=
 							})
 						uni.showLoading({
 							title: '正在获取验证码'

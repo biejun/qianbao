@@ -52,10 +52,24 @@
 			</view>
 		</view>
 		<view class="header-bottom"></view>
+    <view class="operate">
+      <view class="op-left">
+        <image src="../../static/index/content/icon_chongbi.png" mode=""></image>
+        <view @click="goUrl('index/coin/recharge')" class="charge">充币</view>
+      </view>
+       <view class="op-right">
+         <image src="../../static/index/content/icon_tibi.png" mode=""></image>
+         <view @click="goUrl('index/coin/withdraw')" class="charge">提币</view>
+       </view>
+    </view>
 		<view class="index-content">
 			<view class="block-title">
-				<text class="block-title__text">代币兑换</text>
-				<u-icon name="plus" class="add-coin" @click="goUrl('index/coin/add')"></u-icon>
+				<text class="block-title__text">资产列表</text>
+        <image src="../../static/index/content/icon_jiahao.png" mode=""  @click="goUrl('index/coin/add')"></image>
+        <!-- <view class="">
+          <u-icon name="plus" class="add-coin" @click="goUrl('index/coin/add')"></u-icon>
+        </view> -->
+				
 			</view>
 			<view class="coin-list">
 				<view class="coin-cell">
@@ -92,12 +106,6 @@
 					</view>
 				</view>
 			</view>
-			
-			<view class="operate">
-				<button type="warn" plain class="recharge-btn" @click="goUrl('index/coin/recharge')" size="mini">充币</button>
-				<button type="warn" class="exchange-btn" @click="goUrl('index/coin/withdraw')" size="mini">提币</button>
-			</view>
-			
 		</view>
 	</view>
 </template>
@@ -274,8 +282,8 @@
 		}
 		
 		.header-bottom{
-			height: 190rpx;
-			border-bottom: 10rpx solid #F3F3F3;
+			height: 140rpx;
+			// border-bottom: 10rpx solid #fff;
 		}
 		
 		&-content{
@@ -285,13 +293,15 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				
 				&__text{
 					font-size: 34rpx;
 					color: #333;
 					font-weight: bold;
 				}
-				
+				image{
+				  width: 44rpx;
+          height: 44rpx;
+				}
 				.add-coin{
 					width: 50rpx;
 					color: $uni-color-primary;
@@ -340,34 +350,58 @@
 						}
 					}
 					.coin-exchange{
-						background-color: #F1333D;
+						border:1px solid #F1333D;
+            border-right: none;
 						width: 100rpx;
 						height: 48rpx;
 						line-height: 48rpx;
 						padding-left: 20rpx;
-						color: #fff;
+						color: #F1333D;
 						margin-right: -30rpx;
 						border-radius:24rpx 0px 0px 24rpx;
 						font-size: 28rpx;
 					}
 				}
 			}
-			
-			.operate{
-				display: flex;
-				justify-content: space-between;
-			}
 		}
-		
-		.recharge-btn{
-			border: 3rpx solid $uni-color-primary!important;
-			color: $uni-color-primary!important;
-			font-size: 34rpx!important;
-			flex: 0 0 45%;
+		.operate{
+      width:700rpx;
+      height:98rpx;
+      background:rgba(241,51,61,1);
+      border-radius:49rpx;
+      margin: 0 20rpx;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      color: #fff;
+      image{
+        width: 58rpx;
+        height: 58rpx;
+      }
+      .charge{
+        font-size: 32rpx;
+        padding-left: 20rpx;
+      }
+      .op-left{
+        width: 251rpx;
+        display: flex;
+        align-items: center;
+        border-right: 1px solid #fff;
+      }
+      .op-right{
+        display: flex;
+        align-items: center;
+      }
+
 		}
-		.exchange-btn{
-			flex: 0 0 45%;
-			font-size: 34rpx!important;
-		}
+		// .recharge-btn{
+		// 	color: #fff!important;
+		// 	font-size: 34rpx!important;
+		// 	flex: 0 0 45%;
+		// }
+		// .exchange-btn{
+		// 	flex: 0 0 45%;
+		// 	font-size: 34rpx!important;
+		// }
 	}
 </style>
