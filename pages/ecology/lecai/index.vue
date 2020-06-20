@@ -1,6 +1,14 @@
 <template>
 	<view class="lecai-kaijiang">
-		<u-navbar back-icon-name="account" back-icon-size="40" title="哈希乐彩" :custom-back="goUserCenter"></u-navbar>
+		<u-navbar :is-back="false" title="" :custom-back="goUserCenter">
+			<view class="header-navbar">
+				<view class="navbar-icon" @click="goUserCenter">
+					<u-icon name="account" size="40"></u-icon>
+				</view>
+				<view class="navbar-title">哈希乐彩</view>
+				<view></view>
+			</view>
+		</u-navbar>
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
 				0000001期  2020-05-04 22:00开奖
@@ -356,7 +364,7 @@
 		methods: {
 			goUserCenter() {
 				uni.navigateTo({
-					url: '../my/index'
+					url: '/pages/ecology/my/index'
 				})
 			},
 			copy() {
@@ -384,6 +392,18 @@
 <style lang="scss">
 	
 	.lecai-kaijiang{
+		.header-navbar{
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0 30rpx;
+			flex: 1;
+			
+			.navbar-title{
+				font-size: 32rpx;
+				font-weight: bold;
+			}
+		}
 		.border-bottom-10{
 			border-bottom: 10rpx solid #f3f3f3;
 		}

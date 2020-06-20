@@ -117,7 +117,13 @@
 			}
 		},
 		onLoad() {
-
+			if(this.vuex_hasLogin) {
+				this.getUserInfo();
+			}else{
+				uni.navigateTo({
+					url: '/pages/login/login'
+				})
+			}
 		},
 		methods: {
 			openUserCenter() {
@@ -132,6 +138,11 @@
 			goUrl(page) {
 				uni.navigateTo({
 					url: '/pages/'+ page
+				})
+			},
+			getUserInfo() {
+				this.$u.api.getUser().then(res => {
+					console.log(res)
 				})
 			}
 		}

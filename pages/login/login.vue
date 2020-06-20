@@ -5,19 +5,19 @@
 				<image src="../../static/logo.png" mode=""></image>
 			</view>
 			<view class="login-center">
-				<u-cell-group>
-					<u-field v-model="mobile" placeholder="手机号码" :error-message="errorMessage" :list="mobile"></u-field>
-					<u-field v-model="code" placeholder="登录密码" :error-message="errorMessage1" password>
+				<u-cell-group :border="false">
+					<u-field v-model="mobile" label-width="0" placeholder="手机号码" :error-message="errorMessage" :list="mobile"></u-field>
+					<u-field v-model="code" label-width="0" placeholder="登录密码" :error-message="errorMessage1" password>
 						<view slot="right" @click="forget" style="color:#1296DB">忘记密码？</view>
 					</u-field>
 				</u-cell-group>
 				<view class="btns">
 					<u-button type="error" @click="codeChange" shape="circle">登录</u-button>
 				</view>
-				<view style="text-align: right;">新用户快速注册</view>
+				<view style="text-align: right;" @click="register">新用户快速注册</view>
 			</view>
 			<view class="login-bottom">
-				<view @click="note(1)">
+				<view @click="register">
 					<image src="../../static/icon_duanxin.png" mode=""></image>
 					<view>短信登录</view>
 				</view>
@@ -42,21 +42,24 @@
 				if (this.$u.test.mobile(this.mobile) == false) {
 					this.errorMessage = "该手机号不存在 "
 				} else {
+					if(this.code === '') {
+						this.errorMessage1 = "请输入密码"
+						return;
+					}
 					let params = {
 						password: md5Libs.md5(this.code),
 						phone: this.mobile,
-						// phoneCode: this.code
 					}
 					let rest = await this.$u.api.getLog(params).then(res => {
 						this.$u.vuex('vuex_token', res.data.token);
 						this.$u.vuex('vuex_hasLogin', true);
 						this.$u.vuex('vue_phone', this.mobile);
 						this.getGet()
-            uni.switchTab({
-              url:`/pages/index/index`
-            })
-					}, error => {
-						this.$u.toast(error.data.msg);
+						uni.switchTab({
+						  url:`/pages/index/index`
+						})
+					}, err => {
+						this.$u.toast(err.msg);
 					})
 					this.errorMessage = " "
 				}
@@ -71,14 +74,10 @@
 					this.$u.vuex('vuex_img', res.data.avatar);
 				})
 			},
-			note(key) {
-				if (key == 1) {
-					uni.navigateTo({
-						url: `/pages/login/loginzc`
-					})
-				} else {
-
-				}
+			register() {
+				uni.navigateTo({
+					url: `/pages/login/loginzc`
+				})
 			},
 		}
 	}
@@ -106,6 +105,7 @@
 				padding: 0rpx 100rpx 100rpx;
 
 				.btns {
+					border-top: 2rpx solid #f3f3f3;
 					padding: 60rpx 0 20rpx 0;
 				}
 			}

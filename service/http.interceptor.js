@@ -2,7 +2,8 @@
 // 同时，我们也可以在此使用getApp().globalData，如果你把token放在getApp().globalData的话，也是可以使用的
 const install = (Vue, vm) => {
 	Vue.prototype.$u.http.setConfig({
-		baseUrl: 'http://10.168.1.36:8088/',
+		//baseUrl: 'http://10.168.1.36:8088',
+		baseUrl: 'http://crow1111.cn'
 		// 如果将此值设置为true，拦截回调中将会返回服务端返回的所有数据response，而不是response.data
 		// 设置为true后，就需要在this.$u.http.interceptor.response进行多一次的判断，请打印查看具体值
 		// originalData: true, 
@@ -24,6 +25,16 @@ const install = (Vue, vm) => {
 		// config.header.token = token;
 		
 		return config; 
+	}
+	
+	// 响应拦截，判断状态码是否通过
+	Vue.prototype.$u.http.interceptor.response = (res) => {
+		// 如果把originalData设置为了true，这里得到将会是服务器返回的所有的原始数据
+		// 判断可能变成了res.statueCode，或者res.data.code之类的，请打印查看结果
+		if(res.code == 200) {
+			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
+			return res;  
+		} else return false;
 	}
 }
 

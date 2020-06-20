@@ -1,6 +1,6 @@
 <template>
 	<view class="lecai-way-index">
-		<u-tabs :list="list" 
+		<u-tabs :list="tabs" 
 			:is-scroll="false" 
 			:current="current" 
 			@change="change" 
@@ -29,11 +29,12 @@
 
 <script>
 	import dragSorts from '@/common/HM-dragSorts/HM-dragSorts.vue'
+	const makeBalls = () => [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a','b','c','d','e','f'];
 	export default {
 		components: { dragSorts },
 		data() {
 			return {
-				list: [{
+				tabs: [{
 					name: '任选2'
 				}, {
 					name: '任选3'
@@ -49,9 +50,12 @@
 					name: '直选6'
 				}],
 				current: 0,
-				balls: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a','b','c','d','e','f'],
+				balls: makeBalls(),
 				list1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 			}
+		},
+		onLoad(options) {
+			this.current = Number(options.current);
 		},
 		methods: {
 			change(index) {

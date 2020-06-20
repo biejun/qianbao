@@ -5,18 +5,29 @@
 				<image src="../../static/logo.png" mode=""></image>
 			</view>
 			<view class="login-center">
-				<u-cell-group>
-					<u-field v-model="mobile" placeholder="手机号码"></u-field>
-					<u-field v-model="code" placeholder="短信验证码">
+				<u-cell-group :border="false">
+					<u-field label-width="0" v-model="mobile" placeholder="手机号码"></u-field>
+					<u-field label-width="0" v-model="code" placeholder="短信验证码">
 					<u-button size="mini" slot="right" type="error" @tap="getCode">{{codeText}}</u-button></u-field>
 					<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
 				</u-cell-group>
 				<view class="btns">
-					<u-button type="error" @click="circledl" shape="circle" :class="{active:checken}">登录</u-button>
-					<view class="btns-text" @click="chebtn">
-						<view class="iconfont iconcent" v-show="checken==true">&#xe633;</view>
-						<view class="iconfont iconcent" v-show="checken==false" style="color: #1296DB;">&#xe623;</view>
-						<text style="padding-left: 10rpx;text-align: left;">首次登录，填写手机号将为您创建新账号，代表您同意<text style="color: #1296DB;">《xxx用户组测协议》</text></text>
+					<u-button type="error" 
+						@click="circledl" 
+						shape="circle"
+						:disabled="!checken"
+						>
+						登录
+					</u-button>
+					<view class="agree-wrap">
+						<u-checkbox-group class="agree-checkbox" :wrap="true" :size="24">
+							<u-checkbox 
+								v-model="checken" 
+								name="agree"
+							>
+							首次登录，填写手机号将为您创建新账号，代表您同意<text style="color: #1296DB;">《xxx用户组测协议》</text>
+							</u-checkbox>
+						</u-checkbox-group>
 					</view>
 				</view>
 			</view>
@@ -42,7 +53,7 @@
 				mobile: '',
 				code: '',
 				codeText: '',
-				checken:false,
+				checken:true,
 				show: false,
 				mobile1:'',
 				code2:'',
@@ -51,7 +62,7 @@
 		},
 		methods: {
 			async circledl(){
-				if(this.checken == false){
+				if(this.checken == true){
 					let a ={"phone": this.mobile,"phoneCode": this.code}
 					await this.$u.api.getInfo(a).then(res => {
             console.log(res.data.token)
@@ -69,10 +80,10 @@
 					
 						},err => {
 						this.$refs.uToast.show({
-							title:err.data.msg,
+							title:err.msg,
 							type: 'error',
 						});
-						console.log(err.data.msg);
+						console.log(err.msg);
 					})
 				} else{
 					this.$refs.uToast.show({
@@ -83,9 +94,6 @@
 			},
 			codeChange(text) {
 				this.codeText = text;
-			},
-			chebtn(){
-				this.checken=this.checken==true?false:true
 			},
 			async getCodepop(){
 				if(this.mobile1 == this.code2){
@@ -138,9 +146,6 @@
 </script>
 
 <style lang="scss" scoped>
-	.active{
-		background:rgba(37,173,135,.5)!important;
-	}
 	.pop{
 		padding: 60rpx;
 		.btns{
@@ -162,11 +167,22 @@
 			.login-center {
 				padding: 60rpx 80rpx 100rpx 80rpx;
 				.btns{
+					border-top: 2rpx solid #f3f3f3;
 					padding: 60rpx 0 20rpx 0;
 				}
-				.btns-text{
-					display: flex;
-					padding-top: 20rpx;
+				.agree-wrap{
+					padding-top: 30rpx;
+					
+					.agree-checkbox{
+						.u-checkbox{
+							align-items: flex-start;
+							
+							/deep/ .u-checkbox__icon-wrap{
+								margin-top: 15rpx;
+							}
+						}
+						
+					}
 				}
 			}
 		}

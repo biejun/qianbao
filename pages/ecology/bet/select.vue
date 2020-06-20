@@ -12,34 +12,34 @@
 		<view class="wan">
 			<view class="title">任选玩法</view>
 			<view class="wan-list">
-				<view class="wan-item" @click="goIndex">
+				<view class="wan-item" @click="goIndex(1,0)">
 					<view class="text">任选2</view>
 					<view class="text">最易中</view>
 				</view>
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(1,1)">
 					<view class="text">任选3</view>
 					<view class="text">最多人玩</view>
 				</view>
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(1,2)">
 					<view class="text">任选4</view>
 					<view class="text">难度适中</view>
 				</view>
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(1,3)">
 					<view class="text">任选5</view>
 					<view class="text">返奖高</view>
 				</view>
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(1,4)">
 					<view class="text">任选6</view>
 					<view class="text">高额奖金</view>
 				</view>
 			</view>
 			<view class="title">直选玩法</view>
 			<view class="wan-list">
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(2,5)">
 					<view class="text">前1</view>
 					<view class="text">新手最爱</view>
 				</view>
-				<view class="wan-item">
+				<view class="wan-item" @click="goIndex(2,6)">
 					<view class="text">直选6</view>
 					<view class="text">包揽奖池</view>
 				</view>
@@ -56,9 +56,9 @@
 					url: '../bet/way'
 				})
 			},
-			goIndex() {
+			goIndex(type, current) {
 				uni.navigateTo({
-					url: '../bet/index'
+					url: '../bet/index?type='+type+'&current='+current
 				})
 			}
 		}
