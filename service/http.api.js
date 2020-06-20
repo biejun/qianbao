@@ -11,8 +11,14 @@ const install = (Vue, vm) => {
   let getmodification= (params = {}) => vm.$u.post('/uUser/updatePhone' ,params); // 修改手机号1
   let getsetDeal= (params = {}) => vm.$u.post('/uUser/setTxPassword',params); // 设置交易密码
   let getpassword= (params = {}) => vm.$u.post('/uUser/setPassword',params); // 修改密码1
+  let getCoinList = (params = {}) => vm.$u.get('/wRecordRecharge/getCoinList',params); // 获取币列表
+  let getCoinAddress = (coinName) => vm.$u.get('/wRecordRecharge/getCoinAddress/'+coinName); // 获取充币地址
+  let getUserAmount = () => vm.$u.get('/uUserAccount/userAmount'); // 获取用户资金列表
 	vm.$u.api = {
-		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword
+		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
+		getCoinList,
+		getCoinAddress,
+		getUserAmount
 	};
 }
 

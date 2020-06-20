@@ -30,7 +30,7 @@
 					≈279.24 GCN
 				</view>
 				<view class="account-wrap">
-					<view class="account-item">
+					<view class="account-item" @click="goUrl('index/account/digitalAccount')">
 						<view class="account-item-text">
 							数字账户
 						</view>
@@ -39,7 +39,7 @@
 							<text>USDT</text>
 						</view>
 					</view>
-					<view class="account-item">
+					<view class="account-item" @click="goUrl('index/account/gameAccount')">
 						<view class="account-item-text">
 							游戏账户
 						</view>
@@ -52,16 +52,16 @@
 			</view>
 		</view>
 		<view class="header-bottom"></view>
-    <view class="operate">
-      <view class="op-left">
-        <image src="../../static/index/content/icon_chongbi.png" mode=""></image>
-        <view @click="goUrl('index/coin/recharge')" class="charge">充币</view>
-      </view>
-       <view class="op-right">
-         <image src="../../static/index/content/icon_tibi.png" mode=""></image>
-         <view @click="goUrl('index/coin/withdraw')" class="charge">提币</view>
-       </view>
-    </view>
+		<view class="operate">
+		  <view class="op-left">
+			<image src="../../static/index/content/icon_chongbi.png" mode=""></image>
+			<view @click="goUrl('index/coin/recharge')" class="charge">充币</view>
+		  </view>
+		   <view class="op-right">
+			 <image src="../../static/index/content/icon_tibi.png" mode=""></image>
+			 <view @click="goUrl('index/coin/withdraw')" class="charge">提币</view>
+		   </view>
+		</view>
 		<view class="index-content">
 			<view class="block-title">
 				<text class="block-title__text">资产列表</text>
@@ -72,18 +72,18 @@
 				
 			</view>
 			<view class="coin-list">
-				<view class="coin-cell">
+				<view class="coin-cell" v-for="item in list" :key="item.id">
 					<image src="../../static/index/content/icon_usdt.png" class="coin-image"></image>
-					<view class="coin-name">USDT</view>
+					<view class="coin-name">{{item.coinName}}</view>
 					<view class="coin-meta">
 						<view class="coin-count">312.123456</view>
 						<view class="coin-amount">≈860.123456 GCN</view>
 					</view>
-					<view class="coin-exchange" @click="goUrl('index/coin/exchange')">
+					<view class="coin-exchange" @click="goUrl('index/coin/exchange?coinName='+item.coinName)">
 						兑换
 					</view>
 				</view>
-				<view class="coin-cell">
+<!-- 				<view class="coin-cell">
 					<image src="../../static/index/content/icon_BTC.png" class="coin-image"></image>
 					<view class="coin-name">BTC</view>
 					<view class="coin-meta">
@@ -104,7 +104,7 @@
 					<view class="coin-exchange" @click="goUrl('index/coin/exchange')">
 						兑换
 					</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 	</view>
@@ -114,16 +114,16 @@
 	export default {
 		data() {
 			return {
+				list: []
 			}
 		},
 		onLoad() {
-			if(this.vuex_hasLogin) {
-				this.getUserInfo();
-			}else{
+			if(!this.vuex_hasLogin) {
 				uni.navigateTo({
 					url: '/pages/login/login'
 				})
 			}
+			this.getUserAmount();
 		},
 		methods: {
 			openUserCenter() {
@@ -135,14 +135,15 @@
 				// 关闭 nvue 子窗体  
 				//subNVue.hide('fade-out', 300)
 			},
+			getUserAmount() {
+				this.$u.api.getUserAmount().then(res => {
+					this.list = res.data;
+					console.log(res)
+				})
+			},
 			goUrl(page) {
 				uni.navigateTo({
 					url: '/pages/'+ page
-				})
-			},
-			getUserInfo() {
-				this.$u.api.getUser().then(res => {
-					console.log(res)
 				})
 			}
 		}
@@ -299,6 +300,7 @@
 		
 		&-content{
 			padding: 30rpx;
+			margin-bottom: 30px;
 			
 			.block-title{
 				display: flex;

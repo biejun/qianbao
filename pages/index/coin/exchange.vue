@@ -5,8 +5,13 @@
 				<view class="exchange-box__header" :class="isReverse ? 'is-reverse' :''">
 					<view class="exchange-coin is-left">
 						<image src="../../../static/index/content/icon_BTC.png" class="exchange-coin-image"></image>
-						<text class="exchange-coin-name" @click.stop="visible = true">{{currentValue}}</text>
-						<text class="exchange-coin-dropdown" @click.stop="visible = true">▼</text>
+						<text class="exchange-coin-name">{{currentValue}}</text>
+					</view>
+					<view class="exchange-btn" @click="isReverse = !isReverse">
+						<image src="../../../static/index/duihuan-icon.png" class="exchange-icon"></image>
+					</view>
+					<view class="exchange-coin is-right">
+						<text class="exchange-coin-dropdown" @click.stop="visible = !visible">▼</text>
 						<view class="exchange-dropdown" v-show="visible">
 							<view class="exchange-item" @click="selectedItem('BTC')">
 								<image src="../../../static/index/content/icon_BTC.png" class="exchange-item-image"></image>
@@ -17,18 +22,13 @@
 								<view class="exchange-item-name">USDT</view>
 							</view>
 						</view>
-					</view>
-					<view class="exchange-btn" @click="isReverse = !isReverse">
-						<image src="../../../static/index/duihuan-icon.png" class="exchange-icon"></image>
-					</view>
-					<view class="exchange-coin is-right">
-						<text class="exchange-coin-name">ETH</text>
-						<image src="../../../static/index/content/icon_BTC.png" class="exchange-coin-image"></image>
+						<text class="exchange-coin-name" @click.stop="visible = !visible">{{value}}</text>
+						<image src="../../../static/index/content/icon_gcn.png" class="exchange-coin-image"></image>
 					</view>
 				</view>
 				<view class="exchange-box__body">
 					<view class="exchange-number">
-						<input type="text" class="input" v-model="value" placeholder="兑换数量">
+						<input type="text" class="input" v-model="exNum" placeholder="兑换数量">
 						<view class="item">
 							<text class="item-name">当前可用:</text>
 							<text class="item-value">2333</text>
@@ -43,7 +43,7 @@
 						
 					</view>
 					<view class="exchange-number">
-						<input type="text" class="input" v-model="value" placeholder="兑换数量">
+						<input type="text" class="input" v-model="needNum" placeholder="需求数量">
 						<view class="item">
 							<text class="item-name">汇率:</text>
 							<text class="item-value">451.000000</text>
@@ -65,11 +65,16 @@
 	export default{
 		data() {
 			return {
-				value: '',
+				value: 'GCN',
 				visible: false,
 				currentValue: 'BTC',
-				isReverse: false
+				isReverse: false,
+				exNum: '',
+				needNum: ''
 			}
+		},
+		onLoad(options) {
+			
 		},
 		methods: {
 			onClick() {
@@ -78,6 +83,9 @@
 			selectedItem(item) {
 				this.visible = false
 				this.currentValue = item;
+			},
+			getCoinList() {
+				
 			}
 		},
 		onNavigationBarButtonTap(e) {

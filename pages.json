@@ -38,6 +38,28 @@
 			}
 		},
 		{
+		    "path" : "pages/index/account/digitalAccount",
+		    "style" : {
+				"navigationBarTitleText": "数字账户",
+				"navigationBarBackgroundColor": "#F1333D",
+				"navigationBarTextStyle": "white"
+			}
+		},
+		{
+		    "path" : "pages/index/account/gameAccount",
+		    "style" : {
+				"navigationBarTitleText": "游戏账户",
+				"navigationBarBackgroundColor": "#F1333D",
+				"navigationBarTextStyle": "white",
+				"app-plus": {
+					"titleNView": {
+						"splitLine": null
+					}  
+				}
+				
+			}
+		},
+		{
 		    "path" : "pages/index/coin/exchange",
 		    "style" : {
 				"navigationBarTitleText": "资产列表",
