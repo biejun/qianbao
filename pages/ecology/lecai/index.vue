@@ -11,43 +11,18 @@
 		</u-navbar>
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
-				0000001期  2020-05-04 22:00开奖
+				{{info.currentNumber}}期  {{info.openTime | dateFormat}}开奖
 			</view>
-			<view class="header-notify">
+			<view class="header-notify" @click="goUrl('user/notify')">
 				<image src="../../../static/icon_xiaoxi.png" class="notify-icon"></image>
 			</view>
 		</view>
 		<view class="kai-jiang border-bottom-10">
 			<view class="title">开奖号码</view>
 			<view class="numbers">
-				<div class="item">
+				<div class="item" v-for="(item, index) in info.openRewardNo.split(',')" :key="index">
 					<view class="num">
-						9
-					</view>
-				</div>
-				<div class="item">
-					<view class="num">
-						7
-					</view>
-				</div>
-				<div class="item">
-					<view class="num">
-						a
-					</view>
-				</div>
-				<div class="item">
-					<view class="num">
-						c
-					</view>
-				</div>
-				<div class="item">
-					<view class="num">
-						c
-					</view>
-				</div>
-				<div class="item">
-					<view class="num">
-						9
+						{{item}}
 					</view>
 				</div>
 			</view>
@@ -55,11 +30,11 @@
 				<view class="kai-jiang-pd30">
 					<view class="kai-row">
 						<view class="kai-item-name">开奖哈希：</view>
-						<view class="kai-item-value">492d65d279d6c3a53520c435da4ceaa2e956e52976a2c</view>
+						<view class="kai-item-value">{{info.openRewardHash}}</view>
 					</view>
 					<view class="kai-row">
 						<view class="kai-item-name">区块高度：</view>
-						<view class="kai-item-value">628099</view>
+						<view class="kai-item-value">{{info.blockNumber}}</view>
 						<view @click="copy" class="copy-text">复制</view>
 					</view>
 				</view>
@@ -70,7 +45,7 @@
 			<view class="kai-detail-row">
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">3.15</text>
+						<text class="detail-num">{{info.currentRewardPool}}</text>
 						<text class="detail-unit">亿</text>
 					</view>
 					<view class="detail-cell-item">
@@ -79,7 +54,7 @@
 				</view>
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">3.15</text>
+						<text class="detail-num">{{info.currentFloatReward}}</text>
 						<text class="detail-unit">亿</text>
 					</view>
 					<view class="detail-cell-item">
@@ -88,7 +63,7 @@
 				</view>
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">3.15</text>
+						<text class="detail-num">{{info.currentSellNumber}}</text>
 						<text class="detail-unit">亿</text>
 					</view>
 					<view class="detail-cell-item">
@@ -113,233 +88,23 @@
 				</view>
 			</view>
 			<view class="kai-detail-table-body">
-				<view class="kai-detail-row">
+				<view v-for="item in detail" class="kai-detail-row" :key="item.id">
 					<view class="kai-detail-cell">
-						特等奖 
+						{{item.gameLevelDesc}}
 					</view>
 					<view class="kai-detail-cell">
-						直选6
+						{{item.rewardLevelDesc}}
 					</view>
 					<view class="kai-detail-cell">
-						0
+						{{item.rewardCount}}
 					</view>
 					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
-					</view>
-				</view>
-				<view class="kai-detail-row">
-					<view class="kai-detail-cell">
-						特等奖 
-					</view>
-					<view class="kai-detail-cell">
-						直选6
-					</view>
-					<view class="kai-detail-cell">
-						0
-					</view>
-					<view class="kai-detail-cell">
-						6,000,000
+						{{item.amount}}
 					</view>
 				</view>
 				<view class="next">
-					<text>下期：0000002期</text>
-					<text>2020-05-05 22:00开奖</text>
+					<text>下期：{{info.currentNumber ? info.currentNumber+1 : '-'}}期</text>
+					<text>{{nextOpenTime | dateFormat}}开奖</text>
 				</view>
 			</view>
 		</view>
@@ -348,20 +113,73 @@
 				我的投注
 			</view>
 			<view class="woyao-touzhu" @click="goSelect">
-				我要投注
+				我要投注 ({{remainTime > 0 ? '已结束' : endTime + '截止'}})
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { dateFormat } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
-				value: '2222'
+				info: {
+					openRewardHash: '', // 开奖哈希
+					openRewardNo: '', // 开奖号码
+					openTime: '', // 开奖时间
+					currentSellNumber: '',
+					currentRewardPool: '',
+					currentNumber: '',
+					currentFloatReward: '',
+					createTime: '',
+					blockNumber: '',
+					beginTime: '',
+					endTime: ''
+				},
+				detail: [],
+			}
+		},
+		created() {
+			this.getGameBaseInfo();
+			this.getGameDetail();
+		},
+		computed: {
+			remainTime() {
+				let nowTime = new Date().getTime();
+				if(!this.info.endTime) return 0;
+				return nowTime - this.info.endTime
+			},
+			endTime() {
+				return dateFormat(this.info.endTime, 'H:i:s');
+			},
+			nextOpenTime() {
+				let date = new Date(this.info.openTime);
+				date.setDate(date.getDate() + 1);
+				return date;
+			}
+		},
+		filters: {
+			dateFormat(val) {
+				return dateFormat(val, 'Y-m-d H:i:s');
 			}
 		},
 		methods: {
+			getGameBaseInfo() {
+				this.$u.get('/gGameBase/getGameBase').then(res => {
+					if(res.data) {
+						this.info = res.data;
+						this.$u.vuex('vuex_hasLogin', true);
+						this.$u.vuex('vuex_game_id', this.info.id);
+						this.$u.vuex('vuex_bet_period', this.info.currentNumber);
+					}
+				})
+			},
+			getGameDetail() {
+				this.$u.get('/gGameBase/getGameDetail').then(res => {
+					this.detail = res.data;
+				});
+			},
 			goUserCenter() {
 				uni.navigateTo({
 					url: '/pages/ecology/my/index'
@@ -369,20 +187,27 @@
 			},
 			copy() {
 				uni.setClipboardData({
-				    data: this.value,
+				    data: this.info.blockNumber,
 				    success() {
 				        console.log('success');
 				    }
 				});
 			},
 			goSelect() {
-				uni.navigateTo({
-					url: '../bet/select'
-				})
+				if(this.remainTime < 0) {
+					uni.navigateTo({
+						url: '../bet/select'
+					})
+				}
 			},
 			goMy() {
 				uni.navigateTo({
 					url: '../bet/my'
+				})
+			},
+			goUrl(page) {
+				uni.navigateTo({
+					url: '/pages/'+ page
 				})
 			}
 		}

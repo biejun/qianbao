@@ -1,17 +1,13 @@
 <template>
 	<view class="lecai-way">
 		<view class="way-item">
-			<view class="way-title">
-				任选2
-			</view>
-			<view class="way-desc">
-				介绍文字
-			</view>
-			<view class="way-title">
-				任选2
-			</view>
-			<view class="way-desc">
-				介绍文字
+			<view v-for="item in list" :key="item.id">
+				<view class="way-title">
+					{{item.wayName}}
+				</view>
+				<view class="way-desc">
+					{{item.wayDesc}}
+				</view>
 			</view>
 		</view>
 	</view>
@@ -19,7 +15,22 @@
 
 <script>
 	export default{
-		
+		data() {
+			return {
+				list: []
+			}
+		},
+		onLoad() {
+			this.getWay();
+		},
+		methods: {
+			getWay() {
+				this.$u.get('/gGameOrder/getWay').then(res => {
+					//console.log(res);
+					this.list = res.data;
+				})
+			},
+		}
 	}
 </script>
 

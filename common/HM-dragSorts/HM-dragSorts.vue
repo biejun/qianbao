@@ -3,21 +3,17 @@
 		<view class="list" :class="[listSwitch?'show':'hide']">
 			<block v-for="(row,index) in dragListA" :key="index">
 				<view class="rowA" :id="'rowA'+index">
-					<view class="modules">
-						{{row}}
-						<!-- #ifndef MP-WEIXIN -->
-							<view class="drag" :data-index="index" data-type="A" :data-isdelay="isdelay" :data-rownum="dragListA.length"
-							 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
-								<text class="iconfont icon-drag"></text>
-							</view>
-						<!-- #endif -->
-						<!-- #ifdef MP-WEIXIN -->
-							<view class="drag" :data-index="index" data-type="A" :data-isdelay="isdelay" :data-rownum="dragListA.length"
-							 @touchstart="drag.touchstart" @touchmove="drag.touchmove" @touchend="drag.touchend">
-								<text class="iconfont icon-drag"></text>
-							</view>
-						<!-- #endif -->
-					</view>
+					<view class="num">{{row}}</view>
+					<!-- #ifndef MP-WEIXIN -->
+						<view class="drag" :data-index="index" data-type="A" :data-isdelay="isdelay" :data-rownum="dragListA.length"
+						 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
+						</view>
+					<!-- #endif -->
+					<!-- #ifdef MP-WEIXIN -->
+						<view class="drag" :data-index="index" data-type="A" :data-isdelay="isdelay" :data-rownum="dragListA.length"
+						 @touchstart="drag.touchstart" @touchmove="drag.touchmove" @touchend="drag.touchend">
+						</view>
+					<!-- #endif -->
 				</view>
 			</block>
 		</view>
@@ -26,21 +22,17 @@
 		<view class="list" :class="[listSwitch?'hide':'show']">
 			<block v-for="(row,index) in dragListB" :key="index">
 				<view class="rowB" :id="'rowB'+index">
-					<view class="modules">
-						{{row}}
-						<!-- #ifndef MP-WEIXIN -->
-							<view class="drag" :data-index="index" data-type="B" :data-isdelay="isdelay" :data-rownum="dragListB.length"
-							 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
-								<text class="iconfont icon-drag"></text>
-							</view>
-						<!-- #endif -->
-						<!-- #ifdef MP-WEIXIN -->
-							<view class="drag" :data-index="index" data-type="B" :data-isdelay="isdelay" :data-rownum="dragListB.length"
-							 @touchstart="drag.touchstart" @touchmove="drag.touchmove" @touchend="drag.touchend">
-								<text class="iconfont icon-drag"></text>
-							</view>
-						<!-- #endif -->
-					</view>
+					<view class="num">{{row}}</view>
+					<!-- #ifndef MP-WEIXIN -->
+						<view class="drag" :data-index="index" data-type="B" :data-isdelay="isdelay" :data-rownum="dragListB.length"
+						 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
+						</view>
+					<!-- #endif -->
+					<!-- #ifdef MP-WEIXIN -->
+						<view class="drag" :data-index="index" data-type="B" :data-isdelay="isdelay" :data-rownum="dragListB.length"
+						 @touchstart="drag.touchstart" @touchmove="drag.touchmove" @touchend="drag.touchend">
+						</view>
+					<!-- #endif -->
 				</view>
 			</block>
 		</view>
@@ -170,9 +162,28 @@
 
 			.rowA,
 			.rowB {
+				position: relative;
 				display: flex;
-				width: 45px;
-				height: 45px;
+				width: 40px;
+				height: 40px;
+				border: 1px solid #333;
+				border-radius: 50%;
+				margin-left: 10rpx;
+				margin-right: 10rpx;
+				
+				.num{
+					width: 100%;
+					text-align: center;
+					line-height: 40px;
+				}
+				
+				.drag{
+					position: absolute;
+					top: 5px;
+					left: 0;
+					right: 0;
+					bottom: 0;
+				}
 
 				&.ani {
 					transition: all 0.2s;
@@ -187,20 +198,5 @@
 			}
 		}
 
-	}
-	@font-face {
-		font-family:"HM-DS-font";
-		src: url('data:font/truetype;charset=utf-8;base64,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') format('truetype');
-	}
-	.iconfont {
-		font-family: "HM-DS-font" !important;
-		font-style: normal;
-		color: #c7c7cb;
-		&.icon-drag {
-			&:before {
-				content: "\e6e4";
-			}
-		}
-		
 	}
 </style>

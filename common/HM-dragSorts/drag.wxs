@@ -90,7 +90,7 @@ function moveRow(instance, moveX) {
 		}
 		var translateY = 0;
 		if ((i >= offset && i < initIndex) || (i <= offset && i > initIndex)) {
-			translateY = i < initIndex ? 45 : -45;
+			translateY = i < initIndex ? 50 : -50;
 		}
 		var style = {
 			'transform': 'translateX(' + translateY + 'px)',
@@ -104,17 +104,17 @@ function moveRow(instance, moveX) {
 var oldOffset = null;
 
 function calcOffset(initIndex, moveY) {
-	var offset = initIndex + parseInt(moveY / 45); //偏移 40的倍数
-	var rest = moveY % 45;
+	var offset = initIndex + parseInt(moveY / 50); //偏移 40的倍数
+	var rest = moveY % 50;
 	if (rest > 0) {
-		offset = offset + (rest / 45 >= 0.6 ? 1 : 0);
+		offset = offset + (rest / 50 >= 0.6 ? 1 : 0);
 		if (offset < oldOffset) {
-			offset = rest / 45 <= 0.4 ? offset : oldOffset;
+			offset = rest / 50 <= 0.4 ? offset : oldOffset;
 		}
 	} else {
-		offset = offset + (rest / 45 <= -0.6 ? -1 : 0);
+		offset = offset + (rest / 50 <= -0.6 ? -1 : 0);
 		if (offset > oldOffset) {
-			offset = rest / 45 >= -0.4 ? offset : oldOffset;
+			offset = rest / 50 >= -0.4 ? offset : oldOffset;
 		}
 	}
 	return offset;

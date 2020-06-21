@@ -5,7 +5,7 @@
 				<view class="exchange-box__header" :class="isReverse ? 'is-reverse' :''">
 					<view class="exchange-coin is-left">
 						<image src="../../../static/index/content/icon_BTC.png" class="exchange-coin-image"></image>
-						<text class="exchange-coin-name">{{currentValue}}</text>
+						<text class="exchange-coin-name">{{coin}}</text>
 					</view>
 					<view class="exchange-btn" @click="isReverse = !isReverse">
 						<image src="../../../static/index/duihuan-icon.png" class="exchange-icon"></image>
@@ -13,40 +13,39 @@
 					<view class="exchange-coin is-right">
 						<text class="exchange-coin-dropdown" @click.stop="visible = !visible">▼</text>
 						<view class="exchange-dropdown" v-show="visible">
-							<view class="exchange-item" @click="selectedItem('BTC')">
+							<view v-for="item in coinList" 
+								:key="item.id"
+								class="exchange-item" 
+								@click="selectedItem(item.coinName)">
 								<image src="../../../static/index/content/icon_BTC.png" class="exchange-item-image"></image>
-								<view class="exchange-item-name">BTC</view>
-							</view>
-							<view class="exchange-item" @click="selectedItem('BTC')">
-								<image src="../../../static/index/content/icon_BTC.png" class="exchange-item-image"></image>
-								<view class="exchange-item-name">USDT</view>
+								<view class="exchange-item-name">{{item.toCoin}}</view>
 							</view>
 						</view>
-						<text class="exchange-coin-name" @click.stop="visible = !visible">{{value}}</text>
+						<text class="exchange-coin-name" @click.stop="visible = !visible">{{toCoin}}</text>
 						<image src="../../../static/index/content/icon_gcn.png" class="exchange-coin-image"></image>
 					</view>
 				</view>
 				<view class="exchange-box__body">
 					<view class="exchange-number">
-						<input type="text" class="input" v-model="exNum" placeholder="兑换数量">
+						<input type="number" class="input" v-model="exNum" placeholder="兑换数量">
 						<view class="item">
 							<text class="item-name">当前可用:</text>
-							<text class="item-value">2333</text>
+							<text class="item-value">{{amount}}</text>
 							<text class="item-btn-all">全部</text>
 						</view>
 						<view class="item">
 							<text class="item-name">手续费:</text>
-							<text class="item-value">451.000000</text>
+							<text class="item-value">{{fee}}</text>
 						</view>
 					</view>
 					<view class="exchange-spea">
 						
 					</view>
 					<view class="exchange-number">
-						<input type="text" class="input" v-model="needNum" placeholder="需求数量">
+						<input type="number" class="input" v-model="needNum" placeholder="需求数量">
 						<view class="item">
 							<text class="item-name">汇率:</text>
-							<text class="item-value">451.000000</text>
+							<text class="item-value">{{rate}}</text>
 						</view>
 						<view class="item">
 							<text class="item-value">手续费将从兑出数量中扣减</text>
@@ -55,37 +54,69 @@
 				</view>
 			</view>
 			<view class="exchange-wrap">
-				<button type="warn" class="exchange-wrap-button" :disabled="true">确认兑换</button>
+				<button type="warn" class="exchange-wrap-button" @click="submitEx" :disabled="disabled">确认兑换</button>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import { getNowTime } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
-				value: 'GCN',
+				coin: 'GCN',
 				visible: false,
-				currentValue: 'BTC',
+				toCoin: 'BTC',
 				isReverse: false,
 				exNum: '',
-				needNum: ''
+				needNum: '',
+				fee: 0,
+				rate: 0,
+				amount: 0,
+				coinList: []
 			}
 		},
 		onLoad(options) {
-			
+			this.coin = options.coinName;
+			this.amount = options.amount;
+			this.getCoinList(this.coin);
+		},
+		computed: {
+			disabled() {
+				return this.needNum == '' || this.exNum == '';
+			}
 		},
 		methods: {
 			onClick() {
-				this.visible = false
+				this.visible = false;
 			},
 			selectedItem(item) {
-				this.visible = false
-				this.currentValue = item;
+				this.visible = false;
+				this.toCoin = item.toCoin;
 			},
-			getCoinList() {
-				
+			getCoinList(coinName) {
+				this.$u.get('/wRecordRecharge/getExchange/'+coinName).then(res => {
+					this.coinList = res.data;
+					if(this.coinList.length) {
+						let coin = this.coinList[0];
+						this.toCoin = coin.toCoin;
+						this.fee = coin.fee;
+						this.rate = coin.rate;
+					}
+				})
+			},
+			submitEx() {
+				this.$u.post('/wRecordRecharge/exchangeCoin', {
+					coin: this.coin,
+					createTime: getNowTime(),
+					exchangeAmount: 0,
+					fee: 0,
+					rate: 0,
+					toCoin: this.toCoin
+				}).then(res => {
+					console.log(res)
+				})
 			}
 		},
 		onNavigationBarButtonTap(e) {
@@ -221,7 +252,7 @@
 					
 					.input{
 						padding: 20rpx 0;
-						color: #A5A5A5;
+						color: #333;
 						font-size: 34rpx;
 						border-bottom: 3rpx solid #f3f3f3;
 					}

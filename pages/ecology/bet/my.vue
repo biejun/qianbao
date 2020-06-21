@@ -8,37 +8,34 @@
 				<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 				<view class="dropdown" v-show="dropdownShow">
 					<view class="dropdown-item" @click="type = 1">按订单展示</view>
-					<view class="dropdown-item" @click="type = 2">按分组展示</view>
+					<view class="dropdown-item" @click="type = 2">按期数展示</view>
 				</view>
 			</view>
 		</view>
 		<template v-if="type === 1">
-			<view class="data-box">
-				<view class="data-title">订单编号：202011330110</view>
-				<u-cell-group>
-					<u-cell-item title="2222期" value="等待开奖" :arrow="false">
+			<view v-for="d in data1" class="data-box">
+				<view class="data-title">订单编号：{{d.orderNo}}</view>
+				<u-cell-group v-for="item in data1.currentOrderDTOList" :key="item.currentNumber">
+					<u-cell-item :title="item.currentNumber + '期'" :value="item.status" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
-					<u-cell-item value="50">
-						<view slot="title" class="pn">任选2</view>
-					</u-cell-item>
-					<u-cell-item value="50">
-						<view slot="title" class="pn">任选3</view>
+					<u-cell-item v-for="game in item.ggameOrderList" :value="game.stakeAmount" :key="game.id">
+						<view slot="title" class="pn">{{game.wayDesc}}</view>
 					</u-cell-item>
 				</u-cell-group>
-				<view class="data-sum">
+<!-- 				<view class="data-sum">
 					<view>投注合计</view>
 					<view>222GCN</view>
-				</view>
+				</view> -->
 			</view>
 		</template>
 		<template v-if="type === 2">
-			<view class="data-box">
+			<view v-for="d in data2" class="data-box">
 				<view class="data-sum">
 					<view>00000001期</view>
 					<view>等待开奖</view>
 				</view>
-				<u-cell-group>
+				<u-cell-group v-for="item in d.currentOrderDTOList">
 					<u-cell-item title="订单编号: 2020323000001" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
@@ -60,12 +57,38 @@
 		data() {
 			return {
 				dropdownShow: false,
-				type: 1
+				type: 1,
+				data1: [],
+				data2: []
 			}
+		},
+		created() {
+			this.getData();
 		},
 		computed: {
 			dropdownText() {
-				return this.type === 1 ? '按订单展示' : '按分组展示'
+				return this.type === 1 ? '按订单展示' : '按期数展示'
+			}
+		},
+		watch: {
+			type() {
+				this.getData();
+			}
+		},
+		methods: {
+			getData() {
+				let url = this.type === 1 ? '/gGameOrder/getOrderDetailWithNumber' : '/gGameOrder/getOrderDetailWithOrder';
+				this.$u.post(url, {
+					beginTime: '',
+					endTime: '',
+					wayType: 0
+				}).then(res => {
+					if(this.type === 1) {
+						this.data1 = res.data;
+					}else if(this.type === 2) {
+						this.data2 = res.data;
+					}
+				})
 			}
 		}
 	}

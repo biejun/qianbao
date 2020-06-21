@@ -13,7 +13,7 @@ try {
 } catch (e) {}
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ['vuex_user', 'vuex_token','vuex_from', 'vuex_hasLogin','vue_phone'];
+let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_from', 'vuex_hasLogin', 'vue_phone'];
 
 // 保存变量到本地存储中
 const saveLifeData = function(key, value) {
@@ -29,25 +29,26 @@ const saveLifeData = function(key, value) {
 	}
 }
 const store = new Vuex.Store({
-	
+
 	state: {
 		// 如果上面从本地获取的lifeData对象下有对应的属性，就赋值给state中对应的变量
 		// 加上vuex_前缀，是防止变量名冲突，也让人一目了然
 		vuex_user: lifeData.vuex_user ? lifeData.vuex_user : {
 			name: ''
 		},
-    vuex_hasLogin: lifeData.vuex_hasLogin ? lifeData.vuex_hasLogin:false, // 用户是否登录
+		vuex_hasLogin: lifeData.vuex_hasLogin ? lifeData.vuex_hasLogin : false, // 用户是否登录
 		vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '', // token
-    vue_phone:lifeData.vue_phone ? lifeData.vue_phone : '', // 手机号
+		vue_phone: lifeData.vue_phone ? lifeData.vue_phone : '', // 手机号
 		vuex_version: '1.0.1',
-    vuex_from: lifeData.vuex_from ? lifeData.vuex_from:{
-    	userName: "",
-    	sex: '女',
-    	birthday: '1992.02.22'
-    },
-    
+		vuex_from: lifeData.vuex_from ? lifeData.vuex_from : {
+			userName: "",
+			sex: '女',
+			birthday: '1992.02.22'
+		},
+		vuex_bet_period: 0,
+		vuex_game_id: 0
 	},
-	
+
 	mutations: {
 		$uStore(state, payload) {
 			// 判断是否多层级调用，state中为对象存在的情况，诸如user.info.score = 1

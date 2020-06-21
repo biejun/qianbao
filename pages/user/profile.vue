@@ -18,6 +18,7 @@
 		 @confirm="confirm(1)"></u-modal>
 		 <u-modal v-model="show2" :content="contentlst" :mask-close-able="true" :show-title="false" :show-cancel-button="true"
 		  @confirm="confirm(2)"></u-modal>
+		  <u-toast ref="uToast" />
 	</view>
 </template>
 

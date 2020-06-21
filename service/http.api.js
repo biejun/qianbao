@@ -14,11 +14,13 @@ const install = (Vue, vm) => {
   let getCoinList = (params = {}) => vm.$u.get('/wRecordRecharge/getCoinList',params); // 获取币列表
   let getCoinAddress = (coinName) => vm.$u.get('/wRecordRecharge/getCoinAddress/'+coinName); // 获取充币地址
   let getUserAmount = () => vm.$u.get('/uUserAccount/userAmount'); // 获取用户资金列表
+  let getAccountDetail = (accountType, type) => vm.$u.get(`/uUserAccount/getAccountDetail/${accountType}/${type}`);
 	vm.$u.api = {
 		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
 		getCoinList,
 		getCoinAddress,
-		getUserAmount
+		getUserAmount,
+		getAccountDetail
 	};
 }
 

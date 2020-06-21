@@ -22,20 +22,22 @@
 			</view>
 			<view class="recharge-coin">
 				<view class="recharge-qrcode">
-					
+					<canvas canvas-id="qrcode" :style="{width: `150px`, height: `150px`}"/>
 				</view>
 				<view class="recharge-address">
 					充币地址：{{rechargeAddress}}
 				</view>
 			</view>
 			<view class="copy-address">
-				<button type="warn" class="copy-address-button" :disabled="rechargeAddress === null">复制地址</button>
+				<button type="warn" class="copy-address-button" @click="copyAddress" :disabled="rechargeAddress === null">复制地址</button>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import qrcode from '@/common/uqrcode.js';
+	 
 	export default{
 		data() {
 			return {
@@ -51,8 +53,10 @@
 		},
 		methods: {
 			selectCoin(item) {
-				this.selectedCoin = item;
-				this.getCoinAddress(item.coinName);
+				if(this.selectedCoin != item) {
+					this.selectedCoin = item;
+					this.getCoinAddress(item.coinName);
+				}
 				this.coinListShow = false;
 			},
 			getCoinList() {
@@ -68,15 +72,28 @@
 			getCoinAddress(coinName) {
 				this.$u.api.getCoinAddress(coinName).then(res => {
 					this.rechargeAddress = res.data;
+					qrcode.make({
+						canvasId: 'qrcode',
+						text: this.rechargeAddress,
+						size: 200,
+						margin: 10,
+						success: res => {
+							console.log(res);
+						},
+						complete: () => {}
+					})
 				}, err => {
 					this.$u.toast(err.msg);
 				});
 			},
 			copyAddress() {
 				if(this.rechargeAddress) {
-					
-				}else{
-					
+					uni.setClipboardData({
+					    data: this.rechargeAddress,
+					    success() {
+							this.$u.toast('已复制！');
+					    }
+					});
 				}
 			}
 		}
@@ -102,8 +119,8 @@
 			padding: 120rpx 0;
 			
 			.recharge-qrcode{
-				width: 320rpx;
-				height: 320rpx;
+				width: 160px;
+				height: 160px;
 				background-color: #fff;
 			}
 			.recharge-address{

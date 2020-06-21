@@ -5,28 +5,18 @@
 				:current="curNow" 
 				mode="subsection"
 				@change="sectionChange"></u-subsection>
-			<view v-show="curNow === 0" class="content-wrap">
-				<view class="content-box">
+			<view v-if="data.length" class="content-wrap">
+				<view class="content-box" v-for="item in data" :key="item.id">
 					<view class="content-header">
-						<view class="content-title">恭喜您，中奖了！</view>
-						<view class="content-time">2020-10-22</view>
+						<view class="content-title">{{item.noticeTitle}}</view>
+						<view class="content-time">{{item.createTime}}</view>
 					</view>
 					<view class="content-body">
-						您的投注订单：10001523115，已中    
+						{{item.content}}  
 					</view>
 				</view>
 			</view>
-			<view v-show="curNow === 1" class="content-wrap">
-				<view class="content-box">
-					<view class="content-header">
-						<view class="content-title">系统升级通知</view>
-						<view class="content-time">2020-10-22</view>
-					</view>
-					<view class="content-body">
-						sdfdsfdsfsdf   
-					</view>
-				</view>
-			</view>
+			<u-empty v-else text="暂无数据" mode="list"></u-empty>
 		</view>
 	</view>
 </template>
@@ -43,12 +33,23 @@
 						name: '系统公告'
 					}
 				],
+				data: [],
 				curNow: 0
 			}
+		},
+		created() {
+			this.getNotifyData();
 		},
 		methods: {
 			sectionChange(index) {
 				this.curNow = index;
+				this.getNotifyData();
+			},
+			getNotifyData() {
+				let type = this.curNow + 1;
+				this.$u.get('/notice/getNotice/'+ type).then(res => {
+					this.data = res.data;
+				})
 			}
 		}
 	}

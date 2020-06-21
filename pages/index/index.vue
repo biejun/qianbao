@@ -20,31 +20,31 @@
 				</view>
 				<view class="total-balance">
 					<view class="total-balance-number">
-						279.4
+						{{totalAmount}}
 					</view>
 					<view class="total-balance-unit">
 						USDT
 					</view>
 				</view>
 				<view class="total-balance-translate">
-					≈279.24 GCN
+					≈{{totalAmount}} GCN
 				</view>
 				<view class="account-wrap">
-					<view class="account-item" @click="goUrl('index/account/digitalAccount')">
+					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
 						<view class="account-item-text">
 							数字账户
 						</view>
 						<view class="account-item-number">
-							<text>279</text>
+							<text>{{totalDigitalAmount}}</text>
 							<text>USDT</text>
 						</view>
 					</view>
-					<view class="account-item" @click="goUrl('index/account/gameAccount')">
+					<view class="account-item" @click="goUrl('index/account/gameAccount?amount='+totalGameAmount)">
 						<view class="account-item-text">
 							游戏账户
 						</view>
 						<view class="account-item-number">
-							<text>279</text>
+							<text>{{totalGameAmount}}</text>
 							<text>USDT</text>
 						</view>
 					</view>
@@ -76,10 +76,10 @@
 					<image src="../../static/index/content/icon_usdt.png" class="coin-image"></image>
 					<view class="coin-name">{{item.coinName}}</view>
 					<view class="coin-meta">
-						<view class="coin-count">312.123456</view>
-						<view class="coin-amount">≈860.123456 GCN</view>
+						<view class="coin-count">{{item.amount}}</view>
+						<view class="coin-amount">≈{{item.cnyAmount}} GCN</view>
 					</view>
-					<view class="coin-exchange" @click="goUrl('index/coin/exchange?coinName='+item.coinName)">
+					<view class="coin-exchange" @click="goUrl('index/coin/exchange?coinName='+item.coinName+'&amount='+item.amount)">
 						兑换
 					</view>
 				</view>
@@ -114,31 +114,60 @@
 	export default {
 		data() {
 			return {
-				list: []
+				list: [],
+				totalAmount: 0,
+				totalGameAmount: 0,
+				totalDigitalAmount: 0
 			}
 		},
 		onLoad() {
-			if(!this.vuex_hasLogin) {
-				uni.navigateTo({
-					url: '/pages/login/login'
-				})
-			}
+			this.checkLogin();
+		},
+		onShow() {
 			this.getUserAmount();
 		},
 		methods: {
+			checkLogin() {
+				if(!this.vuex_hasLogin) {
+					uni.navigateTo({
+						url: '/pages/login/login'
+					})
+					return false;
+				}
+				return true;
+			},
 			openUserCenter() {
-				//this.showUserCenter = true;
-				const userCenterPopup = uni.getSubNVueById('userCenterPopup');
-				userCenterPopup.show('slide-in-left', 300, function(){
-					
-				});
-				// 关闭 nvue 子窗体  
-				//subNVue.hide('fade-out', 300)
+				if(this.checkLogin()) {
+					//this.showUserCenter = true;
+					const userCenterPopup = uni.getSubNVueById('userCenterPopup');
+					userCenterPopup.show('slide-in-left', 300, function(){
+						
+					});
+					// 关闭 nvue 子窗体  
+					//subNVue.hide('fade-out', 300)
+				}
 			},
 			getUserAmount() {
 				this.$u.api.getUserAmount().then(res => {
 					this.list = res.data;
-					console.log(res)
+					let totalAmount = 0;
+					let totalGameAmount = 0;
+					let totalDigitalAmount = 0;
+					res.data.forEach(v => {
+						let cnyAmount = v.cnyAmount || 0;
+						let gameAmount = v.gameAmount || 0;
+						let amount = v.amount || 0;
+						totalAmount += cnyAmount;
+						totalGameAmount += gameAmount;
+						totalDigitalAmount += amount;
+					});
+					this.totalAmount = totalAmount;
+					this.totalGameAmount = totalGameAmount;
+					this.totalDigitalAmount = totalDigitalAmount;
+				}, res => {
+					if(res.code === 401) {
+						this.$u.vuex('vuex_hasLogin', false);
+					}
 				})
 			},
 			goUrl(page) {
@@ -382,7 +411,7 @@
       height:98rpx;
       background:rgba(241,51,61,1);
       border-radius:49rpx;
-      margin: 0 20rpx;
+      margin: 20rpx;
       display: flex;
       align-items: center;
       justify-content: space-around;

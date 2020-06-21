@@ -1,5 +1,6 @@
 // 这里的vm，就是我们在vue文件里面的this，所以我们能在这里获取vuex的变量，比如存放在里面的token
 // 同时，我们也可以在此使用getApp().globalData，如果你把token放在getApp().globalData的话，也是可以使用的
+let isInLogin = false;
 const install = (Vue, vm) => {
 	Vue.prototype.$u.http.setConfig({
 		//baseUrl: 'http://10.168.1.36:8088',
@@ -33,8 +34,10 @@ const install = (Vue, vm) => {
 		// 判断可能变成了res.statueCode，或者res.data.code之类的，请打印查看结果
 		if(res.code == 200) {
 			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
-			return res;  
-		} else return false;
+			return res;
+		} else {
+			return false;
+		}
 	}
 }
 

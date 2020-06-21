@@ -4,7 +4,7 @@
 			<view class="select-title">
 				玩法多样，奖金滚滚来！
 			</view>
-			<view class="select-introduce" @click="goWay">
+			<view class="select-introduce" @click="goWayDesc">
 				<text>玩法介绍</text>
 				<u-icon name="question-circle"></u-icon>
 			</view>
@@ -12,36 +12,18 @@
 		<view class="wan">
 			<view class="title">任选玩法</view>
 			<view class="wan-list">
-				<view class="wan-item" @click="goIndex(1,0)">
-					<view class="text">任选2</view>
-					<view class="text">最易中</view>
-				</view>
-				<view class="wan-item" @click="goIndex(1,1)">
-					<view class="text">任选3</view>
-					<view class="text">最多人玩</view>
-				</view>
-				<view class="wan-item" @click="goIndex(1,2)">
-					<view class="text">任选4</view>
-					<view class="text">难度适中</view>
-				</view>
-				<view class="wan-item" @click="goIndex(1,3)">
-					<view class="text">任选5</view>
-					<view class="text">返奖高</view>
-				</view>
-				<view class="wan-item" @click="goIndex(1,4)">
-					<view class="text">任选6</view>
-					<view class="text">高额奖金</view>
+				<view class="wan-item" v-for="item in group1" 
+					@click="goWay(1,item)">
+					<view class="text">{{item.wayName}}</view>
+					<view class="text">{{item.wayDesc}}</view>
 				</view>
 			</view>
 			<view class="title">直选玩法</view>
 			<view class="wan-list">
-				<view class="wan-item" @click="goIndex(2,5)">
-					<view class="text">前1</view>
-					<view class="text">新手最爱</view>
-				</view>
-				<view class="wan-item" @click="goIndex(2,6)">
-					<view class="text">直选6</view>
-					<view class="text">包揽奖池</view>
+				<view class="wan-item" v-for="item in group2" :key="item.id" 
+					@click="goWay(2,item)">
+					<view class="text">{{item.wayName}}</view>
+					<view class="text">{{item.wayDesc}}</view>
 				</view>
 			</view>
 		</view>
@@ -50,15 +32,39 @@
 
 <script>
 	export default{
+		data() {
+			return {
+				group1: [],
+				group2: []
+			}
+		},
+		created() {
+			this.getWay();
+		},
 		methods: {
-			goWay() {
+			getWay() {
+				this.$u.get('/gGameOrder/getWay').then(res => {
+					//console.log(res);
+					let arr1 = [], arr2 = [];
+					res.data.forEach(v => {
+						if(v.wayType === 1 || v.wayType === 7) {
+							arr2.push(v);
+						}else{
+							arr1.push(v);
+						}
+					})
+					this.group1 = arr1;
+					this.group2 = arr2;
+				})
+			},
+			goWayDesc() {
 				uni.navigateTo({
 					url: '../bet/way'
 				})
 			},
-			goIndex(type, current) {
+			goWay(type, item) {
 				uni.navigateTo({
-					url: '../bet/index?type='+type+'&current='+current
+					url: '../bet/index?type='+type+'&wayType='+item.wayType
 				})
 			}
 		}
