@@ -76,6 +76,15 @@
 		created() {
 			this.getData();
 		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			// 取消红点或者角标 
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: '/pages/ecology/my/index'
+				})
+			}
+		},
 		methods: {
 			getData() {
 				this.$u.api.getAccountDetail(1, this.dateType).then(res => {

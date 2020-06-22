@@ -61,8 +61,10 @@
 							stakeNumber: multiple
 						});
 					}else if(options.t === '1'){
-						let tm = options.tm, dm = options.dm;
-						let res = toGroup(tm.split(','), dm.split(','));
+						let limit = options.wayType;
+						let tm = options.tm.split(','), dm = options.dm.split(',');
+						let res = toGroup(dm, tm, limit - dm.length);
+						//console.log(limit - dm.length)
 						o.stakeDetailList = res.map(v => ({
 							stakeNo: v,
 							stakeNumber: multiple

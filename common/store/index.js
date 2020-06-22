@@ -47,7 +47,8 @@ const store = new Vuex.Store({
 			birthday: '1992.02.22'
 		},
 		vuex_bet_period: 0,
-		vuex_game_id: 0
+		vuex_game_id: 0,
+		vuex_exchange_image: ''
 	},
 
 	mutations: {

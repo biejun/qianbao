@@ -1,6 +1,6 @@
 <template>
 	<view class="lecai-kaijiang">
-		<u-navbar :is-back="false" title="" :custom-back="goUserCenter">
+<!-- 		<u-navbar :is-back="false" title="" :custom-back="goUserCenter">
 			<view class="header-navbar">
 				<view class="navbar-icon" @click="goUserCenter">
 					<u-icon name="account" size="40"></u-icon>
@@ -8,7 +8,7 @@
 				<view class="navbar-title">哈希乐彩</view>
 				<view></view>
 			</view>
-		</u-navbar>
+		</u-navbar> -->
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
 				{{info.currentNumber}}期  {{info.openTime | dateFormat}}开奖
@@ -138,6 +138,13 @@
 					endTime: ''
 				},
 				detail: [],
+			}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			// 取消红点或者角标 
+			if(e.index === 0) {
+				this.goUserCenter();
 			}
 		},
 		created() {

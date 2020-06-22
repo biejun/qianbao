@@ -42,7 +42,17 @@
 		    "style" : {
 				"navigationBarTitleText": "数字账户",
 				"navigationBarBackgroundColor": "#F1333D",
-				"navigationBarTextStyle": "white"
+				"navigationBarTextStyle": "white",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue716",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px",
+							"width": "35px"
+						}]  
+					}  
+				}
 			}
 		},
 		{
@@ -53,10 +63,14 @@
 				"navigationBarTextStyle": "white",
 				"app-plus": {
 					"titleNView": {
-						"splitLine": null
+						"buttons": [{
+							"text": "\ue716",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px",
+							"width": "35px"
+						}]  
 					}  
 				}
-				
 			}
 		},
 		{
@@ -170,8 +184,17 @@
         {
             "path" : "pages/ecology/lecai/index",
 			"style" : {
-				"navigationBarTitleText": "乐彩",
-				"navigationStyle": "custom"
+				"navigationBarTitleText": "哈希乐彩",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue716",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px",
+							"width": "35px"
+						}]  
+					}  
+				}
 			}
 		},
 		{

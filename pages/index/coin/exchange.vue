@@ -4,7 +4,7 @@
 			<view class="exchange-box">
 				<view class="exchange-box__header" :class="isReverse ? 'is-reverse' :''">
 					<view class="exchange-coin is-left">
-						<image src="../../../static/index/content/icon_BTC.png" class="exchange-coin-image"></image>
+						<image :src="vuex_exchange_image" class="exchange-coin-image"></image>
 						<text class="exchange-coin-name">{{coin}}</text>
 					</view>
 					<view class="exchange-btn" @click="isReverse = !isReverse">
@@ -16,13 +16,13 @@
 							<view v-for="item in coinList" 
 								:key="item.id"
 								class="exchange-item" 
-								@click="selectedItem(item.coinName)">
-								<image src="../../../static/index/content/icon_BTC.png" class="exchange-item-image"></image>
+								@click.stop="selectedItem(item)">
+								<image :src="item.toCoinIcon" class="exchange-item-image"></image>
 								<view class="exchange-item-name">{{item.toCoin}}</view>
 							</view>
 						</view>
 						<text class="exchange-coin-name" @click.stop="visible = !visible">{{toCoin}}</text>
-						<image src="../../../static/index/content/icon_gcn.png" class="exchange-coin-image"></image>
+						<image :src="toCoinIcon" class="exchange-coin-image"></image>
 					</view>
 				</view>
 				<view class="exchange-box__body">
@@ -42,7 +42,7 @@
 						
 					</view>
 					<view class="exchange-number">
-						<input type="number" class="input" v-model="needNum" placeholder="需求数量">
+						<input type="number" class="input" :disabled="true" v-model="needNum" placeholder="需求数量">
 						<view class="item">
 							<text class="item-name">汇率:</text>
 							<text class="item-value">{{rate}}</text>
@@ -67,7 +67,8 @@
 			return {
 				coin: 'GCN',
 				visible: false,
-				toCoin: 'BTC',
+				toCoin: '',
+				toCoinIcon: '',
 				isReverse: false,
 				exNum: '',
 				needNum: '',
@@ -84,7 +85,7 @@
 		},
 		computed: {
 			disabled() {
-				return this.needNum == '' || this.exNum == '';
+				return this.exNum == '';
 			}
 		},
 		methods: {
@@ -92,8 +93,9 @@
 				this.visible = false;
 			},
 			selectedItem(item) {
-				this.visible = false;
 				this.toCoin = item.toCoin;
+				this.toCoinIcon = item.toCoinIcon;
+				this.visible = false;
 			},
 			getCoinList(coinName) {
 				this.$u.get('/wRecordRecharge/getExchange/'+coinName).then(res => {
@@ -101,6 +103,7 @@
 					if(this.coinList.length) {
 						let coin = this.coinList[0];
 						this.toCoin = coin.toCoin;
+						this.toCoinIcon = coin.toCoinIcon;
 						this.fee = coin.fee;
 						this.rate = coin.rate;
 					}
@@ -110,12 +113,15 @@
 				this.$u.post('/wRecordRecharge/exchangeCoin', {
 					coin: this.coin,
 					createTime: getNowTime(),
-					exchangeAmount: 0,
-					fee: 0,
-					rate: 0,
+					exchangeAmount: this.exNum,
+					fee: this.fee,
+					rate: this.rate,
 					toCoin: this.toCoin
 				}).then(res => {
 					console.log(res)
+					this.$u.toast(res.msg);
+				}, err => {
+					this.$u.toast(err.msg);
 				})
 			}
 		},

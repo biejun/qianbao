@@ -6,8 +6,8 @@
 			</view>  
 			<view class="header-navbar">
 				<view class="avatar" @click="openUserCenter">
-          <u-avatar :src="vuex_img" size="mini"></u-avatar>
-				<!-- 	<image src="../../static/index/header/icon_touxiang.png" mode=""></image> -->
+					<u-avatar :src="vuex_img" size="mini" class="avatar-img"></u-avatar>
+				<!-- 	<image :src="vuex_img" mode=""></image> -->
 				</view>
 				<view class="notice">
           <u-notice-bar mode="vertical" 
@@ -81,13 +81,13 @@
 			</view>
 			<view class="coin-list">
 				<view class="coin-cell" v-for="item in list" :key="item.id">
-					<image src="../../static/index/content/icon_usdt.png" class="coin-image"></image>
+					<image :src="item.coinIcon" class="coin-image"></image>
 					<view class="coin-name">{{item.coinName}}</view>
 					<view class="coin-meta">
 						<view class="coin-count">{{item.amount}}</view>
 						<view class="coin-amount">≈{{item.cnyAmount}} GCN</view>
 					</view>
-					<view class="coin-exchange" @click="goUrl('index/coin/exchange?coinName='+item.coinName+'&amount='+item.amount)">
+					<view class="coin-exchange" @click="exchange(item)">
 						兑换
 					</view>
 				</view>
@@ -199,6 +199,10 @@
 				uni.navigateTo({
 					url: '/pages/'+ page
 				})
+			},
+			exchange(item) {
+				this.$u.vuex('vuex_exchange_image', item.coinIcon);
+				this.goUrl('index/coin/exchange?coinName='+item.coinName+'&amount='+item.amount)
 			}
 		}
 	}
@@ -235,9 +239,9 @@
 					width: 50rpx;
 					height: 50rpx;
 					
-					image{
-						width: 50rpx;
-						height: 50rpx;
+					.avatar-img{
+						width: 50rpx!important;
+						height: 50rpx!important;
 					}
 				}
 				

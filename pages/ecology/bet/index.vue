@@ -242,6 +242,7 @@
 			},
 			tuoma(num) {
 				let maxNum = 13;
+				let size = this.list[this.current].wayType;
 				let i = this.tm.indexOf(num);
 				let dmLen = this.dm.length;
 				if(i > -1) {
@@ -254,14 +255,15 @@
 					this.tm.push(num);
 				}
 				if(dmLen) {
-					let res = toGroup(this.dm, this.tm);
+					let res = toGroup(this.dm, this.tm, size - dmLen);
+					//console.log(res, size - dmLen)
 					this.len = res.length;
 				}else{
 					this.len = 0;
 				}
 			},
 			danma(num) {
-				let maxNum = this.list[this.current].wayType;
+				let maxNum = this.list[this.current].wayType - 1;
 				let i = this.dm.indexOf(num);
 				if(i > -1) {
 					this.dm.splice(i, 1);

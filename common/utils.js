@@ -54,7 +54,7 @@ export function dateFormat(timestamp, formats) {
 
 export function combination(aadd, size) {
 	var resultArr = [];
-	deepCompute(aadd, size - 1, 0, "", resultArr);
+	deepCompute(aadd, size - 1, 0, "");
 
 	function deepCompute(arr, choselen, index, str) {
 		for (var a = index; a < arr.length - choselen; a++) {
@@ -69,12 +69,19 @@ export function combination(aadd, size) {
 	return resultArr;
 }
 
-export function toGroup(arr1 = [], arr2 = []) {
+export function toGroup(arr1 = [], arr2 = [], size) {
 	let str = arr1.join(',');
-	let len = arr2.length;
-	let arr = [];
-	for(let i = 0; i < len; i++) {
-		arr.push(arr1.concat(arr2[i]).join(','));
+	let resultArr = [];
+	deepCombition(arr2, size - 1, 0, str !== '' ? str + ',' : '');
+	
+	function deepCombition(arr, choselen, index, str) {
+		for (var a = index; a < arr.length - choselen; a++) {
+			if (choselen != 0) {
+				deepCombition(arr, choselen - 1, a + 1, str + arr[a] + ",")
+			} else {
+				resultArr.push(str + arr[a])
+			}
+		}
 	}
-	return arr;
+	return resultArr;
 }

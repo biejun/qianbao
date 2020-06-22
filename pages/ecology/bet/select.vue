@@ -13,17 +13,19 @@
 			<view class="title">任选玩法</view>
 			<view class="wan-list">
 				<view class="wan-item" v-for="item in group1" 
+					:class="['rx'+item.wayType]"
 					@click="goWay(1,item)">
-					<view class="text">{{item.wayName}}</view>
-					<view class="text">{{item.wayDesc}}</view>
+<!-- 					<view class="text">{{item.wayName}}</view>
+					<view class="text">{{item.wayDesc}}</view> -->
 				</view>
 			</view>
 			<view class="title">直选玩法</view>
 			<view class="wan-list">
 				<view class="wan-item" v-for="item in group2" :key="item.id" 
+					:class="['zx'+item.wayType]"
 					@click="goWay(2,item)">
-					<view class="text">{{item.wayName}}</view>
-					<view class="text">{{item.wayDesc}}</view>
+<!-- 					<view class="text">{{item.wayName}}</view>
+					<view class="text">{{item.wayDesc}}</view> -->
 				</view>
 			</view>
 		</view>
@@ -109,11 +111,36 @@
 				
 				.wan-item{
 					flex: 1 0 40%;
+					max-width: 315rpx;
 					margin: 0 30rpx 20rpx 30rpx;
 					background-color: #F1343E;
 					height: 180rpx;
 					border-radius: 26rpx;
 					padding: 30rpx 40rpx;
+					background-size: cover;
+					
+					&.rx2{
+						background-image: url(../../../static/wanfa/renxuan2.png);
+					}
+					&.rx3{
+						background-image: url(../../../static/wanfa/renxuan3.png);
+					}
+					&.rx4{
+						background-image: url(../../../static/wanfa/renxuan4.png);
+					}
+					&.rx5{
+						background-image: url(../../../static/wanfa/renxuan5.png);
+					}
+					&.rx6{
+						background-image: url(../../../static/wanfa/renxuan6.png);
+					}
+					&.zx1{
+						background-image: url(../../../static/wanfa/zhixuan1.png);
+					}
+					&.zx7{
+						background-image: url(../../../static/wanfa/zhixuan6.png);
+					}
+					
 					
 					.text{
 						color: #fff;
