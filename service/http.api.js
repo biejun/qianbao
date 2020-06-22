@@ -11,13 +11,16 @@ const install = (Vue, vm) => {
   let getmodification= (params = {}) => vm.$u.post('/uUser/updatePhone' ,params); // 修改手机号1
   let getsetDeal= (params = {}) => vm.$u.post('/uUser/setTxPassword',params); // 设置交易密码
   let getpassword= (params = {}) => vm.$u.post('/uUser/setPassword',params); // 修改密码1
+  let getupdateUrl= (params = {}) => vm.$u.post('/uUser/updateUser',params); // 修改个人信息
+  let getLogout = (params = {}) => vm.$u.get('/uUser/logout',{}); // 退出登录
+  let getregister = (params) => vm.$u.post('/uUser/register',params); // 邀请注册
   let getCoinList = (params = {}) => vm.$u.get('/wRecordRecharge/getCoinList',params); // 获取币列表
   let getCoinAddress = (coinName) => vm.$u.get('/wRecordRecharge/getCoinAddress/'+coinName); // 获取充币地址
   let getUserAmount = () => vm.$u.get('/uUserAccount/userAmount'); // 获取用户资金列表
   let getAccountDetail = (accountType, type) => vm.$u.get(`/uUserAccount/getAccountDetail/${accountType}/${type}`);
 	vm.$u.api = {
 		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
-		getCoinList,
+		getCoinList, getupdateUrl, getLogout, getregister,
 		getCoinAddress,
 		getUserAmount,
 		getAccountDetail

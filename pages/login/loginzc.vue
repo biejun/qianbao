@@ -38,7 +38,7 @@
 					<u-field v-model="mobile1" placeholder="请填写登录密码" password></u-field>
 					<u-field v-model="code2" placeholder="再次输入登陆密码":error-message="errorMessage" password ></u-field>
 				</u-cell-group>
-				<u-button type="success" @tap="getCodepop" class="btns" shape="circle">确认</u-button>
+				<u-button type="error" @tap="getCodepop" class="btns" shape="circle">确认</u-button>
 			</view>
 			</u-popup>
 		<u-toast ref="uToast"/>

@@ -6,11 +6,19 @@
 			</view>  
 			<view class="header-navbar">
 				<view class="avatar" @click="openUserCenter">
-					<image src="../../static/index/header/icon_touxiang.png" mode=""></image>
+          <u-avatar :src="vuex_img" size="mini"></u-avatar>
+				<!-- 	<image src="../../static/index/header/icon_touxiang.png" mode=""></image> -->
 				</view>
 				<view class="notice">
-					关于服务器停机更新公告
-					<image src="../../static/index/header/jiantou.png" class="arrow"></image>
+          <u-notice-bar mode="vertical" 
+          :list="listitem" type='none' 
+          :volume-icon="false" 
+          :more-icon="true"
+          color="#fff"
+          padding="12rpx 24rpx"
+          @getMore="getMore"
+          >
+          </u-notice-bar>
 				</view>
 				<view class="notify" @click="goUrl('user/notify')"></view>
 			</view>
@@ -107,13 +115,22 @@
 				</view> -->
 			</view>
 		</view>
+    	<u-popup v-model="show" mode="left" border-radius="14"  length="50%">
+        <popup></popup>
+    	</u-popup>
 	</view>
 </template>
 
 <script>
+  import popup from  './subNVue/popup.nvue'
 	export default {
+    components:{
+      popup
+    },
 		data() {
 			return {
+        listitem: ['服务器暂停服务','平明送客楚山孤','洛阳亲友如相问','一片冰心在玉壶'],
+        show: false,
 				list: [],
 				totalAmount: 0,
 				totalGameAmount: 0,
@@ -122,11 +139,24 @@
 		},
 		onLoad() {
 			this.checkLogin();
+      this.getNotifyData()
 		},
 		onShow() {
 			this.getUserAmount();
 		},
 		methods: {
+      // 公告
+      getNotifyData() {;
+      	this.$u.get('/notice/getNotice/'+ 2).then(res => {
+      		this.listitem = res.data;
+      	})
+      },
+      getMore(){
+        uni.navigateTo({
+        	url: '/pages/user/notify?type=2'
+        })
+      },
+      
 			checkLogin() {
 				if(!this.vuex_hasLogin) {
 					uni.navigateTo({
@@ -137,14 +167,9 @@
 				return true;
 			},
 			openUserCenter() {
+        
 				if(this.checkLogin()) {
-					//this.showUserCenter = true;
-					const userCenterPopup = uni.getSubNVueById('userCenterPopup');
-					userCenterPopup.show('slide-in-left', 300, function(){
-						
-					});
-					// 关闭 nvue 子窗体  
-					//subNVue.hide('fade-out', 300)
+          this.show = true
 				}
 			},
 			getUserAmount() {
@@ -425,7 +450,7 @@
         padding-left: 20rpx;
       }
       .op-left{
-        width: 251rpx;
+        width: 270rpx;
         display: flex;
         align-items: center;
         border-right: 1px solid #fff;

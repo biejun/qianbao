@@ -2,12 +2,12 @@
 	<view class="common-bg profile">
 		<u-cell-group>
 			<u-cell-item title="头像" :arrow="false" @click="img" center>
-				<u-avatar src="http://pic2.sc.chinaz.com/Files/pic/pic9/202002/hpic2119_s.jpg"></u-avatar>
+				<u-avatar :src="vuex_img" size="mini"></u-avatar>
 			</u-cell-item>
-			<u-cell-item title="昵称" :arrow="false"><input type="text" v-model="form.userName" style="font-size: 14px;" /></u-cell-item>
+			<u-cell-item title="昵称" :arrow="false"><input type="text" :value="vuex_from.userName" style="font-size: 14px;" @blur="onKeyInput"/></u-cell-item>
 			<u-cell-item title="性别" :arrow="false">
 				<picker @change="onSexConfirm" :value="index" :range="array">
-					<view class="uni-input" style="font-size: 14px;">男</view>
+					<view class="uni-input" style="font-size: 14px;">{{vuex_from.sex}}</view>
 				</picker>
 			</u-cell-item>
 		</u-cell-group>
@@ -26,9 +26,9 @@
 	export default {
 		data() {
 			return {
-				form: {
-					userName: ''
-				},
+				// form: {
+				// 	userName: ''
+				// },
 				show1: false,
 				show2: false,
 				content: '确定退出登录吗',
@@ -46,32 +46,32 @@
 			}
 		},
 		async onLoad() {
-			// if (this.vuex_hasLogin == true) {
-			// 	let rest = await this.$u.api.getUser().then(res => {
-			// 		let bdfrom = {
-			// 			userName: res.nickName || vuex_from.userName,
-			// 			sex: res.gender || '女',
-			// 		}
-			// 		// this.$u.vuex('vuex_img', res.avatar);
-			// 		this.$u.vuex('vuex_from', bdfrom);
-			// 	})
-			// }
+			if (this.vuex_hasLogin == true) {
+				await this.$u.api.getUser().then(res => {
+					let bdfrom = {
+						userName: res.data.nickName || '',
+						sex: res.data.gender || '女',
+					}
+					// this.$u.vuex('vuex_img', res.avatar);
+					this.$u.vuex('vuex_from', bdfrom);
+				})
+			}
 		},
 		methods: {
 			async getupdate(img, sex, userName) {
 				if (this.vuex_hasLogin == true) {
 					let params = {
-						avatar: img || '',
+						logo: img || '',
 						gender: sex || '',
 						nickName: userName || '',
 					}
-					let rest = await this.$u.api.getupdateUrl(params).then(res => {
+					await this.$u.api.getupdateUrl(params).then(res => {
 						let bdfrom = {
-							userName: res.nickName || vuex_from.userName,
-							sex: res.gender || '女',
-							avatar: res.avatar
+							userName: res.data.nickName || '',
+							sex: res.data.gender || '女',
+							avatar: res.data.logo
 						}
-						this.$u.vuex('vuex_img', res.avatar);
+						this.$u.vuex('vuex_img', res.data.logo);
 						this.$u.vuex('vuex_from', bdfrom);
 					})
 				} else if (this.vuex_hasLogin == false) {
@@ -119,7 +119,6 @@
 			},
 			async confirm(index) {
 				if (index === 1) {
-					let rest = await this.$u.api.getSearch().then(res => {
 						this.$u.vuex('vuex_hasLogin', false)
 						this.$u.vuex('vuex_token', '');
 						this.$u.vuex('vue_phone', '')
@@ -129,10 +128,9 @@
 							avatar: ''
 						}
 						this.$u.vuex('vuex_from', bdfrom);
-						uni.switchTab({
-							url: `/pages/user/user`
+						uni.navigateTo({
+							url: '/pages/login/login'
 						})
-					})
 				} else {
 					uni.navigateTo({
 						url: '/pages/login/login'

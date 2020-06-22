@@ -8,21 +8,21 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTextStyle": "white",
-				"app-plus": {
-					"subNVues":[{
-						// 全局唯一标识
-						"id": "userCenterPopup", 
-						"path": "pages/index/subNvue/popup",
-						"type": "popup",
-						"style": {
-							"position": "absolute",
-							"dock": "left",
-							"width": "460rpx",
-							"background": "transparent"
-						}  
-					}]  
-				}
+				"navigationBarTextStyle": "white"
+				// "app-plus": {
+				// 	"subNVues":[{
+				// 		// 全局唯一标识
+				// 		"id": "userCenterPopup", 
+				// 		"path": "pages/index/subNvue/popup",
+				// 		"type": "popup",
+				// 		"style": {
+				// 			"position": "absolute",
+				// 			"dock": "left",
+				// 			"width": "460rpx",
+				// 			"background": "transparent"
+				// 		}  
+				// 	}]  
+				// }
 			}
 		},
 		{
@@ -240,6 +240,14 @@
 				"navigationBarTitleText": "忘记密码"
 			}
 		}
+    ,{
+        "path" : "pages/login/registeredinvite",
+        "style" : {	"navigationBarTitleText": "邀请注册"}
+    }
+        ,{
+            "path" : "pages/login/versions",
+            "style" : {	"navigationBarTitleText": "版本下载"}
+        }
     ],
 	"tabBar": {
 		"color": "#FCA1A1",

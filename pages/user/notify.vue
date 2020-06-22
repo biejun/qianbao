@@ -4,6 +4,7 @@
 			<u-subsection :list="list" 
 				:current="curNow" 
 				mode="subsection"
+        active-color="#F1333D"
 				@change="sectionChange"></u-subsection>
 			<view v-if="data.length" class="content-wrap">
 				<view class="content-box" v-for="item in data" :key="item.id">
@@ -34,20 +35,27 @@
 					}
 				],
 				data: [],
-				curNow: 0
+				curNow: 0,
+        type:0,
 			}
 		},
-		created() {
-			this.getNotifyData();
-		},
+    onLoad(op) {
+      if(op.type==2){
+        this.curNow = 1
+        this.getNotifyData(op.type);
+      }else{
+        this.getNotifyData(1)
+      }
+
+    },
 		methods: {
 			sectionChange(index) {
 				this.curNow = index;
-				this.getNotifyData();
+        let type = this.curNow + 1;
+				this.getNotifyData(type);
 			},
-			getNotifyData() {
-				let type = this.curNow + 1;
-				this.$u.get('/notice/getNotice/'+ type).then(res => {
+			async getNotifyData(type) {
+				await this.$u.get('/notice/getNotice/'+ type).then(res => {
 					this.data = res.data;
 				})
 			}

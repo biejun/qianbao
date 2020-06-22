@@ -14,7 +14,7 @@
 				<view class="btns">
 					<u-button type="error" @click="codeChange" shape="circle">登录</u-button>
 				</view>
-				<view style="text-align: right;" @click="register">新用户快速注册</view>
+				<view style="text-align: right;" @tap="registeredinvite">新用户快速注册</view>
 			</view>
 			<view class="login-bottom">
 				<view @click="register">
@@ -38,6 +38,9 @@
 			};
 		},
 		methods: {
+      registeredinvite(){
+        this.$u.route('/pages/login/registeredinvite');
+      },
 			async codeChange() {
 				if (this.$u.test.mobile(this.mobile) == false) {
 					this.errorMessage = "该手机号不存在 "

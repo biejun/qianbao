@@ -1,11 +1,8 @@
 <template>
 	<view class="user-center">
-		<view :style="{ height: iStatusBarHeight + 'px'}"></view>
 		<view class="user-info" @click="goUrl('profile')">
-			<view class="user-avatar"></view>
-			<view class="user-name">
-				<text>18092222</text>
-			</view>
+      <u-avatar :src="vuex_img" size="mini"></u-avatar>
+			<view class="user-name">{{vuex_from.userName|| '昵称'}}</view>
 		</view>
 		<view class="cell-wrap">
 			<view class="cell-item" @click="goUrl('security')">
@@ -28,11 +25,7 @@
 	export default {
 		data() {
 			return {
-				statusBarHeight: 0
 			}
-		},
-		onLoad() {
-			this.iStatusBarHeight = uni.getSystemInfoSync().statusBarHeight
 		},
 		methods: {
 			goUrl(page) {
@@ -56,14 +49,8 @@
 		padding: 30rpx;
 	}
 	.user-info{
-		flex-direction: row;
-		align-items: center;
-	}
-	.user-avatar{
-		width: 80rpx;
-		height: 80rpx;
-		background-color: #ddd;
-		border-radius: 50%;
+    display: flex;
+    align-items: center;
 	}
 	.user-name{
 		margin-left: 15rpx;
@@ -81,10 +68,12 @@
 		flex-direction: row;
 		height: 80rpx;
 		align-items: center;
+    vertical-align: middle;
 	}
 	.cell-icon{
 		width: 44rpx;
 		height: 44rpx;
+    vertical-align: middle;
 	}
 	.cell-text{
 		font-size: 28rpx;

@@ -13,7 +13,7 @@ try {
 } catch (e) {}
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_from', 'vuex_hasLogin', 'vue_phone'];
+let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_from', 'vuex_hasLogin', 'vue_phone','vuex_img'];
 
 // 保存变量到本地存储中
 const saveLifeData = function(key, value) {
@@ -40,8 +40,9 @@ const store = new Vuex.Store({
 		vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '', // token
 		vue_phone: lifeData.vue_phone ? lifeData.vue_phone : '', // 手机号
 		vuex_version: '1.0.1',
+    vuex_img: lifeData.vuex_img ? lifeData.vuex_img : '',
 		vuex_from: lifeData.vuex_from ? lifeData.vuex_from : {
-			userName: "",
+			userName: "昵称",
 			sex: '女',
 			birthday: '1992.02.22'
 		},

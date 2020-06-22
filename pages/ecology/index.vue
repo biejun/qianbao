@@ -34,9 +34,10 @@
 	export default{
 		data() {
 			return {
+        im:'',
 				list: [
 					{
-						image: 'https://ossspu.oss-cn-hongkong.aliyuncs.com/shop/2ba1e87f-f04e-40b5-8d99-63e035a9d752.jpg'
+						image: '../../static/index/banner.png'
 					}
 				]
 			}
