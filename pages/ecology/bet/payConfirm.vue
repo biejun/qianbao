@@ -48,8 +48,8 @@
 			let gameId = this.vuex_game_id;
 			let periods = Number(options.periods);
 			let multiple = Number(options.multiple);
-			let arr  = [], tp = this.vuex_bet_period + (periods -1);
-			for(let i = periods; i <= tp; i++) {
+			let arr  = [], tp = this.vuex_bet_period + (periods - 1);
+			for(let i = this.vuex_bet_period; i <= tp; i++) {
 				let o = {
 					currentNumber: i,
 					stakeDetailList: []

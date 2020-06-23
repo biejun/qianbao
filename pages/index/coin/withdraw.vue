@@ -23,15 +23,15 @@
 			<view class="current-assets">
 				<view class="total-balance">
 					<view class="total-balance-number">
-						{{totalCNY}}
+						{{totalAsset}}
 					</view>
-	<!-- 				<view class="total-balance-unit">
-						USDT
-					</view> -->
+					<view class="total-balance-unit">
+						{{currentCoin}}
+					</view>
 				</view>
-				<view class="total-balance-translate">
-					≈{{totalCNY}} {{currentCoin}}
-				</view>
+<!-- 				<view class="total-balance-translate">
+					≈{{totalGCN}} GCN
+				</view> -->
 				<view class="account-wrap">
 					<view class="account-item">
 						<view class="account-item-text">
@@ -94,7 +94,7 @@
 				</u-field>
 				<view class="withdraw-tips">最多可提取{{totalAmount}}</view>
 				<u-field
-					:value="form.fee"
+					:value="inFee"
 					label="手续费"
 					:disabled="true"
 				>
@@ -102,7 +102,7 @@
 				<view class="withdraw-tips">手续费将从兑出数量中扣减</view>
 			</u-cell-group>
 			
-			<u-cell-group  v-if="type === 2" class="withdraw-form-wrap" :border="false">
+			<u-cell-group v-if="type === 2" class="withdraw-form-wrap" :border="false">
 				<u-field
 					v-model="form.address"
 					label="地址"
@@ -117,7 +117,7 @@
 				</u-field>
 				<view class="withdraw-tips">最多可提取{{totalAmount}}</view>
 				<u-field
-					:value="form.fee"
+					:value="outFee"
 					label="手续费"
 					:disabled="true"
 				>
@@ -125,7 +125,7 @@
 				<view class="withdraw-tips">手续费将从兑出数量中扣减</view>
 			</u-cell-group>
 			<view class="withdraw-wrap">
-				<button type="warn" class="withdraw-wrap-button" :disabled="disabled">提交转账申请</button>
+				<button type="warn" class="withdraw-wrap-button" @click="submit" :disabled="disabled">提交转账申请</button>
 			</view>
 		</view>
 		<u-mask :show="coinListShow" z-index="100"></u-mask>
@@ -142,15 +142,17 @@
 				currentCoin: '',
 				coinList: [],
 				totalAmount: 0,
-				totalCNY: 0,
+				totalAsset: 0,
+				totalGCN: 0,
 				totalFreezeAmount: 0,
 				type: 1,
 				form: {
 					address: '',
 					num: '',
-					fee: 0,
 					phone: ''
-				}
+				},
+				inFee: 0,
+				outFee: 0
 			}
 		},
 		created() {
@@ -165,19 +167,16 @@
 			selectCoin(item) {
 				this.currentCoin = item.coinName;
 				this.coinListShow = false;
-				let totalAmount = 0;
-				let totalFreezeAmount = 0;
-				let totalCNY = 0;
 				this.coinList.forEach(v => {
 					if(v.coinName === this.currentCoin) {
-						totalAmount = v.amount || 0;
-						totalFreezeAmount = v.frozenAmount || 0;
-						totalCNY = v.cnyAmount || 0;
+						this.totalAmount = v.amount || 0;
+						this.totalFreezeAmount = v.frozenAmount || 0;
+						this.totalAsset = this.totalAmount + this.totalFreezeAmount;
+						this.totalGCN = v.cnyAmount || 0;
+						this.inFee = v.inFee || 0;
+						this.outFee = v.outFee || 0;
 					}
 				});
-				this.totalAmount = totalAmount;
-				this.totalFreezeAmount = totalFreezeAmount;
-				this.totalCNY = totalCNY;
 			},
 			selectMethod(type) {
 				this.type = type;
@@ -190,19 +189,23 @@
 						phone: this.form.phone,
 						phoneArea: '+86',
 						coinName: this.currentCoin,
-						fee: this.form.fee,
+						fee: this.inFee,
 						toAddress: this.form.address
 					}).then(res => {
-						
+						this.$u.toast(res.msg);
+					},err => {
+						this.$u.toast(err.msg);
 					})
 				}else if(this.type === 2) {
 					this.$u.post('/wRecordTransferOut/withDrawOut', {
 						amount: this.form.num,
 						coinName: this.currentCoin,
-						fee: this.form.fee,
+						fee: this.outFee,
 						toAddress: this.form.address
 					}).then(res => {
-						
+						this.$u.toast(res.msg);
+					}, err => {
+						this.$u.toast(err.msg);
 					})
 				}
 			},
@@ -211,19 +214,16 @@
 					this.coinList = res.data;
 					if(this.coinList.length) {
 						this.currentCoin = this.coinList[0].coinName;
-						let totalAmount = 0;
-						let totalFreezeAmount = 0;
-						let totalCNY = 0;
 						this.coinList.forEach(v => {
 							if(v.coinName === this.currentCoin) {
-								totalAmount = v.amount || 0;
-								totalFreezeAmount = v.frozenAmount || 0;
-								totalCNY = v.cnyAmount || 0;
+								this.totalAmount = v.amount || 0;
+								this.totalFreezeAmount = v.frozenAmount || 0;
+								this.totalAsset = this.totalAmount + this.totalFreezeAmount;
+								this.totalGCN = v.cnyAmount || 0;
+								this.inFee = v.inFee || 0;
+								this.outFee = v.outFee || 0;
 							}
 						});
-						this.totalAmount = totalAmount;
-						this.totalFreezeAmount = totalFreezeAmount;
-						this.totalCNY = totalCNY;
 					}
 				})
 			}

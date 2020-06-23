@@ -28,7 +28,7 @@
 				</view>
 				<view class="total-balance">
 					<view class="total-balance-number">
-						{{totalAmount}}
+						{{totalUSDT}}
 					</view>
 					<view class="total-balance-unit">
 						USDT
@@ -53,7 +53,7 @@
 						</view>
 						<view class="account-item-number">
 							<text>{{totalGameAmount}}</text>
-							<text>USDT</text>
+							<text>GCN</text>
 						</view>
 					</view>
 				</view>
@@ -133,6 +133,7 @@
         show: false,
 				list: [],
 				totalAmount: 0,
+				totalUSDT: 0,
 				totalGameAmount: 0,
 				totalDigitalAmount: 0
 			}
@@ -178,17 +179,21 @@
 					let totalAmount = 0;
 					let totalGameAmount = 0;
 					let totalDigitalAmount = 0;
+					let totalUSDT = 0;
 					res.data.forEach(v => {
-						let cnyAmount = v.cnyAmount || 0;
+						let usdtAmount = v.usdtAmount || 0;
 						let gameAmount = v.gameAmount || 0;
-						let amount = v.amount || 0;
-						totalAmount += cnyAmount;
-						totalGameAmount += gameAmount;
-						totalDigitalAmount += amount;
+						let usdtGameAmount = v.usdtGameAmount || 0;
+						let cnyAmount = v.cnyAmount || 0;
+						totalAmount += cnyAmount; // 持有总USDT 相当于 GCN 的总资产
+						totalGameAmount += gameAmount; // GCN 资产
+						totalDigitalAmount += usdtAmount; // USDT 总资产
+						totalUSDT += (usdtAmount + usdtGameAmount);
 					});
 					this.totalAmount = totalAmount;
 					this.totalGameAmount = totalGameAmount;
 					this.totalDigitalAmount = totalDigitalAmount;
+					this.totalUSDT = totalUSDT;
 				}, res => {
 					if(res.code === 401) {
 						this.$u.vuex('vuex_hasLogin', false);
