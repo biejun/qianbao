@@ -186,7 +186,7 @@
 			submit() {
 				if(this.type === 1) {
 					this.$u.post('/wRecordTransferIn/withDrawIn', {
-						amount: 0,
+						amount: this.form.num,
 						phone: this.form.phone,
 						phoneArea: '+86',
 						coinName: this.currentCoin,
@@ -197,7 +197,7 @@
 					})
 				}else if(this.type === 2) {
 					this.$u.post('/wRecordTransferOut/withDrawOut', {
-						amount: 0,
+						amount: this.form.num,
 						coinName: this.currentCoin,
 						fee: this.form.fee,
 						toAddress: this.form.address
