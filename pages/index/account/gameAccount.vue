@@ -8,6 +8,11 @@
 				<view>
 					{{amount}}
 				</view>
+				<view class="">
+					<u-button type="error" @click="goAccount" plain size="mini">
+						<u-icon name="plus"></u-icon> 划转
+					</u-button>
+				</view>
 			</view>
 		</view>
 		<view class="withdrawal-date-cate">
@@ -22,7 +27,7 @@
 		</view>
 		<view class="withdrawal-list">
 			<u-cell-group v-if="detail.length">
-				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" center :label="item.createTime">
+				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" center :label="item.createTime | dateFormat">
 					<view class="withdrawal-amount is-add">
 						{{item.changeType == 1 ? '+' : '-'}}{{item.amount}}
 					</view>
@@ -34,6 +39,7 @@
 </template>
 
 <script>
+	import { dateFormat } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -45,6 +51,11 @@
 		onLoad(options) {
 			this.amount = options.amount;
 		},
+		filters: {
+			dateFormat(val) {
+				return dateFormat(val, 'Y-m-d H:i:s');
+			}
+		},
 		created() {
 			this.getData();
 		},
@@ -52,12 +63,15 @@
 			// e.index 拿到当前点击顶部按钮的索引
 			// 取消红点或者角标 
 			if(e.index === 0) {
-				uni.navigateTo({
-					url: '/pages/ecology/my/index'
-				})
+				this.goAccount();
 			}
 		},
 		methods: {
+			goAccount() {
+				uni.navigateTo({
+					url: '/pages/ecology/my/index'
+				})	
+			},
 			getData() {
 				this.$u.api.getAccountDetail(2, this.dateType).then(res => {
 					this.detail = res.data;

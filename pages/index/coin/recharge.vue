@@ -51,6 +51,11 @@
 		created() {
 			this.getCoinList();
 		},
+		onNavigationBarButtonTap(e) {
+			uni.navigateTo({
+				url: './rechargeDetail?coinName='+this.selectedCoin.coinName
+			})
+		},
 		methods: {
 			selectCoin(item) {
 				if(this.selectedCoin != item) {

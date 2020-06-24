@@ -42,7 +42,7 @@
 						
 					</view>
 					<view class="exchange-number">
-						<input type="number" class="input" :disabled="true" v-model="needNum" placeholder="需求数量">
+						<input type="number" class="input" :disabled="true" :value="needNum" placeholder="需求数量">
 						<view class="item">
 							<text class="item-name">汇率:</text>
 							<text class="item-value">{{rate}}</text>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-	import { getNowTime } from '@/common/utils.js';
+	import { getNowTime, accMul } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -71,7 +71,6 @@
 				toCoinIcon: '',
 				isReverse: false,
 				exNum: '',
-				needNum: '',
 				fee: 0,
 				rate: 0,
 				amount: 0,
@@ -86,6 +85,10 @@
 		computed: {
 			disabled() {
 				return this.exNum == '';
+			},
+			needNum() {
+				if(!this.exNum) return 0;
+				return accMul(Number(this.exNum), this.rate);
 			}
 		},
 		methods: {
@@ -95,6 +98,8 @@
 			selectedItem(item) {
 				this.toCoin = item.toCoin;
 				this.toCoinIcon = item.toCoinIcon;
+				this.fee = item.fee;
+				this.rate = item.rate;
 				this.visible = false;
 			},
 			getCoinList(coinName) {
@@ -110,6 +115,10 @@
 				})
 			},
 			submitEx() {
+				if(this.needNum < 1) {
+					this.$u.toast('数量太少');
+					return;
+				}
 				this.$u.post('/wRecordRecharge/exchangeCoin', {
 					coin: this.coin,
 					createTime: getNowTime(),
@@ -118,7 +127,6 @@
 					rate: this.rate,
 					toCoin: this.toCoin
 				}).then(res => {
-					console.log(res)
 					this.$u.toast(res.msg);
 				}, err => {
 					this.$u.toast(err.msg);

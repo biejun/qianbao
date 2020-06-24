@@ -163,6 +163,11 @@
 				return this.form.num === '';
 			}
 		},
+		onNavigationBarButtonTap(e) {
+			uni.navigateTo({
+				url: './withdrawDetail?coinName='+this.currentCoin
+			})
+		},
 		methods: {
 			selectCoin(item) {
 				this.currentCoin = item.coinName;
@@ -183,27 +188,44 @@
 				this.coinMethodShow = false;
 			},
 			submit() {
+				let amount = Number(this.form.num);
+				if(!amount) {
+					this.$u.toast("请输入提币数量");
+					return;
+				}
+				if(amount > this.totalAmount) {
+					this.$u.toast("提币数量不能超过"+this.totalAmount);
+					return;
+				}
 				if(this.type === 1) {
+					if(!this.form.phone) {
+						this.$u.toast("请输入手机号码");
+						return;
+					}
+					let msg = this.type === 1 ? '提币成功，内部提币无需审核' : '提币申请已提交，等待系统审核';
 					this.$u.post('/wRecordTransferIn/withDrawIn', {
-						amount: this.form.num,
+						amount: amount,
 						phone: this.form.phone,
 						phoneArea: '+86',
 						coinName: this.currentCoin,
 						fee: this.inFee,
-						toAddress: this.form.address
 					}).then(res => {
-						this.$u.toast(res.msg);
+						uni.navigateTo({
+							url: './success?back=2&msg='+msg
+						})
 					},err => {
 						this.$u.toast(err.msg);
 					})
 				}else if(this.type === 2) {
 					this.$u.post('/wRecordTransferOut/withDrawOut', {
-						amount: this.form.num,
+						amount: amount,
 						coinName: this.currentCoin,
 						fee: this.outFee,
 						toAddress: this.form.address
 					}).then(res => {
-						this.$u.toast(res.msg);
+						uni.navigateTo({
+							url: './success?back=2&msg='+msg
+						})
 					}, err => {
 						this.$u.toast(err.msg);
 					})

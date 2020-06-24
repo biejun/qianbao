@@ -34,7 +34,22 @@
 		{
 		    "path" : "pages/index/coin/recharge",
 		    "style" : {
-				"navigationBarTitleText": "充币"
+				"navigationBarTitleText": "充币",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue64a",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px"
+						}]  
+					}  
+				}
+			}
+		},
+		{
+		    "path" : "pages/index/coin/success",
+		    "style" : {
+				
 			}
 		},
 		{
@@ -42,17 +57,17 @@
 		    "style" : {
 				"navigationBarTitleText": "数字账户",
 				"navigationBarBackgroundColor": "#F1333D",
-				"navigationBarTextStyle": "white",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue716",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px",
-							"width": "35px"
-						}]  
-					}  
-				}
+				"navigationBarTextStyle": "white"
+				// "app-plus": {
+				// 	"titleNView": {
+				// 		"buttons": [{
+				// 			"text": "\ue716",
+				// 			"fontSrc": "/static/iconfont.ttf",
+				// 			"fontSize": "24px",
+				// 			"width": "35px"
+				// 		}]  
+				// 	}  
+				// }
 			}
 		},
 		{
@@ -97,7 +112,28 @@
 		{
 		    "path" : "pages/index/coin/withdraw",
 		    "style" : {
-				"navigationBarTitleText": "提币"
+				"navigationBarTitleText": "提币",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue64a",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "24px"
+						}]  
+					}  
+				}
+			}
+		},
+		{
+		    "path" : "pages/index/coin/withdrawDetail",
+		    "style" : {
+				"navigationBarTitleText": "提币记录"
+			}
+		},
+		{
+		    "path" : "pages/index/coin/rechargeDetail",
+		    "style" : {
+				"navigationBarTitleText": "充币记录"
 			}
 		},
 		{
@@ -254,7 +290,7 @@
 		{
 			"path": "pages/login/loginzc",
 			"style": {
-				"navigationBarTitleText": "注册"
+				"navigationBarTitleText": "短信登录"
 			}
 		},
 		{

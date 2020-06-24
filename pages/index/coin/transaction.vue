@@ -16,7 +16,7 @@
 						手续费: {{item.fee}}
 					</text>
 					<text class="text">
-						{{item.createTime}}
+						{{item.createTime | dateFormat}}
 					</text>
 				</view>
 			</view>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+	import { dateFormat } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -34,6 +35,11 @@
 		},
 		created() {
 			this.getRecords();
+		},
+		filters: {
+			dateFormat(val) {
+				return dateFormat(val, 'Y-m-d H:i:s');
+			}
 		},
 		methods: {
 			getRecords() {

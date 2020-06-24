@@ -8,7 +8,7 @@
 				<view>
 					{{amount}}
 				</view>
-				<view class="right-coin" @click.stop="showDropdown = !showDropdown">
+<!-- 				<view class="right-coin" @click.stop="showDropdown = !showDropdown">
 					{{currentCoin}}
 					<u-icon name="arrow-down" size="20"></u-icon>
 					<view class="dropdown" v-show="showDropdown">
@@ -16,7 +16,7 @@
 							BTC
 						</view>
 					</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<view class="withdrawal-date-cate">
@@ -31,7 +31,7 @@
 		</view>
 		<view class="withdrawal-list">
 			<u-cell-group v-if="detail.length">
-				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" :label="item.createTime" :arrow="false">
+				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" :label="item.createTime | dateFormat" :arrow="false">
 					<view class="withdrawal-amount is-add">
 						{{item.changeType == 1 ? '+' : '-'}}{{item.amount}}
 					</view>
@@ -47,6 +47,7 @@
 </template>
 
 <script>
+	import { dateFormat } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -75,6 +76,11 @@
 		},
 		created() {
 			this.getData();
+		},
+		filters: {
+			dateFormat(val) {
+				return dateFormat(val, 'Y-m-d H:i:s');
+			}
 		},
 		onNavigationBarButtonTap(e) {
 			// e.index 拿到当前点击顶部按钮的索引

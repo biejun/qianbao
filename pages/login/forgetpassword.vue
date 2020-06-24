@@ -6,13 +6,13 @@
 						<view class="imgtext" slot="right" @tap="imgyzm">{{imgtext}}</view>
 					</u-field>
 					<u-field v-model="code" label="短信验证码" placeholder="短信验证码" :label-width="lwh" :input-align="input" :error-message="errorMessage2">
-						<u-button size="mini" slot="right" type="success" @tap="getCode">{{codeText}}</u-button>
+						<u-button size="mini" slot="right" type="error" @tap="getCode">{{codeText}}</u-button>
 					</u-field>
 					<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
 					<u-field v-model="password"label="新密码"placeholder="8-20位数字,字母组合" :input-align="input" :label-width="lwh" :error-message="errorMessage3" password></u-field>
 					<u-field v-model="newpassword"label="确认新密码"placeholder="与新密码保持一致" :input-align="input" :label-width="lwh" :error-message="errorMessage4" password></u-field>
 				</u-cell-group>
-				<u-button type="success" class="btn" shape="circle" @click="codeChangelist">确认修改</u-button>
+				<u-button type="error" class="btn" shape="circle" @click="codeChangelist">确认修改</u-button>
 				<u-toast ref="uToast" />
 	</view>
 </template>
