@@ -14,6 +14,7 @@ const install = (Vue, vm) => {
   let getupdateUrl= (params = {}) => vm.$u.post('/uUser/updateUser',params); // 修改个人信息
   let getLogout = (params = {}) => vm.$u.get('/uUser/logout',{}); // 退出登录
   let getregister = (params) => vm.$u.post('/uUser/register',params); // 邀请注册
+  let getuserInvite = (coinName) => vm.$u.get('/uUser/userInvite/'+coinName); // 二维码邀请
   let getCoinList = (params = {}) => vm.$u.get('/wRecordRecharge/getCoinList',params); // 获取币列表
   let getCoinAddress = (coinName) => vm.$u.get('/wRecordRecharge/getCoinAddress/'+coinName); // 获取充币地址
   let getUserAmount = () => vm.$u.get('/uUserAccount/userAmount'); // 获取用户资金列表
@@ -21,7 +22,7 @@ const install = (Vue, vm) => {
 	vm.$u.api = {
 		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
 		getCoinList, getupdateUrl, getLogout, getregister,
-		getCoinAddress,
+		getCoinAddress, getuserInvite,
 		getUserAmount,
 		getAccountDetail
 	};

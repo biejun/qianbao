@@ -96,7 +96,7 @@
 				ways: [],
 				wayType: 0,
 				beginTime: '',
-				endTime: ''
+				endTime: '',
 			}
 		},
 		created() {
@@ -105,7 +105,7 @@
 		computed: {
 			dropdownText() {
 				return this.type === 1 ? '按订单展示' : '按期数展示'
-			}
+			},
 		},
 		watch: {
 			type() {
@@ -159,14 +159,37 @@
 					if(this.type === 1) {
 						this.data1 = res.data.map(v => {
 							let stakeAmount = 0;
+              let obj={
+                wayType:{
+                  name:'直1',
+                  data:[],
+                  num:24
+                }
+              }
+              let objitem={}
 							v.currentOrderDTOList.forEach(c => {
-								c.ggameOrderList.forEach(d => {
+								c.ggameOrderList.forEach((d,i) => {
 									stakeAmount += d.stakeAmount;
+                  let alist = d.wayType
+                  obj.num =  (objitem[alist] + 1) || 1
+                  // if( d.wayType = d.wayType){
+                  //   obj.wayType.data.push(d) 
+                  //   // console.log(d)
+                  // }
+                  
+                  // if(!obj[v.wayType]){
+                  //    obj[v.wayType] = []
+                  //    obj[v.wayType].push(c)  // push ggameOrderList 
+                  // }
 								})
 							})
+                console.log(objitem)
 							v.stakeAmount = stakeAmount;
+              v.newArr = Object.values(obj);
 							return v;
 						});
+          
+             console.log(this.data1)
 					}else if(this.type === 2) {
 						this.data2 = res.data;
 					}

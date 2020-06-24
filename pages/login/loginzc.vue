@@ -6,7 +6,12 @@
 			</view>
 			<view class="login-center">
 				<u-cell-group :border="false">
-					<u-field label-width="0" v-model="mobile" placeholder="手机号码"></u-field>
+					<u-field label-width="0" 
+          v-model="mobile" placeholder="手机号码"
+          right-icon="arrow-down-fill"
+          >
+          <view slot="right"  @tap="description">+86中国</view>
+          </u-field>
 					<u-field label-width="0" v-model="code" placeholder="短信验证码">
 					<u-button size="mini" slot="right" type="error" @tap="getCode">{{codeText}}</u-button></u-field>
 					<u-verification-code ref="uCode" @change="codeChange"></u-verification-code>
@@ -61,6 +66,12 @@
 			};
 		},
 		methods: {
+      // 区号
+      description(){
+        uni.navigateTo({
+          url:`/pages/login/description/description`
+        })
+      },
 			async circledl(){
 				if(this.checken == true){
 					let a ={"phone": this.mobile,"phoneCode": this.code}

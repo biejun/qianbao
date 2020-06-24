@@ -307,6 +307,14 @@
             "path" : "pages/login/versions",
             "style" : {	"navigationBarTitleText": "版本下载"}
         }
+        ,{
+            "path" : "pages/user/security/invitation",
+            "style" : {"navigationBarTitleText": "我的邀请码"}
+        }
+        ,{
+            "path" : "pages/login/description/description",
+            "style" : {"navigationBarTitleText": "选择区号"}
+        }
     ],
 	"tabBar": {
 		"color": "#FCA1A1",

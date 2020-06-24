@@ -17,6 +17,10 @@
 				<image src="../../../static/index/userCenter/icon_shezhi.png" class="cell-icon"></image>
 				<text class="cell-text">设置</text>
 			</view>
+      <view class="cell-item" @click="goUrl('setting')">
+      	<image src="../../../static/index/userCenter/icon_anqian.png" class="cell-icon"></image>
+      	<text class="cell-text">分享</text>
+      </view>
 		</view>
 	</view>
 </template>

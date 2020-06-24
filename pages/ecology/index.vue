@@ -20,11 +20,19 @@
 				<view class="title-span"></view>
 				<view class="title-text">第三方应用</view>
 			</view>
-			<view class="app-list-wrap">
-				<view class="app-item">
-					<image src="../../static/icon_haxi.png" class="app-item-img"></image>
-					<text class="app-item-text">哈希乐彩</text>
+			<view class="app-list-wrap" style="justify-content: space-around;">
+        <view class="app-item" @click="navito('token.im/')">
+        	<image src="https://s2.bqiapp.com/image/20181123/e6c37980_b777_430f_b86e_c893ccfd4803.png" class="app-item-img"></image>
+         <text class="app-item-text">imToken</text>
+        </view>
+				<view class="app-item" @click="navito('www.huobi.me/zh-cn/')">
+					<image src="https://s2.bqiapp.com/logo/2/huobipro.png" class="app-item-img"></image>
+           <text class="app-item-text">火币全球站</text>
 				</view>
+        <view class="app-item" @click="navito('www.huobi.me/zh-cn/')">
+        	<image src="https://s2.bqiapp.com/images/site/coindesk_com.png" class="app-item-img"></image>
+           <text class="app-item-text" >Coindesk</text>
+        </view>
 			</view>
 		</view>
 	</view>
@@ -34,7 +42,6 @@
 	export default{
 		data() {
 			return {
-        im:'',
 				list: [
 					{
 						image: '../../static/index/banner.png'
@@ -43,6 +50,11 @@
 			}
 		},
 		methods: {
+      navito (e) {
+        plus.runtime.openURL('https://' + e);  
+        // window.location.href = 'https://' + e
+      
+      },
 			openImageDetail() {
 				
 			},
@@ -56,6 +68,9 @@
 </script>
 
 <style lang="scss">
+  .app-item-img{
+    border-radius: 50% !important;
+  }
 	.ecology-index{
 		padding: 30rpx;
 		.banner {

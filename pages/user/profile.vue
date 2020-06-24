@@ -10,6 +10,8 @@
 					<view class="uni-input" style="font-size: 14px;">{{vuex_from.sex}}</view>
 				</picker>
 			</u-cell-item>
+      <u-cell-item title="我的邀请码"  @click="invitation" center>
+      </u-cell-item>
 		</u-cell-group>
 		<view class="setting-bottom">
 			<button type="warn" @click="goSetting" class="btn">退出登录</button>
@@ -58,6 +60,11 @@
 			}
 		},
 		methods: {
+      invitation(){
+         uni.navigateTo({
+          url: `/pages/user/security/invitation`
+        })
+      },
 			async getupdate(img, sex, userName) {
 				if (this.vuex_hasLogin == true) {
 					let params = {
