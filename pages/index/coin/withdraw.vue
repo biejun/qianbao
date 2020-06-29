@@ -7,7 +7,7 @@
 						{{currentCoin}}
 					</view>
 					<view class="dropdown-header__right" @click="coinListShow = !coinListShow">
-						<text>切换币种</text>
+						<text>{{$t('SwitchCurrency')}}</text>
 						<u-icon name="arrow-up-fill" class="icon" :class="coinListShow ? '' : 'is-down'"></u-icon>
 					</view>
 				</view>
@@ -35,7 +35,7 @@
 				<view class="account-wrap">
 					<view class="account-item">
 						<view class="account-item-text">
-							当前可用
+							{{$t('CurrentlyAvailable')}}
 						</view>
 						<view class="account-item-number">
 							<text>{{totalAmount}}</text>
@@ -44,7 +44,7 @@
 					</view>
 					<view class="account-item">
 						<view class="account-item-text">
-							当前冻结
+							{{$t('CurrentFreeze')}}
 						</view>
 						<view class="account-item-number">
 							<text>{{totalFreezeAmount}}</text>
@@ -56,31 +56,31 @@
 			<view class="dropdown-addon" :class="coinMethodShow ? 'is-fixed' : ''">
 				<view class="dropdown-header">
 					<view class="dropdown-header__left">
-						{{type === 1? '对内提币' : '对外提币'}}
+						{{type === 1? $t('Internal') : $t('External')}}
 					</view>
 					<view class="dropdown-header__right" @click="coinMethodShow = !coinMethodShow">
-						<text>切换方式</text>
+						<text>{{$t('SwitchingMode')}}</text>
 						<u-icon name="arrow-up-fill" class="icon" :class="coinMethodShow ? '' : 'is-down'"></u-icon>
 					</view>
 				</view>
 				<view v-show="coinMethodShow" class="dropdown-content">
 					<view class="dropdown-content-item" @click="selectMethod(1)">
-						对内提币
+						{{$t('Internal')}}
 					</view>
 					<view class="dropdown-content-item" @click="selectMethod(2)">
-						对外提币
+						{{$t('External')}}
 					</view>
 				</view>
 			</view>
 			<u-cell-group v-if="type === 1" class="withdraw-form-wrap" :border="false">
 				<u-cell-item 
-					title="国家/地区"
+					:title="$t('CountryRegion')"
 					value="+86 中国">
 				</u-cell-item>
 				<u-field
 					v-model="form.phone"
-					label="手机号码"
-					placeholder="请输入手机号码"
+					:label="$t('Phone')"
+					:placeholder="$t('phonePleaseHolder')"
 				>
 <!-- 					<view slot="right">
 						dsfsdf
@@ -88,44 +88,44 @@
 				</u-field>
 				<u-field
 					v-model="form.num"
-					label="提币数量"
-					placeholder="请输入提币数量"
+					:label="$t('withdrawalNumber')"
+					:placeholder="$t('withdrawalNumberPleaseNum')"
 				>
 				</u-field>
-				<view class="withdraw-tips">最多可提取{{totalAmount}}</view>
+				<view class="withdraw-tips">{{$t('MaximumExtractable')}}{{totalAmount}}</view>
 				<u-field
 					:value="inFee"
-					label="手续费"
+					:label="$t('Fee')"
 					:disabled="true"
 				>
 				</u-field>
-				<view class="withdraw-tips">手续费将从兑出数量中扣减</view>
+				<view class="withdraw-tips">{{$t('feeTip')}}</view>
 			</u-cell-group>
 			
 			<u-cell-group v-if="type === 2" class="withdraw-form-wrap" :border="false">
 				<u-field
 					v-model="form.address"
-					label="地址"
-					placeholder="请输入转账地址"
+					:label="$t('address')"
+					:placeholder="$t('addressPleaseNum')"
 				>
 				</u-field>
 				<u-field
 					v-model="form.num"
-					label="提币数量"
-					placeholder="请输入提币数量"
+					:label="$t('withdrawalNumber')"
+					:placeholder="$t('withdrawalNumberPleaseNum')"
 				>
 				</u-field>
-				<view class="withdraw-tips">最多可提取{{totalAmount}}</view>
+				<view class="withdraw-tips">{{$t('MaximumExtractable')}}{{totalAmount}}</view>
 				<u-field
 					:value="outFee"
-					label="手续费"
+					:label="$t('Fee')"
 					:disabled="true"
 				>
 				</u-field>
-				<view class="withdraw-tips">手续费将从兑出数量中扣减</view>
+				<view class="withdraw-tips">{{$t('feeTip')}}</view>
 			</u-cell-group>
 			<view class="withdraw-wrap">
-				<button type="warn" class="withdraw-wrap-button" @click="submit" :disabled="disabled">提交转账申请</button>
+				<button type="warn" class="withdraw-wrap-button" @click="submit" :disabled="disabled">{{$t('Submit')}}</button>
 			</view>
 		</view>
 		<u-mask :show="coinListShow" z-index="100"></u-mask>
@@ -152,11 +152,54 @@
 					phone: ''
 				},
 				inFee: 0,
-				outFee: 0
+				outFee: 0,
+				i18n: {
+					zh: {
+						SwitchCurrency: '切换币种',
+						withdrawal: "提币",
+						CurrentlyAvailable: "当前可用",
+						SwitchingMode: "切换方式",
+						Internal: "对内提币",
+						External: "对外提币",
+						CurrentFreeze: "当前冻结",
+						CountryRegion: "国家/地区",
+						Phone: "手机号码",
+						withdrawalNumber: "提币数量",
+						Fee: "手续费",
+						address: "地址",
+						phonePleaseHolder: "请输入手机号码",
+						withdrawalNumberPleaseNum: "请输入提币数量",
+						addressPleaseNum: "请输入转账地址",
+						feeTip: "手续费将从兑出数量中扣减",
+						MaximumExtractable: "最多可提取",
+						Submit: "提交转账申请"
+					},
+					en: {
+						SwitchCurrency: 'Switch Currency',
+						withdrawal: "Withdrawal",
+						CurrentlyAvailable: "Currently Available",
+						SwitchingMode: "Switching Mode",
+						Internal: "Internal",
+						External: "External",
+						CurrentFreeze: "Current Freeze",
+						CountryRegion: "Country Region",
+						Phone: "Phone",
+						withdrawalNumber: "Number of withdrawal",
+						Fee: "Fee",
+						address: "Address",
+						phonePleaseHolder: "Please enter your mobile number",
+						withdrawalNumberPleaseNum: "Please enter withdrawal number",
+						addressPleaseNum: "Please enter the transfer address",
+						feeTip: "Service charge will be deducted from the quantity",
+						MaximumExtractable: "Maximum extractable",
+						Submit: "Submit"
+					}
+				},
 			}
 		},
 		created() {
 			this.getCoinList();
+			this.setNavBarTitle('withdrawal');
 		},
 		computed: {
 			disabled() {

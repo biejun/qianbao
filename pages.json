@@ -314,7 +314,13 @@
         ,{
             "path" : "pages/login/description/description",
             "style" : {"navigationBarTitleText": "选择区号"}
-        }
+        },
+		{
+		    "path" : "pages/user/index",
+		    "style" : {
+				"navigationBarTitleText": "个人中心"
+			}
+		}
     ],
 	"tabBar": {
 		"color": "#FCA1A1",
@@ -337,6 +343,12 @@
 				"iconPath": "static/tabbar/icon_shengtai@2x.png",
 				"selectedIconPath": "static/tabbar/icon_shengtaixz@2x.png",
 				"text": "生态"
+			},
+			{
+				"pagePath": "pages/user/index",
+				"iconPath": "static/tabbar/icon_miyou@2x.png",
+				"selectedIconPath": "static/tabbar/icon_miyouxz@2x.png",
+				"text": "个人中心"
 			}
 		]
 	},

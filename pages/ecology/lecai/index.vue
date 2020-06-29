@@ -11,14 +11,14 @@
 		</u-navbar> -->
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
-				{{info.currentNumber}}期  {{info.openTime | dateFormat}}开奖
+				{{$t('Period').replace('{0}', info.currentNumber)}} {{$t('Lottery').replace('{0}', dateFormat(info.openTime))}}
 			</view>
 			<view class="header-notify" @click="goUrl('user/notify')">
 				<image src="../../../static/icon_xiaoxi.png" class="notify-icon"></image>
 			</view>
 		</view>
 		<view class="kai-jiang border-bottom-10">
-			<view class="title">开奖号码</view>
+			<view class="title">{{$t('PrizeNumber')}}</view>
 			<view class="numbers">
 				<div class="item" v-for="(item, index) in info.openRewardNo.split(',')" :key="index">
 					<view class="num">
@@ -29,30 +29,30 @@
 			<view class="kai-jiang-ma">
 				<view class="kai-jiang-pd30">
 					<view class="kai-row">
-						<view class="kai-item-name">开奖哈希：</view>
+						<view class="kai-item-name">{{$t('WinningHash')}}：</view>
 						<view class="kai-item-value">{{info.openRewardHash}}</view>
 					</view>
 					<view class="kai-row">
-						<view class="kai-item-name">区块高度：</view>
+						<view class="kai-item-name">{{$t('BlockHeight')}}：</view>
 						<view class="kai-item-value">{{info.blockNumber}}</view>
-						<view @click="copy" class="copy-text">复制</view>
+						<view @click="copy" class="copy-text">{{$t('Copy')}}</view>
 					</view>
 				</view>
 			</view>
 		</view>
 		<view class="kai-jiang">
-			<view class="title">开奖详细</view>
+			<view class="title">{{$t('PrizeDetails')}}</view>
 			<view class="kai-detail-row">
 				<view class="kai-detail-cell">
 					<view>
 						<text class="detail-num">{{info.currentRewardPool}}</text>
-						<text class="detail-unit">亿</text>
+						<text class="detail-unit">{{$t('Billion')}}</text>
 					</view>
 					<view class="detail-cell-item">
-						本期奖池
+						{{$t('Jackpot')}}
 					</view>
 				</view>
-				<view class="kai-detail-cell">
+<!-- 				<view class="kai-detail-cell">
 					<view>
 						<text class="detail-num">{{info.currentFloatReward}}</text>
 						<text class="detail-unit">亿</text>
@@ -60,30 +60,30 @@
 					<view class="detail-cell-item">
 						本期浮动奖金
 					</view>
-				</view>
+				</view> -->
 				<view class="kai-detail-cell">
 					<view>
 						<text class="detail-num">{{info.currentSellNumber}}</text>
-						<text class="detail-unit">亿</text>
+						<text class="detail-unit">{{$t('Billion')}}</text>
 					</view>
 					<view class="detail-cell-item">
-						本期销售额
+						{{$t('SalesVolume')}}
 					</view>
 				</view>
 			</view>
 			<view class="kai-detail-table-head">
 				<view class="kai-detail-row">
 					<view class="kai-detail-cell">
-						奖项
+						{{$t('Awards')}}
 					</view>
 					<view class="kai-detail-cell">
-						中奖条件
+						{{$t('WinningRules')}}
 					</view>
 					<view class="kai-detail-cell">
-						中奖注数
+						{{$t('WinningRules')}}
 					</view>
 					<view class="kai-detail-cell">
-						单注金额(GCN)
+						{{$t('SingleBetAmount')}}(GCN)
 					</view>
 				</view>
 			</view>
@@ -103,17 +103,18 @@
 					</view>
 				</view>
 				<view class="next">
-					<text>下期：{{info.currentNumber ? info.currentNumber+1 : '-'}}期</text>
-					<text>{{nextOpenTime | dateFormat}}开奖</text>
+					<text>{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? info.currentNumber+1 : '-')}}</text>
+					<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
 				</view>
 			</view>
 		</view>
 		<view class="footer-item">
 			<view class="wode-touzhu" @click="goMy">
-				我的投注
+				{{$t('MyBet')}}
 			</view>
 			<view class="woyao-touzhu" @click="goSelect">
-				我要投注 ({{remainTime > 0 ? '已结束' : endTime + '截止'}})
+				{{$t('Bet')}}
+				({{remainTime > 0 ? $t('closed') : endTime + $t('End')}})
 			</view>
 		</view>
 	</view>
@@ -138,6 +139,50 @@
 					endTime: ''
 				},
 				detail: [],
+				i18n: {
+					zh: {
+						PrizeNumber: '开奖号码',
+						Period: "{0} 期",
+						WinningHash:"开奖哈希",
+						BlockHeight: "区块高度",
+						PrizeDetails: "开奖详细",
+						Jackpot: "本期奖池",
+						SalesVolume: "本期销售额",
+						Billion: "亿",
+						Copy: "复制",
+						Awards: "奖项",
+						WinningRules: "中奖条件",
+						NumberWinners: "中奖注数",
+						SingleBetAmount: "单注金额",
+						Lottery: "{0} 开奖",
+						NextPeriod: "下期",
+						MyBet: "我的投注",
+						Bet: "我要投注",
+						closed: "已结束",
+						End: "截止"
+					},
+					en: {
+						PrizeNumber: 'Prize Number',
+						Period: "No. {0}",
+						WinningHash:"Winning Hash",
+						BlockHeight: "Block Height",
+						PrizeDetails: "Prize details",
+						Jackpot: "Jackpot",
+						SalesVolume: "Sales volume",
+						Billion: "Billion",
+						Copy: "Copy",
+						Awards: "Awards",
+						WinningRules: "Winning Rules",
+						NumberWinners: "Number of winners",
+						SingleBetAmount: "Single bet amount",
+						Lottery: "Opening time: {0}",
+						NextPeriod: "Next",
+						MyBet: "My Bet",
+						Bet: "Bet",
+						closed: "Closed",
+						End: "End"
+					}
+				},
 			}
 		},
 		onNavigationBarButtonTap(e) {
@@ -172,6 +217,9 @@
 			}
 		},
 		methods: {
+			dateFormat(val) {
+				return dateFormat(val, 'Y-m-d H:i:s')
+			},
 			getGameBaseInfo() {
 				this.$u.get('/gGameBase/getGameBase').then(res => {
 					if(res.data) {

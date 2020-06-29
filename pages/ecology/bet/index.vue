@@ -11,18 +11,18 @@
 			<view v-if="type === 1" class="way-tab">
 				<view class="way-tab-item"
 					:class="[tab1 === 0 ? 'is-active' : '']" 
-					@click="tab1 = 0">普通玩法</view>
+					@click="tab1 = 0">{{$t('Commonplay')}}</view>
 				<view class="way-tab-item" 
 					:class="[tab1 === 1 ? 'is-active' : '']" 
-					@click="tab1 = 1">拖胆玩法</view>
+					@click="tab1 = 1">{{$t('Daretoplay')}}</view>
 			</view>
 			<view v-if="type === 2" class="way-tab">
 				<view class="way-tab-item" 
 					:class="[tab2 === 0 ? 'is-active' : '']" 
-					@click="tab2 = 0">普通玩法</view>
+					@click="tab2 = 0">{{$t('Commonplay')}}</view>
 				<view class="way-tab-item" 
 					:class="[tab2 === 1 ? 'is-active' : '']"  
-					@click="tab2 = 1">复式投注</view>
+					@click="tab2 = 1">{{$t('MultipleBets')}}</view>
 			</view>
 			<template v-if="type === 1">
 				<template v-if="tab1 === 0">
@@ -36,11 +36,11 @@
 						</view>
 					</view>
 					<view class="select-tip">
-						您当前选择了<text class="num">{{len}}</text>注，共<text class="num">{{totalGCN}}</text>个GCN
+						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
 					</view>
 				</template>
 				<template v-if="tab1 === 1">
-					<view clasa="ball-title">胆码选择</view>
+					<view clasa="ball-title">{{$t('Important')}}</view>
 					<view class="ball-list">
 						<view class="ball-item" 
 							v-for="(item, index) in danmas" :key="index"
@@ -50,7 +50,7 @@
 							</view>
 						</view>
 					</view>
-					<view clasa="ball-title">拖码选择</view>
+					<view clasa="ball-title">{{$t('Secondary')}}</view>
 					<view class="ball-list">
 						<view class="ball-item" 
 							v-for="(item, index) in tuomas" 
@@ -62,7 +62,7 @@
 						</view>
 					</view>
 					<view class="select-tip">
-						您当前选择了<text class="num">{{len}}</text>注，共<text class="num">{{totalGCN}}</text>个GCN
+						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
 					</view>
 				</template>
 			</template>
@@ -78,12 +78,12 @@
 						</view>
 					</view>
 					<view class="select-tip">
-						您当前选择了<text class="num">{{len}}</text>注，共<text class="num">{{totalGCN}}</text>个GCN
+						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
 					</view>
 					<view class="drag-balls" v-if="zx.length > 1">
-						<view class="drag-title">排序</view>
+						<view class="drag-title">{{$t('Sort')}}</view>
 						<dragSorts :list="zx" @confirm="confirm"></dragSorts>
-						<view class="drag-desc">手指拖动进行排序</view>
+						<view class="drag-desc">{{$t('SortTip')}}</view>
 					</view>
 				</template>
 				<template v-if="tab2 === 1">
@@ -97,7 +97,7 @@
 						</view>
 					</view>
 					<view class="select-tip">
-						您当前选择了<text class="num">{{len}}</text>注，共<text class="num">{{totalGCN}}</text>个GCN
+						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
 					</view>
 				</template>
 			</template>
@@ -105,21 +105,21 @@
 		<u-popup v-model="show" mode="bottom" border-radius="20" closeable>
 			<view class="touzhu-popover">
 				<view class="title">
-					追号/倍数选择
+					{{$t('title')}}
 				</view>
 				<view class="select-item">
-					<view>追号期数</view>
+					<view>{{$t('Append')}}</view>
 					<view><u-number-box v-model="periods" :min="1" :max="15"></u-number-box></view>
 				</view>
 				<view class="select-item">
-					<view>投注倍数</view>
+					<view>{{$t('Multiple')}}</view>
 					<view><u-number-box v-model="multiple" :min="1" :max="50"></u-number-box></view>
 				</view>
 				
-				<view class="submit" @click="submit">提交投注</view>
+				<view class="submit" @click="submit">{{$t('Submit')}}</view>
 			</view>
 		</u-popup>
-		<view class="submit is-fixed" @click="submit">提交投注</view>
+		<view class="submit is-fixed" @click="submit">{{$t('Submit')}}</view>
 	</view>
 </template>
 
@@ -150,7 +150,41 @@
 				show: false,
 				periods: 1,
 				multiple: 1,
-				len: 0
+				len: 0,
+				i18n: {
+					zh: {
+						Commonplay: "普通玩法",
+						Daretoplay: "拖胆玩法",
+						Important: "胆码选择",
+						Secondary: "拖码选择",
+						MultipleBets: "复式投注",
+						Currentlyselected: "您当前选择了",
+						Bet: "注",
+						Total: "总共",
+						Sort: "排序",
+						SortTip: "手指拖动进行排序",
+						Multiple: "投注倍数",
+						Append: "追号期数",
+						title: "追号/倍数选择",
+						Submit: "提交投注"
+					},
+					en: {
+						Commonplay: "Common play",
+						Daretoplay: "Dare to play",
+						Important: "Important",
+						Secondary: "Secondary",
+						MultipleBets: "Multiple Bets",
+						Currentlyselected: "Currently selected",
+						Bet: "Bet",
+						Total: "Total",
+						Sort: "Sort",
+						SortTip: "Drag with fingers to sort",
+						Multiple: "Multiple",
+						Append: "Append",
+						title: "Add number / multiple selection",
+						Submit: "Submit"
+					}
+				},
 			}
 		},
 		computed: {

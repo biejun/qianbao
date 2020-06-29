@@ -7,8 +7,8 @@
 				</text>
 				<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 				<view class="dropdown" v-show="dropdownShow">
-					<view class="dropdown-item" @click="type = 1">对内提币</view>
-					<view class="dropdown-item" @click="type = 2">对外提币</view>
+					<view class="dropdown-item" @click="type = 1">{{$t('Internal')}}</view>
+					<view class="dropdown-item" @click="type = 2">{{$t('External')}}</view>
 				</view>
 			</view>
 		</view>
@@ -45,7 +45,7 @@
 			<view v-if="detail && type === 1" class="detail-view">
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						提币手机号
+						{{$t('phone')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.toUserPhone || '-'}}
@@ -53,7 +53,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						数量
+						{{$t('num')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.amount}}
@@ -61,7 +61,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						手续费
+						{{$t('fee')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.fee}}
@@ -69,7 +69,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						时间
+						{{$t('time')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.createTime}}
@@ -79,7 +79,7 @@
 			<view v-if="detail && type === 2" class="detail-view">
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						地址
+						{{$t('address')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.fromAddress || '-'}}
@@ -87,7 +87,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						数量
+						{{$t('num')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.amount}}
@@ -95,7 +95,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						手续费
+						{{$t('fee')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.fee}}
@@ -103,7 +103,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						状态
+						{{$t('status')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.status | statusText}}
@@ -111,7 +111,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						时间
+						{{$t('time')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.createTime}}
@@ -133,6 +133,28 @@
 				data1: [],
 				data2: [],
 				detail: null,
+				i18n: {
+					zh: {
+						Internal: "对内提币",
+						External: "对外提币",
+						phone: "手机号",
+						address: "地址",
+						num: "数量",
+						fee: "手续费",
+						status: "状态",
+						time: "时间"
+					},
+					en: {
+						Internal: "Internal",
+						External: "External",
+						phone: "Phone",
+						address: "Address",
+						num: "Quantity",
+						fee: "Fee",
+						status: "Status",
+						time: "Time"
+					}
+				},
 			}
 		},
 		onLoad(options) {
@@ -143,7 +165,7 @@
 		},
 		computed: {
 			dropdownText() {
-				return this.type === 1 ? '对内提币' : '对外提币'
+				return this.type === 1 ? this.$t('Internal') : this.$t('External')
 			}
 		},
 		filters: {

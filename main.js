@@ -10,6 +10,40 @@ Vue.config.productionTip = false;
 
 Vue.use(uView);
 Vue.mixin(vuexStore);
+Vue.mixin({
+	methods: {
+		setLanguage(lang) {
+			this.$u.vuex('vuex_lang', lang);
+		},
+		setTabbarText(index, property) {
+			uni.setTabBarItem({
+				index,
+				text: this.$t(property)
+			});
+		},
+		setNavBarTitle(property) {
+			uni.setNavigationBarTitle({
+				title: this.$t(property)
+			})
+		},
+		$t(property, defaultValue) {
+			let obj = this.i18n[this.vuex_lang];
+			console.log(this.vuex_lang)
+			defaultValue = defaultValue || property;
+			if (!obj) { return defaultValue}
+			if(property.indexOf('.') > 0) {
+			  let segments = property.split('.');
+			  for (let i = 0; i < segments.length; i++) {
+			    if (!obj) { return }
+			    obj = obj[segments[i]];
+			  }
+			  return obj ? obj : defaultValue;
+			}else{
+			  return typeof obj[property] !== 'undefined' ? obj[property] : defaultValue;
+			}
+		}
+	}
+})
 
 App.mpType = 'app';
 

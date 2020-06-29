@@ -2,15 +2,15 @@
 	<view class="lecai-select">
 		<view class="select-wrap">
 			<view class="select-title">
-				玩法多样，奖金滚滚来！
+				{{$t('AD')}}
 			</view>
 			<view class="select-introduce" @click="goWayDesc">
-				<text>玩法介绍</text>
+				<text>{{$t('Introduction')}}</text>
 				<u-icon name="question-circle"></u-icon>
 			</view>
 		</view>
 		<view class="wan">
-			<view class="title">任选玩法</view>
+			<view class="title">{{$t('Introduction')}}</view>
 			<view class="wan-list">
 				<view class="wan-item" v-for="item in group1" 
 					:class="['rx'+item.wayType]"
@@ -19,7 +19,7 @@
 					<view class="text">{{item.wayDesc}}</view> -->
 				</view>
 			</view>
-			<view class="title">直选玩法</view>
+			<view class="title">{{$t('Directselection')}}</view>
 			<view class="wan-list">
 				<view class="wan-item" v-for="item in group2" :key="item.id" 
 					:class="['zx'+item.wayType]"
@@ -37,7 +37,21 @@
 		data() {
 			return {
 				group1: [],
-				group2: []
+				group2: [],
+				i18n: {
+					zh: {
+						Introduction: "玩法介绍",
+						Optionalplay: "任选玩法",
+						Directselection: "直选玩法",
+						AD: "玩法多样，奖金滚滚来！"
+					},
+					en: {
+						Introduction: "Introduction",
+						Optionalplay: "Optional play",
+						Directselection: "Direct selection",
+						AD: "Play a variety of ways, bonus roll!"
+					}
+				},
 			}
 		},
 		created() {

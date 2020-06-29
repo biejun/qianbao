@@ -15,6 +15,8 @@ const install = (Vue, vm) => {
 		// 方式一，存放在vuex的token，假设使用了uView封装的vuex方式，见：https://uviewui.com/components/globalVariable.html
 		config.header.token = vm.vuex_token;
 		
+		config.header.lang = vm.vuex_lang;
+		
 		// 方式二，如果没有使用uView封装的vuex方法，那么需要使用$store.state获取
 		// config.header.token = vm.$store.state.token;
 		

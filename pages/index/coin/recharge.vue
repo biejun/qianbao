@@ -7,7 +7,7 @@
 						{{selectedCoin ? selectedCoin.coinName : ''}}
 					</view>
 					<view class="dropdown-header__right" @click.stop="coinListShow = !coinListShow">
-						<text>切换币种</text>
+						<text>{{$t('SwitchCurrency')}}</text>
 						<u-icon name="arrow-up-fill" class="icon" :class="coinListShow ? '' : 'is-down'"></u-icon>
 					</view>
 				</view>
@@ -25,11 +25,11 @@
 					<canvas canvas-id="qrcode" :style="{width: `150px`, height: `150px`}"/>
 				</view>
 				<view class="recharge-address">
-					充币地址：{{rechargeAddress}}
+					{{$t('RechargeAddress')}}：{{rechargeAddress}}
 				</view>
 			</view>
 			<view class="copy-address">
-				<button type="warn" class="copy-address-button" @click="copyAddress" :disabled="rechargeAddress === null">复制地址</button>
+				<button type="warn" class="copy-address-button" @click="copyAddress" :disabled="rechargeAddress === null">{{$t('CopyAddress')}}</button>
 			</view>
 		</view>
 	</view>
@@ -45,11 +45,26 @@
 				value: '',
 				coinList: [],
 				selectedCoin: null,
-				rechargeAddress: null
+				rechargeAddress: null,
+				i18n: {
+					zh: {
+						SwitchCurrency: '切换币种',
+						RechargeAddress: '充值地址',
+						CopyAddress: "复制地址",
+						recharge: "充币"
+					},
+					en: {
+						SwitchCurrency: 'Switch Currency',
+						RechargeAddress: 'Recharge Address',
+						CopyAddress: "Copy Address",
+						recharge: "Recharge"
+					}
+				},
 			}
 		},
 		created() {
 			this.getCoinList();
+			this.setNavBarTitle('recharge');
 		},
 		onNavigationBarButtonTap(e) {
 			uni.navigateTo({

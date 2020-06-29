@@ -1,39 +1,72 @@
 <template>
 	<div class="transfer-page">
-		<div class="transfer-child-title">选择币种</div>
+		<div class="transfer-child-title">{{$t('SelectCurrency')}}</div>
 		<view class="current-coin">
 			<image src="../../../static/index/content/icon_gcn.png" mode="" class="coin-icon"></image>
 			<view class="coin-name">GCN</view>
 		</view>
-		<div class="transfer-child-title">选择账户</div>
+		<div class="transfer-child-title">{{$t('Chooseanaccount')}}</div>
 		<div class="transfer-wrap">
 			<div class="transfer-item">
-				<span class="transfer-name">从</span>
-				<span>{{isReverse ? '游戏账户' : '资产账户'}}</span>
+				<span class="transfer-name">{{$t('From')}}</span>
+				<span>{{isReverse ? $t('gameAccount') : $t('digitalAccount')}}</span>
 			</div>
 			<div class="transfer-item">
-				<span class="transfer-name">到</span>
-				<span>{{isReverse ? '资产账户' : '游戏账户'}}</span>
+				<span class="transfer-name">{{$t('To')}}</span>
+				<span>{{isReverse ? $t('digitalAccount') : $t('gameAccount')}}</span>
 			</div>
 		</div>
-		<div class="transfer-child-title">填写数量</div>
+		<div class="transfer-child-title">{{$t('Quantity')}}</div>
 		<div class="transfer-num-wrap">
-			<input type="text" class="transfer-num" v-model="exchangeNum" placeholder="兑换数量">
+			<input type="text" class="transfer-num" v-model="exchangeNum" :placeholder="$t('Exchangequantity')">
 		</div>
-		<div class="transfer-child-title">当前可用 <span class="transfer-balance">{{sunCount}}</span>
-			<text class="all-in" @click="allIn">全部</text></div>
-		<u-button type="error" class="submitBtn" @click="exchange">划转</u-button>
+		<div class="transfer-child-title">{{$t('Currentlyavailable')}} <span class="transfer-balance">{{sunCount}}</span>
+			<text class="all-in" @click="allIn">{{$t('All')}}</text></div>
+		<u-button type="error" class="submitBtn" @click="exchange">{{$t('Transfer')}}</u-button>
 		<u-toast ref="uToast" />
 	</div>
 </template>
 
 <script>
+	
 	export default {
 		data() {
 			return {
 				isReverse: false,
 				exchangeNum: 0,
-				sunCount: 0
+				sunCount: 0,
+				i18n: {
+					zh: {
+						SelectCurrency: "选择币种",
+						Chooseanaccount: "选择账户",
+						Quantity:"数量",
+						From: "从",
+						To: "到",
+						digitalAccount: '数字账户',
+						gameAccount: "游戏账户",
+						Currentlyavailable: "当前可用",
+						All: "全部",
+						Transfer:"划转",
+						Exchangequantity: "兑换数量",
+						trOut: "转出成功",
+						trIn: "转入成功"
+					},
+					en: {
+						SelectCurrency: "Select currency",
+						Chooseanaccount: "Choose an account",
+						Quantity:"Quantity",
+						From: "From",
+						To: "To",
+						digitalAccount: "Digital Account",
+						gameAccount: "Game Account",
+						Currentlyavailable: "Currently available",
+						All: "All",
+						Transfer: "Transfer",
+						Exchangequantity: "Exchange quantity",
+						trOut: "Transfer out successfully",
+						trIn: "Transfer to success"
+					}
+				},
 			}
 		},
 		onLoad(options) {
@@ -51,7 +84,7 @@
 					exchangeType: this.isReverse ? 2 : 1
 				}).then(res => {
 					this.$refs.uToast.show({
-						title: this.isReverse ? '转出成功' : '转入成功',
+						title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
 						type: 'success',
 					})
 				}, err => {

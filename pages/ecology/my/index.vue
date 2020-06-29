@@ -1,29 +1,44 @@
 <template>
 	<view class="lecai-my-index">
 		<view class="my-assets">
-			<view class="assets-title">可转出数量</view>
+			<view class="assets-title">{{$t('QuantityAvailable')}}</view>
 			<view class="asset-amount">
 				{{totalGameAmount}}
 				<text class="asset-unit">GCN</text>
 			</view>
 			<view class="asset-result">
-				待结算数量: {{totalFreezeAmount}} GCN
+				{{$t('QuantityToBeSettled')}}: {{totalFreezeAmount}} GCN
 			</view>
 		</view>
 		<view class="buttons">
-			<u-button type="error" plain class="btn-plain" @click="goUrl('./transfer?amount='+totalAmount)">转入</u-button>
-			<u-button type="error" @click="goUrl('./transfer?isReverse=1&amount='+totalGameAmount)">转出</u-button>
+			<u-button type="error" plain class="btn-plain" @click="goUrl('./transfer?amount='+totalAmount)">{{$t('TransferInto')}}</u-button>
+			<u-button type="error" @click="goUrl('./transfer?isReverse=1&amount='+totalGameAmount)">{{$t('TransferOut')}}</u-button>
 		</view>
 	</view>
 </template>
 
 <script>
+	
 	export default {
 		data() {
 			return {
 				totalAmount: 0,
 				totalGameAmount: 0,
-				totalFreezeAmount: 0
+				totalFreezeAmount: 0,
+				i18n: {
+					zh: {
+						QuantityAvailable: "可转出数量",
+						QuantityToBeSettled: "待结算数量",
+						TransferInto: "转入",
+						TransferOut: "转出"
+					},
+					en: {
+						QuantityAvailable: "Quantity Available",
+						QuantityToBeSettled: "Quantity to be settled",
+						TransferInto: "Transfer in",
+						TransferOut: "Transfer out"
+					}
+				},
 			}
 		},
 		created() {

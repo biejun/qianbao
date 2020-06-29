@@ -2,9 +2,9 @@
 	<view class="tc-confirm">
 		<view class="tc-header">{{name}}</view>
 		<view class="tc-wrap">
-			<view class="tc-title">投注详细</view>
+			<view class="tc-title">{{$t('BettingDetails')}}</view>
 			<view class="tc-item" v-for="item in form" :key="item.currentNumber">
-				<view class="tc-period">{{item.currentNumber}} 期</view>
+				<view class="tc-period">{{$t('Period').replace('{0}', item.currentNumber)}}</view>
 				<view class="tc-list" v-for="(row, index) in item.stakeDetailList" :key="index">
 					<view>
 						{{row.stakeNo}}
@@ -15,18 +15,18 @@
 				</view>
 			</view>
 			<view class="tc-title">
-				支付代币数
+				{{$t('Paymenttokens')}}
 			</view>
 			<view class="tc-total">
 				<view>
-					共 <text>{{totalNum.multiple}}</text>注
+					{{$t('Total')}} <text>{{totalNum.multiple}}</text>{{$t('Bet')}}
 				</view>
 				<view>
 					{{totalNum.amount}} GCN
 				</view>
 			</view>
 		</view>
-		<button class="tc-submit" @click="submit" :disabled="isLoading">确认支付</button>
+		<button class="tc-submit" @click="submit" :disabled="isLoading">{{$t('ConfirmPayment')}}</button>
 	</view>
 </template>
 
@@ -39,7 +39,27 @@
 				form: [],
 				wayType: '',
 				gameId: '',
-				isLoading: false
+				isLoading: false,
+				i18n: {
+					zh: {
+						BettingDetails: "投注详细",
+						Paymenttokens: "支付代币数",
+						Total: "共",
+						Bet: "注",
+						ConfirmPayment: "确认支付",
+						Period: "{0} 期",
+						Orderprocessing: "订单处理中"
+					},
+					en: {
+						BettingDetails: "Betting details",
+						Paymenttokens: "Payment tokens",
+						Total: "Total",
+						Bet: "Bet",
+						ConfirmPayment: "Confirm Payment",
+						Period: "No. {0}",
+						Orderprocessing: "Order processing"
+					}
+				},
 			}
 		},
 		onLoad(options) {
@@ -110,7 +130,7 @@
 		methods: {
 			submit() {
 				uni.showLoading({
-				    title: '正在处理订单'
+				    title: this.$t('Orderprocessing')
 				});
 				this.isLoading = true;
 				this.$u.post('/gGameOrder/addGame', {

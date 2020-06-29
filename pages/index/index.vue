@@ -1,5 +1,5 @@
 <template>
-	<view class="index">
+	<view class="index" @click="bodyClick">
 		<view class="index-header">
 			<view class="header-status-bar">
 				<view class="is-fixed"></view>
@@ -15,10 +15,15 @@
 					</u-notice-bar>
 				</view>
 				<view class="notify" @click="goUrl('user/notify')"></view>
+				<view class="i18n" @click.stop="dropdownShow = true"></view>
+				<view class="dropdown" v-show="dropdownShow">
+					<view class="dropdown-item" @click="setLanguage('zh')">简体中文</view>
+					<view class="dropdown-item" @click="setLanguage('en')">English</view>
+				</view>
 			</view>
 			<view class="hedaer-assets">
 				<view class="total-balance-text">
-					总资产
+					{{$t('totalAssets')}}
 				</view>
 				<view class="total-balance">
 					<view class="total-balance-number">
@@ -34,7 +39,7 @@
 				<view class="account-wrap">
 					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
 						<view class="account-item-text">
-							数字账户
+							{{$t('digitalAccount')}}
 						</view>
 						<view class="account-item-number">
 							<text>{{totalDigitalAmount}}</text>
@@ -43,7 +48,7 @@
 					</view>
 					<view class="account-item" @click="goUrl('index/account/gameAccount?amount='+totalGameAmount)">
 						<view class="account-item-text">
-							游戏账户
+							{{$t('gameAccount')}}
 						</view>
 						<view class="account-item-number">
 							<text>{{totalGameAmount}}</text>
@@ -57,16 +62,16 @@
 		<view class="operate">
 			<view class="op-left">
 				<image src="../../static/index/content/icon_chongbi.png" mode=""></image>
-				<view @click="goUrl('index/coin/recharge')" class="charge">充币</view>
+				<view @click="goUrl('index/coin/recharge')" class="charge">{{$t('recharge')}}</view>
 			</view>
 			<view class="op-right">
 				<image src="../../static/index/content/icon_tibi.png" mode=""></image>
-				<view @click="goUrl('index/coin/withdraw')" class="charge">提币</view>
+				<view @click="goUrl('index/coin/withdraw')" class="charge">{{$t('withdrawal')}}</view>
 			</view>
 		</view>
 		<view class="index-content">
 			<view class="block-title">
-				<text class="block-title__text">资产列表</text>
+				<text class="block-title__text">{{$t('assetList')}}</text>
 				<image src="../../static/index/content/icon_jiahao.png" mode="" @click="goUrl('index/coin/add')"></image>
 				<!-- <view class="">
           <u-icon name="plus" class="add-coin" @click="goUrl('index/coin/add')"></u-icon>
@@ -82,7 +87,7 @@
 						<view class="coin-amount">≈{{item.cnyAmount}} GCN</view>
 					</view>
 					<view class="coin-exchange" @click="exchange(item)">
-						兑换
+						{{$t('exchange')}}
 					</view>
 				</view>
 				<!-- 				<view class="coin-cell">
@@ -109,9 +114,9 @@
 				</view> -->
 			</view>
 		</view>
-		<u-popup v-model="show" mode="left" border-radius="14" length="50%">
+<!-- 		<u-popup v-model="show" mode="left" border-radius="14" length="50%">
 			<popup></popup>
-		</u-popup>
+		</u-popup> -->
 	</view>
 </template>
 
@@ -132,17 +137,61 @@
 				totalAmount: 0,
 				totalUSDT: 0,
 				totalGameAmount: 0,
-				totalDigitalAmount: 0
+				totalDigitalAmount: 0,
+				dropdownShow: false,
+				i18n: {
+					zh: {
+						totalAssets: '总资产',
+						digitalAccount: '数字账户',
+						gameAccount: "游戏账户",
+						recharge: "充币",
+						withdrawal: "提币",
+						assetList: "资产列表",
+						exchange: "兑换",
+						tabbar: {
+							wallet: "钱包",
+							ecology: "生态",
+							my: "我的"
+						}
+					},
+					en: {
+						totalAssets: 'Total Assets',
+						digitalAccount: "Digital Account",
+						gameAccount: "Game Account",
+						recharge: "Recharge",
+						withdrawal: "Withdrawal",
+						assetList: "Asset List",
+						exchange: "Exchange",
+						tabbar: {
+							wallet: "Wallet",
+							ecology: "Ecology",
+							my: "My"
+						}
+					}
+				},
 			}
 		},
 		onLoad() {
 			this.checkLogin();
-			this.getNotifyData()
+			this.getNotifyData();
+		},
+		watch: {
+			vuex_lang() {
+				this.initTab();
+			}
+		},
+		created() {
+			this.initTab();
 		},
 		onShow() {
 			this.getUserAmount();
 		},
 		methods: {
+			initTab() {
+				this.setTabbarText(0, 'tabbar.wallet');
+				this.setTabbarText(1, 'tabbar.ecology');
+				this.setTabbarText(2, 'tabbar.my');
+			},
 			// 公告
 			getNotifyData() {
 				this.$u.get('/notice/getNotice/' + 2).then(res => {
@@ -157,7 +206,10 @@
 					url: '/pages/user/notify?type=2'
 				})
 			},
-
+			
+			bodyClick() {
+				this.dropdownShow = false;
+			},
 			checkLogin() {
 				if (!this.vuex_hasLogin) {
 					uni.navigateTo({
@@ -170,7 +222,9 @@
 			openUserCenter() {
 
 				if (this.checkLogin()) {
-					this.show = true
+					uni.switchTab({
+						url: '/pages/user/index'
+					});
 				}
 			},
 			getUserAmount() {
@@ -236,6 +290,7 @@
 			}
 
 			.header-navbar {
+				position: relative;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
@@ -278,6 +333,33 @@
 					height: 45rpx;
 					background-image: url(../../static/index/header/icon_xiaoxi.png);
 					background-size: cover;
+				}
+				
+				.i18n {
+					position: relative;
+					width: 45rpx;
+					height: 45rpx;
+					background-image: url(../../static/index/header/icon_internet.png);
+					background-size: cover;
+					margin-left: 15rpx;
+				}
+				
+				.dropdown {
+					position: absolute;
+					top: 100%;
+					right: 0;
+					background-color: #fff;
+					width: 200rpx;
+					z-index: 99;
+					border: 1rpx solid rgba(165, 165, 165, .2);
+					padding: 10rpx 12rpx;
+					box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.08);
+					border-radius: 10rpx;
+				
+					.dropdown-item {
+						font-size: 28rpx;
+						padding: 10rpx;
+					}
 				}
 			}
 

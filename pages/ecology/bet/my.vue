@@ -7,8 +7,8 @@
 				</text>
 				<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 				<view class="dropdown" v-show="dropdownShow">
-					<view class="dropdown-item" @click="type = 1">按订单展示</view>
-					<view class="dropdown-item" @click="type = 2">按期数展示</view>
+					<view class="dropdown-item" @click="type = 1">{{$t('ByOrder')}}</view>
+					<view class="dropdown-item" @click="type = 2">{{$t('ByNumber')}}</view>
 				</view>
 			</view>
 			<view @click="showFilterAndLoadWays">
@@ -17,17 +17,17 @@
 		</view>
 		<template v-if="type === 1">
 			<view v-for="d in data1" class="data-box">
-				<view class="data-title">订单编号：{{d.orderNo}}</view>
+				<view class="data-title">{{$t('OrderNo')}}：{{d.orderNo}}</view>
 				<u-cell-group v-for="item in d.currentOrderDTOList" :key="item.currentNumber">
-					<u-cell-item :title="item.currentNumber + '期'" :value="item.status | statusText" :arrow="false">
+					<u-cell-item :title="$t('Period').replace('{0}', item.currentNumber)" :value="item.status | statusText" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
-					<u-cell-item v-for="game in item.ggameOrderList" :value="game.stakeNumber+'注'" :key="game.id">
+					<u-cell-item v-for="game in item.orders" @click="openDetail(game)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
 						<view slot="title" class="pn">{{game.wayDesc}}</view>
 					</u-cell-item>
 				</u-cell-group>
 				<view class="data-sum">
-					<view>投注合计</view>
+					<view>{{$t('Total')}}</view>
 					<view>{{d.stakeAmount}} GCN</view>
 				</view>
 			</view>
@@ -35,56 +35,78 @@
 		<template v-if="type === 2">
 			<view v-for="d in data2" class="data-box">
 				<view class="data-sum">
-					<view>{{d.currentNumber}}期</view>
-					<view>{{d.status | statusText}}</view>
+					<view>{{$t('Period').replace('{0}', d.currentNumber)}}</view>
+					<view>{{statusText(d.status)}}</view>
 				</view>
 				<u-cell-group v-for="item in d.orderNoTwoDTOList">
-					<u-cell-item :title="'订单编号: '+item.orderNo" :arrow="false">
+					<u-cell-item :title="$t('OrderNo')+': '+item.orderNo" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
-					<u-cell-item v-for="game in item.ggameOrderList" :value="game.stakeNumber+'注'" :key="game.id">
+					<u-cell-item v-for="game in item.orders" @click="openDetail(game)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
 						<view slot="title" class="pn">{{game.wayDesc}}</view>
 					</u-cell-item>
+					<u-cell-item :title="$t('Total')" :value="item.stakeAmount+'GCN'" :arrow="false">
+					</u-cell-item>
 				</u-cell-group>
-
 			</view>
 		</template>
 		<u-popup v-model="showFilter" mode="right">
 			<view class="filter-wrap">
 				<view class="filter-header">
 					<view class="filter-title">
-						筛选
+						{{$t('Filter')}}
 					</view>
 					<view class="filter-title" @click="clearFilter">
-						清空条件
+						{{$t('Clear')}}
 					</view>
 				</view>
 				<view class="filter-title">
-					玩法
+					{{$t('Play')}}
 				</view>
 				<view class="filter-tags">
-					<u-tag v-for="item in ways" @click="wayType = item.wayType" class="gutter" :key="item.wayType" :text="item.wayName" shape="circle" :type="item.wayType === wayType ? 'error' : 'info'" mode="plain"/>
+					<u-tag v-for="item in ways" @click="wayType = item.wayType" class="gutter" :key="item.wayType" :text="item.wayName"
+					 shape="circle" :type="item.wayType === wayType ? 'error' : 'info'" mode="plain" />
 				</view>
 				<view class="filter-title">
-					时间筛选
+					{{$t('Date')}}
 				</view>
 				<view>
 					<u-icon @click="showCalendar = true" name="calendar" size="40"></u-icon>
 				</view>
 				<view>
-					{{beginTime}}  {{endTime}}
+					{{beginTime}} {{endTime}}
 				</view>
 				<view class="filter-search">
-					<button type="warn" size="mini" @click="submitFilter">确定</button>	
+					<button type="warn" size="mini" @click="submitFilter">{{$t('Submit')}}</button>
 				</view>
 			</view>
 		</u-popup>
 		<u-calendar v-model="showCalendar" mode="range" @change="changeDate"></u-calendar>
+		<u-modal v-model="showDetail" :confirm-text="$t('Close')" :title="$t('Detail')">
+			<view v-if="detail" class="detail-view">
+				<view class="detail-title">
+					{{$t('Period').replace('{0}', detail.number)}}
+					{{detail.wayDesc}}
+				</view>
+				<u-table class="detail-table">
+					<u-tr>
+						<u-th>{{$t('BettingCode')}}</u-th>
+						<u-th>{{$t('NumberOfBets')}}</u-th>
+						<u-th>{{$t('WinningSituation')}}</u-th>
+					</u-tr>
+					<u-tr v-for="item in detail.details">
+						<u-td>{{item.gameRewardNo}}</u-td>
+						<u-td>{{$t('Bet').replace('{0}', item.stakeNumber)}}</u-td>
+						<u-td>{{statusText(item.status)}}</u-td>
+					</u-tr>
+				</u-table>
+			</view>
+		</u-modal>
 	</view>
 </template>
 
 <script>
-	export default{
+	export default {
 		data() {
 			return {
 				dropdownShow: false,
@@ -97,6 +119,54 @@
 				wayType: 0,
 				beginTime: '',
 				endTime: '',
+				showDetail: false,
+				detail: null,
+				i18n: {
+					zh: {
+						Period: "{0} 期",
+						ByOrder: "按订单展示",
+						ByNumber: "按期数展示",
+						OrderNo: "订单编号",
+						Total: "投注合计",
+						Detail: "投注详细",
+						Close: "关闭",
+						BettingCode: "投注码",
+						NumberOfBets:" 投注数",
+						WinningSituation: "投注情况",
+						Bet: "{0} 注",
+						NotWinning: "未中奖",
+						Win: "已中奖",
+						Waiting: "待开奖",
+						Settled: "已结算",
+						Filter: "筛选",
+						Clear: "清空条件",
+						Play: "玩法",
+						Date: "日期筛选",
+						Submit: "确定"
+					},
+					en: {
+						Period: "No. {0}",
+						ByOrder: "By order",
+						ByNumber: "By number",
+						OrderNo: "Order No",
+						Total: "Total",
+						Detail: "Detail",
+						Close: "Close",
+						BettingCode: "Betting code",
+						NumberOfBets:" Number of bets",
+						WinningSituation: "Winning situation",
+						Bet: "{0} bet",
+						NotWinning: "Not Winning",
+						Win: "Win",
+						Waiting: "Waiting",
+						Settled: "Settled",
+						Filter: "Filter",
+						Clear: "Clear",
+						Play: "Play",
+						Date: "Date Filter",
+						Submit: "Search"
+					}
+				},
 			}
 		},
 		created() {
@@ -104,7 +174,7 @@
 		},
 		computed: {
 			dropdownText() {
-				return this.type === 1 ? '按订单展示' : '按期数展示'
+				return this.type === 1 ? this.$t('ByOrder') : this.$t('ByNumber')
 			},
 		},
 		watch: {
@@ -112,22 +182,24 @@
 				this.getData();
 			}
 		},
-		filters: {
+		methods: {
 			statusText(val) {
 				// 0 待开奖 1已中奖 2未中奖 3已结算
-				switch(val) {
+				switch (val) {
 					case 0:
-						return '待开奖';
+						return this.$t('Waiting');
 					case 1:
-						return '已中奖';
+						return this.$t('Win');
 					case 2:
-						return '未中奖';
+						return this.$t('NotWinning');
 					case 3:
-						return '已结算';
+						return this.$t('Settled');
 				}
-			}
-		},
-		methods: {
+			},
+			openDetail(item) {
+				this.showDetail = true;
+				this.detail = item;
+			},
 			changeDate(e) {
 				this.beginTime = e.startDate;
 				this.endTime = e.endDate;
@@ -138,7 +210,7 @@
 				this.wayType = 0;
 			},
 			showFilterAndLoadWays() {
-				if(this.ways.length === 0) {
+				if (this.ways.length === 0) {
 					this.$u.get('/gGameOrder/getWay').then(res => {
 						this.ways = res.data;
 					})
@@ -156,42 +228,55 @@
 					endTime: this.endTime,
 					wayType: this.wayType
 				}).then(res => {
-					if(this.type === 1) {
+					if (this.type === 1) {
 						this.data1 = res.data.map(v => {
 							let stakeAmount = 0;
-              let obj={
-                wayType:{
-                  name:'直1',
-                  data:[],
-                  num:24
-                }
-              }
-              let objitem={}
 							v.currentOrderDTOList.forEach(c => {
-								c.ggameOrderList.forEach((d,i) => {
+								let obj = {};
+								c.ggameOrderList.forEach((d, i) => {
 									stakeAmount += d.stakeAmount;
-                  let alist = d.wayType
-                  obj.num =  (objitem[alist] + 1) || 1
-                  // if( d.wayType = d.wayType){
-                  //   obj.wayType.data.push(d) 
-                  //   // console.log(d)
-                  // }
-                  
-                  // if(!obj[v.wayType]){
-                  //    obj[v.wayType] = []
-                  //    obj[v.wayType].push(c)  // push ggameOrderList 
-                  // }
-								})
+									if(!obj[d.wayType]){
+									   obj[d.wayType] = {
+										   number: d.currentNumber,
+										   wayDesc: d.wayDesc,
+										   details: [d],
+										   stakeNumber: d.stakeNumber
+									   }
+									}else{
+										obj[d.wayType].stakeNumber = obj[d.wayType].stakeNumber + d.stakeNumber;
+										obj[d.wayType].details.push(d);
+									}
+								});
+								c.orders = Object.values(obj);
 							})
-                console.log(objitem)
 							v.stakeAmount = stakeAmount;
-              v.newArr = Object.values(obj);
 							return v;
 						});
-          
-             console.log(this.data1)
-					}else if(this.type === 2) {
-						this.data2 = res.data;
+
+						console.log(this.data1)
+					} else if (this.type === 2) {
+						this.data2 = res.data.map(v => {
+							v.orderNoTwoDTOList.forEach(c => {
+								let obj = {}, stakeAmount = 0;
+								c.ggameOrderList.forEach((d, i) => {
+									stakeAmount += d.stakeAmount;
+									if(!obj[d.wayType]){
+									   obj[d.wayType] = {
+										   number: d.currentNumber,
+										   wayDesc: d.wayDesc,
+										   details: [d],
+										   stakeNumber: d.stakeNumber
+									   }
+									}else{
+										obj[d.wayType].stakeNumber = obj[d.wayType].stakeNumber + d.stakeNumber;
+										obj[d.wayType].details.push(d);
+									}
+								});
+								c.orders = Object.values(obj);
+								c.stakeAmount = stakeAmount;
+							})
+							return v;
+						});
 					}
 				})
 			}
@@ -200,9 +285,9 @@
 </script>
 
 <style lang="scss">
-	.my-bet{
-		
-		.page-header{
+	.my-bet {
+
+		.page-header {
 			display: flex;
 			justify-content: space-between;
 			background-color: #fff;
@@ -210,94 +295,122 @@
 			padding: 10rpx 30rpx;
 			align-items: center;
 
-			.filter{
+			.filter {
 				width: 32rpx;
 				height: 32rpx;
 			}
 		}
-		.dropdown-button{
+
+		.dropdown-button {
 			position: relative;
-			&__text{
+
+			&__text {
 				color: #333;
 				font-size: 28rpx;
 			}
-			&__icon{
+
+			&__icon {
 				font-size: 18rpx;
 				vertical-align: 5rpx;
 				margin-left: 10rpx;
 			}
 		}
-		.dropdown{
+
+		.dropdown {
 			position: absolute;
 			top: 100%;
 			background-color: #fff;
 			width: 200rpx;
 			z-index: 99;
-			border: 2rpx solid rgba(165,165,165,1);
+			border: 2rpx solid rgba(165, 165, 165, 1);
 			padding: 10rpx;
-			box-shadow:0px 3px 7px 0px rgba(0, 0, 0, 0.08);
+			box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.08);
 			border-radius: 3rpx;
-			
-			.dropdown-item{
+
+			.dropdown-item {
 				font-size: 28rpx;
 				padding: 10rpx;
 			}
 		}
-		.data-box{
+
+		.data-box {
 			border-bottom: 10rpx solid #f3f3f3;
-			.data-title{
+
+			.data-title {
 				padding: 12rpx 30rpx;
 				font-size: 30rpx;
 				color: #333;
 			}
-			.data-sum{
+
+			.data-sum {
 				display: flex;
 				justify-content: space-between;
 				padding: 12rpx 30rpx;
 				font-size: 30rpx;
 				color: #333;
 			}
-			.sp{
+
+			.sp {
 				width: 6rpx;
 				height: 23rpx;
 				background-color: $uni-color-primary;
 				margin-right: 15rpx;
 			}
-			.pn{
+
+			.pn {
 				padding-left: 20rpx;
 				font-size: 28rpx;
 				color: #333;
 			}
 		}
-		
-		.filter-wrap{
+
+		.filter-wrap {
 			padding: 20rpx;
 			width: 380rpx;
-			.filter-header{
+
+			.filter-header {
 				display: flex;
 				justify-content: space-between;
 				border-bottom: 1px solid #f3f3f3;
 				padding: 15rpx 0;
 				margin-bottom: 30rpx;
 			}
-			.filter-title{
+
+			.filter-title {
 				color: #333;
 				font-size: 30rpx;
 				margin-bottom: 10rpx;
 			}
-			.gutter{
+
+			.gutter {
 				margin-right: 15rpx;
 				margin-bottom: 15rpx;
 			}
-			.filter-tags{
+
+			.filter-tags {
 				padding: 20rpx 0;
 				border-bottom: 1px solid #f3f3f3;
 				margin-bottom: 30rpx;
 			}
-			.filter-search{
+
+			.filter-search {
 				padding: 20rpx 0;
 				display: flex;
 				justify-content: center;
+			}
+		}
+		
+		.detail-view{
+			padding: 20rpx 0;
+			.detail-title{
+				font-size: 32rpx;
+				color: #333;
+				padding-bottom: 15rpx;
+				text-align: center;
+			}
+			.detail-table{
+				height: 400rpx;
+				overflow: auto;
 			}
 		}
 	}
