@@ -54,7 +54,7 @@
 				</view>
 			</view>
 			<view class="exchange-wrap">
-				<button type="warn" class="exchange-wrap-button" @click="submitEx" :disabled="disabled">确认兑换</button>
+				<button type="default" class="exchange-wrap-button" @click="submitEx" :disabled="disabled">确认兑换</button>
 			</view>
 		</view>
 	</view>
@@ -310,6 +310,8 @@
 				.exchange-wrap-button{
 					border-radius: 50rpx;
 					font-size: 32rpx;
+					background-color: #FFC000;
+					color: #fff;
 				}
 			}
 		}

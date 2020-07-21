@@ -1,25 +1,6 @@
 <template>
 	<view class="common-bg withdraw-add">
 		<view class="withdraw-add-inner">
-			<view class="dropdown-addon" :class="coinListShow ? 'is-fixed' : ''">
-				<view class="dropdown-header">
-					<view class="dropdown-header__left">
-						{{currentCoin}}
-					</view>
-					<view class="dropdown-header__right" @click="coinListShow = !coinListShow">
-						<text>{{$t('SwitchCurrency')}}</text>
-						<u-icon name="arrow-up-fill" class="icon" :class="coinListShow ? '' : 'is-down'"></u-icon>
-					</view>
-				</view>
-				<view v-show="coinListShow" class="dropdown-content">
-					<view v-for="item in coinList" 
-						class="dropdown-content-item" 
-						@click="selectCoin(item)"
-						:key="item.id">
-						{{item.coinName}}
-					</view>
-				</view>
-			</view>
 			<view class="current-assets">
 				<view class="total-balance">
 					<view class="total-balance-number">
@@ -50,6 +31,25 @@
 							<text>{{totalFreezeAmount}}</text>
 							<text>{{currentCoin}}</text>
 						</view>
+					</view>
+				</view>
+			</view>
+			<view class="dropdown-addon" :class="coinListShow ? 'is-fixed' : ''">
+				<view class="dropdown-header">
+					<view class="dropdown-header__left">
+						{{currentCoin}}
+					</view>
+					<view class="dropdown-header__right" @click="coinListShow = !coinListShow">
+						<text>{{$t('SwitchCurrency')}}</text>
+						<u-icon name="arrow-up-fill" class="icon" :class="coinListShow ? '' : 'is-down'"></u-icon>
+					</view>
+				</view>
+				<view v-show="coinListShow" class="dropdown-content">
+					<view v-for="item in coinList" 
+						class="dropdown-content-item" 
+						@click="selectCoin(item)"
+						:key="item.id">
+						{{item.coinName}}
 					</view>
 				</view>
 			</view>
@@ -172,7 +172,7 @@
 						addressPleaseNum: "请输入转账地址",
 						feeTip: "手续费将从兑出数量中扣减",
 						MaximumExtractable: "最多可提取",
-						Submit: "提交转账申请"
+						Submit: "确定"
 					},
 					en: {
 						SwitchCurrency: 'Switch Currency',

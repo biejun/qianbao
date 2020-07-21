@@ -133,7 +133,7 @@
 			height: 240rpx;
 			padding: 70rpx 30rpx 60rpx 30rpx;
 			color: #fff;
-			background-color: #F1333D;
+			background:linear-gradient(180deg,rgba(246,211,101,1),rgba(253,160,133,1));
 			
 			.current-type{
 				font-size: 28rpx;

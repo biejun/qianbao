@@ -1,6 +1,10 @@
 <template>
 	<view class="common-bg recharge-add" @click="coinListShow = false">
 		<view class="recharge-add-inner">
+			<view class="recharge-message">
+				<text class="message-text">把比BTC、ETH、USDT等主流数字货币充入到区块玩家 身份下多链钱包中! </text>
+				<navigator class="message-btn" url="./learnRecharge"><u-icon name="question-circle"></u-icon> 了解充币</navigator>
+			</view>
 			<view class="dropdown-addon" :class="coinListShow ? 'is-fixed' : ''">
 				<view class="dropdown-header">
 					<view class="dropdown-header__left">
@@ -29,7 +33,7 @@
 				</view>
 			</view>
 			<view class="copy-address">
-				<button type="warn" class="copy-address-button" @click="copyAddress" :disabled="rechargeAddress === null">{{$t('CopyAddress')}}</button>
+				<button type="default" class="copy-address-button" @click="copyAddress" :disabled="rechargeAddress === null">{{$t('CopyAddress')}}</button>
 			</view>
 		</view>
 	</view>
@@ -126,10 +130,26 @@
 			padding: 30rpx;
 		}
 		
+		.recharge-message{
+			margin-bottom: 30rpx;
+			font-size: 28rpx;
+			
+			.message-text{
+				color: #3C3C3C;
+			}
+			.message-btn{
+				margin-left: 15rpx;
+				color: #F1333D;
+				display: inline-block;
+			}
+		}
+		
 		.copy-address{
 			.copy-address-button{
 				border-radius: 50rpx;
 				font-size: 32rpx;
+				background-color: #FFC000;
+				color: #fff;
 			}
 		}
 		.recharge-coin{

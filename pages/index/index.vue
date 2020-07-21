@@ -5,54 +5,68 @@
 				<view class="is-fixed"></view>
 			</view>
 			<view class="header-navbar">
-				<view class="avatar" @click="openUserCenter">
-					<u-avatar :src="vuex_img" size="mini" class="avatar-img"></u-avatar>
-					<!-- 	<image :src="vuex_img" mode=""></image> -->
-				</view>
+				<view class="notify" @click="goUrl('user/notify')"></view>
 				<view class="notice">
 					<u-notice-bar mode="vertical" :list="listitem" type='none' :volume-icon="false" :more-icon="true" color="#fff"
-					 padding="12rpx 24rpx" @getMore="getMore">
+					 padding="12rpx 18rpx" @getMore="getMore">
 					</u-notice-bar>
 				</view>
-				<view class="notify" @click="goUrl('user/notify')"></view>
 				<view class="i18n" @click.stop="dropdownShow = true"></view>
 				<view class="dropdown" v-show="dropdownShow">
 					<view class="dropdown-item" @click="setLanguage('zh')">简体中文</view>
 					<view class="dropdown-item" @click="setLanguage('en')">English</view>
 				</view>
+				<view class="qr-icon" @click="scanCode"></view>
 			</view>
 			<view class="hedaer-assets">
-				<view class="total-balance-text">
-					{{$t('totalAssets')}}
-				</view>
-				<view class="total-balance">
-					<view class="total-balance-number">
-						{{totalUSDT}}
-					</view>
-					<view class="total-balance-unit">
-						USDT
-					</view>
-				</view>
-				<view class="total-balance-translate">
-					≈{{totalAmount}} GCN
-				</view>
 				<view class="account-wrap">
 					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
 						<view class="account-item-text">
+							<image src="../../static/index/content/icon_qianbao.png" class="small-icon"></image>
 							{{$t('digitalAccount')}}
+							<view class="total-balance-text">
+								{{$t('totalAssets')}}
+							</view>
 						</view>
 						<view class="account-item-number">
+							
 							<text>{{totalDigitalAmount}}</text>
-							<text>USDT</text>
+							<text class="account-item-unit">USDT</text>
 						</view>
 					</view>
 					<view class="account-item" @click="goUrl('index/account/gameAccount?amount='+totalGameAmount)">
 						<view class="account-item-text">
+							<image src="../../static/index/content/icon_layer.png" class="small-icon"></image>
 							{{$t('gameAccount')}}
 						</view>
 						<view class="account-item-number">
 							<text>{{totalGameAmount}}</text>
-							<text>GCN</text>
+							<text class="account-item-unit">GCN</text>
+						</view>
+					</view>
+				</view>
+				<view class="account-wrap total-balance">
+					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
+						<view class="account-item-text">
+							<image src="../../static/index/content/icon_card.png" class="small-icon"></image>
+							{{$t('cunKuanBao')}}
+							<view class="total-balance-text">
+								1.86%年化
+							</view>
+						</view>
+						<view class="account-item-number">
+							<text>{{totalDigitalAmount}}</text>
+							<text class="account-item-unit">GCN</text>
+						</view>
+					</view>
+					<view class="account-item account-returns">
+						<view class="return-item">
+							<view class="return-item-name">日收益</view>
+							<view class="return-item-value">+1.00 GCN</view>
+						</view>
+						<view class="return-item">
+							<view class="return-item-name">累计收益</view>
+							<view class="return-item-value">+1.00 GCN</view>
 						</view>
 					</view>
 				</view>
@@ -61,11 +75,11 @@
 		<view class="header-bottom"></view>
 		<view class="operate">
 			<view class="op-left">
-				<image src="../../static/index/content/icon_chongbi.png" mode=""></image>
+				<image src="../../static/index/content/coin.png" mode=""></image>
 				<view @click="goUrl('index/coin/recharge')" class="charge">{{$t('recharge')}}</view>
 			</view>
 			<view class="op-right">
-				<image src="../../static/index/content/icon_tibi.png" mode=""></image>
+				<image src="../../static/index/content/coin.png" mode=""></image>
 				<view @click="goUrl('index/coin/withdraw')" class="charge">{{$t('withdrawal')}}</view>
 			</view>
 		</view>
@@ -152,7 +166,8 @@
 							wallet: "钱包",
 							ecology: "生态",
 							my: "我的"
-						}
+						},
+						cunKuanBao: '存款宝'
 					},
 					en: {
 						totalAssets: 'Total Assets',
@@ -166,14 +181,15 @@
 							wallet: "Wallet",
 							ecology: "Ecology",
 							my: "My"
-						}
+						},
+						cunKuanBao: 'Cun Kuan Bao'
 					}
 				},
 			}
 		},
 		onLoad() {
-			this.checkLogin();
-			this.getNotifyData();
+			// this.checkLogin();
+			// this.getNotifyData();
 		},
 		watch: {
 			vuex_lang() {
@@ -184,9 +200,17 @@
 			this.initTab();
 		},
 		onShow() {
-			this.getUserAmount();
+			//this.getUserAmount();
 		},
 		methods: {
+			scanCode() {
+				uni.scanCode({
+					success: function (res) {
+						console.log('条码类型：' + res.scanType);
+						console.log('条码内容：' + res.result);
+					}
+				});	
+			},
 			initTab() {
 				this.setTabbarText(0, 'tabbar.wallet');
 				this.setTabbarText(1, 'tabbar.ecology');
@@ -270,7 +294,7 @@
 <style lang="scss">
 	.index {
 		&-header {
-			background: linear-gradient(177deg, rgba(241, 51, 61, 1) 0%, rgba(240, 90, 80, 1) 100%);
+			background: linear-gradient(177deg, #F8C76C 0%, #FCAA7F 100%);
 			height: 350rpx;
 			border-radius: 0 0 50% 50%/0 0 30% 30%;
 			padding: 0 30rpx;
@@ -284,7 +308,7 @@
 					left: 0;
 					right: 0;
 					height: var(--status-bar-height);
-					background-color: #F1333D;
+					background-color: #F8C76C;
 					z-index: 999;
 				}
 			}
@@ -309,11 +333,11 @@
 				.notice {
 					position: relative;
 					height: 55rpx;
-					margin-left: 20rpx;
-					margin-right: 20rpx;
+					margin-left: 15rpx;
+					margin-right: 15rpx;
 					flex: 1;
 					border: 2rpx solid #fff;
-					padding: 0 20rpx;
+					padding: 0 10rpx;
 					color: #fff;
 					font-size: 26rpx;
 					border-radius: 26rpx;
@@ -321,7 +345,7 @@
 
 					.arrow {
 						position: absolute;
-						right: 20rpx;
+						right: 16rpx;
 						top: 12rpx;
 						width: 15rpx;
 						height: 24rpx;
@@ -335,13 +359,20 @@
 					background-size: cover;
 				}
 				
+				.qr-icon{
+					width: 48rpx;
+					height: 48rpx;
+					background-image: url(../../static/index/header/saoma.png);
+					background-size: cover;
+					margin-left: 5px;
+				}
+				
 				.i18n {
 					position: relative;
 					width: 45rpx;
 					height: 45rpx;
 					background-image: url(../../static/index/header/icon_internet.png);
 					background-size: cover;
-					margin-left: 15rpx;
 				}
 				
 				.dropdown {
@@ -371,61 +402,47 @@
 				box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.11);
 				padding: 30rpx;
 
-				.total-balance-text {
-					font-size: 34rpx;
-					color: #666666;
-					font-weight: 500;
-				}
-
-				.total-balance {
-					display: flex;
-					margin-top: 10rpx;
-					align-items: baseline;
-
-					&-number {
-						font-size: 52rpx;
-						color: #333333;
-						margin-right: 20rpx;
-						font-weight: bold;
-					}
-
-					&-unit {
-						color: #666666;
-						font-size: 30rpx;
-						font-weight: 500;
-					}
-				}
-
-				.total-balance-translate {
-					font-size: 30rpx;
-					color: #A5A5A5;
-					padding-top: 10rpx;
-					padding-bottom: 20rpx;
-					border-bottom: 2rpx solid #F3F3F3;
-				}
-
 				.account-wrap {
 					display: flex;
 					justify-content: space-between;
-					padding-top: 20rpx;
+					padding: 20rpx 0;
+					border-bottom: 2rpx solid #F3F3F3;
 
 					.account-item {
 						position: relative;
 						flex: 1;
+						
+						.small-icon{
+							width: 30rpx;
+							height: 27rpx;
+							margin-right: 10rpx;
+						}
 
 						&-text {
-							color: #A5A5A5;
-							font-size: 28rpx;
+							color: #666666;
+							font-size: 32rpx;
+							margin-bottom: 10px;
+							
+							.total-balance-text {
+								display: inline-block;
+								font-size: 20rpx;
+								color: #EF323C;
+								margin-left: 5rpx;
+							}
 						}
 
 						&-number {
 							color: #333333;
-							font-size: 30rpx;
-							padding-top: 10rpx;
+							font-size: 40rpx;
 
 							text {
 								margin-right: 10rpx;
 								font-weight: bold;
+							}
+							
+							.account-item-unit{
+								font-size: 28rpx;
+								color: #666666;
 							}
 						}
 
@@ -440,6 +457,50 @@
 								bottom: 10rpx;
 								width: 2rpx;
 								background-color: #F3F3F3;
+							}
+						}
+						
+						&.account-returns{
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+							font-size: 22rpx;
+							
+							.return-item{
+								text-align: center;
+								
+								.return-item-name{
+									color: #3866FD;
+								}
+								.return-item-value{
+									color: #333333;
+								}
+							}
+						}
+					}
+				}
+				
+				.total-balance {
+					border-bottom: none;
+				
+					&-number {
+						font-size: 52rpx;
+						color: #333333;
+						margin-right: 20rpx;
+						font-weight: bold;
+					}
+				
+					&-unit {
+						color: #666666;
+						font-size: 30rpx;
+						font-weight: 500;
+					}
+					
+					.account-item{
+						&:last-child {
+						
+							&:before {
+								background-color: #fff;
 							}
 						}
 					}
@@ -524,13 +585,13 @@
 					}
 
 					.coin-exchange {
-						border: 1px solid #F1333D;
+						border: 1px solid #EEBE23;
 						border-right: none;
 						width: 100rpx;
 						height: 48rpx;
 						line-height: 48rpx;
 						padding-left: 20rpx;
-						color: #F1333D;
+						color: #EEBE23;
 						margin-right: -30rpx;
 						border-radius: 24rpx 0px 0px 24rpx;
 						font-size: 28rpx;
@@ -542,7 +603,7 @@
 		.operate {
 			width: 700rpx;
 			height: 98rpx;
-			background: rgba(241, 51, 61, 1);
+			background: #ECB416;
 			border-radius: 49rpx;
 			margin: 20rpx;
 			display: flex;
@@ -561,15 +622,18 @@
 			}
 
 			.op-left {
-				width: 270rpx;
 				display: flex;
 				align-items: center;
 				border-right: 1px solid #fff;
+				justify-content: center;
+				flex: 1 0 50%;
 			}
 
 			.op-right {
 				display: flex;
 				align-items: center;
+				justify-content: center;
+				flex: 1 0 50%;
 			}
 
 		}

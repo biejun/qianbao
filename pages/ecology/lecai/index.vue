@@ -71,6 +71,10 @@
 					</view>
 				</view>
 			</view>
+			<view class="next">
+				<text>{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? info.currentNumber+1 : '-')}}</text>
+				<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
+			</view>
 			<view class="kai-detail-table-head">
 				<view class="kai-detail-row">
 					<view class="kai-detail-cell">
@@ -101,10 +105,6 @@
 					<view class="kai-detail-cell">
 						{{item.amount}}
 					</view>
-				</view>
-				<view class="next">
-					<text>{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? info.currentNumber+1 : '-')}}</text>
-					<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
 				</view>
 			</view>
 		</view>
@@ -322,7 +322,7 @@
 					.num{
 						width:80rpx;
 						height:80rpx;
-						background:rgba(241,38,28,1);
+						background: linear-gradient(0deg, #FA6B45 0%, #F49231 100%);
 						border-radius:50%;
 						font-size:60rpx;
 						line-height: 80rpx;
@@ -450,7 +450,7 @@
 			}
 			.woyao-touzhu{
 				flex: 1;
-				background-color: #F1343E;
+				background-color: #FFC000;
 				color: #fff;
 				font-size: 32rpx;
 				height: 98rpx;

@@ -1,26 +1,60 @@
 <template>
 	<view class="user-center">
-		<view class="user-info" @click="goUrl('profile')">
-      <u-avatar :src="vuex_img" size="mini"></u-avatar>
-			<view class="user-name">{{vuex_from.userName|| $t('nickName')}}</view>
+		<view class="user-info">
+			<!-- <view class="user-name">{{vuex_from.userName|| $t('nickName')}}</view> -->
 		</view>
 		<view class="cell-wrap">
 			<view class="cell-item" @click="goUrl('security')">
-				<image src="@/static/index/userCenter/icon_anqian.png" class="cell-icon"></image>
-				<text class="cell-text">{{$t('security')}}</text>
+				<view>
+					<image src="@/static/user/location.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('identity')}}</text>
+				</view>
+				<view class="backup">
+					备份
+				</view>
 			</view>
-			<view class="cell-item" @click="goUrl('service')">
-				<image src="@/static/index/userCenter/icon_kefu.png" class="cell-icon"></image>
-				<text class="cell-text">{{$t('service')}}</text>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/record.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('mnemonic')}}</text>
+				</view>
 			</view>
-			<view class="cell-item" @click="goUrl('setting')">
-				<image src="@/static/index/userCenter/icon_shezhi.png" class="cell-icon"></image>
-				<text class="cell-text">{{$t('setting')}}</text>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/qianbao.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('walletAccount')}}</text>
+				</view>
 			</view>
-<!--      <view class="cell-item" @click="goUrl('setting')">
-      	<image src="@/static/index/userCenter/icon_anqian.png" class="cell-icon"></image>
-      	<text class="cell-text">分享</text>
-      </view> -->
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/youxi.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('gameAccount')}}</text>
+				</view>
+			</view>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/yinhangka.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('cunKuanBao')}}</text>
+				</view>
+			</view>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/kefu.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('service')}}</text>
+				</view>
+			</view>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/term.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('terms')}}</text>
+				</view>
+			</view>
+			<view class="cell-item" @click="goUrl('security')">
+				<view>
+					<image src="@/static/user/banben.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('version')}}</text>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -31,16 +65,26 @@
 			return {
 				i18n: {
 					zh: {
-						nickName: '昵称',
-						security: "安全",
+						identity: '身份/地址',
+						mnemonic: "助记词",
+						walletAccount: "钱包账户",
+						gameAccount: "游戏账户",
+						cunKuanBao: "存款宝",
 						service: "客服",
-						setting: "设置",
+						terms: "条款",
+						termsOfService: "服务条款",
+						version: "版本"
 					},
 					en: {
-						nickName: 'Nick Name',
-						security: "Security",
+						identity: 'Identity',
+						mnemonic: "Mnemonic",
+						walletAccount: "Wallet account",
+						gameAccount: "Game account",
+						cunKuanBao: "Cun Kuan Bao",
 						service: "Service",
-						setting: "Setting"
+						terms: "Terms",
+						termsOfService: "Terms of service",
+						version: "Version"
 					}
 				},
 			}
@@ -74,13 +118,12 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #f3f3f3;
 	}
 	.user-info{
-    display: flex;
-    align-items: center;
-	background-color: #fff;
-	padding: 30rpx;
+		height: 250rpx;
+		background-image: url(../../static/user-bg.png);
+		background-size: cover;
+		margin-bottom: 50rpx;
 	}
 	.user-name{
 		margin-left: 15rpx;
@@ -88,9 +131,6 @@
 		color: #333;
 	}
 	.cell-wrap{
-		border-top-color: #F3F3F3;
-		border-top-width: 2rpx;
-		border-top-style: solid;
 		margin-top: 20rpx;
 		background-color: #fff;
 	}
@@ -101,15 +141,20 @@
 		align-items: center;
 		padding: 0 30rpx;
 		border-bottom: 2rpx solid #f3f3f3;
+		justify-content: space-between;
 	}
 	.cell-icon{
-		width: 44rpx;
-		height: 44rpx;
-    vertical-align: middle;
+		width: 28rpx;
+		height: 28rpx;
+		vertical-align: middle;
 	}
 	.cell-text{
 		font-size: 28rpx;
 		margin-left: 20rpx;
 		color: #333;
+	}
+	
+	.backup{
+		color: #4A9BFF;
 	}
 </style>

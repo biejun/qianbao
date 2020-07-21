@@ -25,6 +25,6 @@
 	
 	.common-bg{
 		height: 100%;
-		background-color: #F3F3F3;
+		background-color: $uni-bg-color-grey;
 	}
 </style>
