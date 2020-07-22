@@ -71,7 +71,7 @@
 			</swiper-item>
 		</swiper>
 		<view class="entry-wrap">
-			<view class="entry-item" @click="goUrl('new-register/create-id')">
+			<view class="entry-item" @click="goUrl('register/create-id')">
 				<view class="item-title">
 					创建身份/地址
 				</view>
@@ -80,7 +80,7 @@
 					<image src="../../static/register/youjiantou.png" class="right-arrow"></image>
 				</view>
 			</view>
-			<view class="entry-item">
+			<view class="entry-item" @click="goUrl('register/restore-id')">
 				<view class="item-title">
 					恢复身份/地址
 				</view>

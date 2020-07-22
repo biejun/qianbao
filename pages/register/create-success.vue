@@ -3,13 +3,13 @@
 		<view class="item-SEFW">
 			<view class="item-label-DESC2">您的私钥：</view>
 			<view>
-				<u-input v-model="value" type="password"/>
+				<u-input v-model="vuex_privateKey" type="password"/>
 			</view>
 		</view>
 		<view class="item-SEFW">
 			<view class="item-label-DESC2">您的身份/地址：</view>
 			<view>
-				<u-input v-model="value" type="password"/>
+				<u-input v-model="vuex_address" type="password"/>
 			</view>
 		</view>
 		<view class="item-right-tip">这是您在区块链上的身份，也是数字货币GCN的转账地址！</view>
@@ -21,13 +21,12 @@
 	export default{
 		data() {
 			return {
-				value: ''
 			}
 		},
 		methods: {
 			submit() {
 				uni.navigateTo({
-					url: '/pages/register/create-success'
+					url: '/pages/mnemonic/index'
 				})
 			}
 		}

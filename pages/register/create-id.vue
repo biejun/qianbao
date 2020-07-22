@@ -4,7 +4,7 @@
 		<view class="create-YUS2">
 			<view class="input-D3GZ">密文</view>
 			<view class="input-DDEW">
-				<u-input v-model="value" type="password" password-icon/>
+				<u-input v-model="password" type="password" password-icon/>
 			</view>
 		</view>
 		<view class="create-tips">密文尽量简短，易记，如：〞区块玩家〞，密文关系到货币转账安全，请妥善保存和记忆!</view>
@@ -16,14 +16,26 @@
 	export default{
 		data() {
 			return {
-				value: ''
+				password: ''
 			}
 		},
 		methods: {
 			submit() {
-				uni.navigateTo({
-					url: '/pages/register/create-success'
+				let password = this.password.trim();
+				if(password === '') return;
+				this.$u.post('/mnemonic/createAccount', {
+					password: this.password
+				}).then(res => {
+					this.$u.vuex('vuex_mnemonic', res.data.mnemonic.split(' '))
+					this.$u.vuex('vuex_privateKey', res.data.privateKey)
+					this.$u.vuex('vuex_token', res.data.token)
+					this.$u.vuex('vuex_address', res.data.address)
+					console.log(res)
+					uni.navigateTo({
+						url: '/pages/register/create-success'
+					})
 				})
+
 			}
 		}
 	}

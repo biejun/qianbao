@@ -1,22 +1,23 @@
 <template>
 	<view class="user-center">
 		<view class="user-info">
+			<view @click="goUrl('mnemonic/verify')">点击这里打开登录</view>
 			<!-- <view class="user-name">{{vuex_from.userName|| $t('nickName')}}</view> -->
 		</view>
 		<view class="cell-wrap">
-			<view class="cell-item" @click="goUrl('security')">
+			<view class="cell-item" @click="goUrl('register/register')">
 				<view>
 					<image src="@/static/user/location.png" class="cell-icon"></image>
 					<text class="cell-text">{{$t('identity')}}</text>
 				</view>
-				<view class="backup">
-					备份
-				</view>
 			</view>
-			<view class="cell-item" @click="goUrl('security')">
+			<view class="cell-item" @click="goUrl('mnemonic/index')">
 				<view>
 					<image src="@/static/user/record.png" class="cell-icon"></image>
 					<text class="cell-text">{{$t('mnemonic')}}</text>
+				</view>
+				<view class="backup">
+					备份
 				</view>
 			</view>
 			<view class="cell-item" @click="goUrl('security')">
@@ -43,7 +44,7 @@
 					<text class="cell-text">{{$t('service')}}</text>
 				</view>
 			</view>
-			<view class="cell-item" @click="goUrl('security')">
+			<view class="cell-item" @click="goUrl('register/service-terms')">
 				<view>
 					<image src="@/static/user/term.png" class="cell-icon"></image>
 					<text class="cell-text">{{$t('terms')}}</text>
@@ -95,7 +96,7 @@
 		methods: {
 			goUrl(page) {
 				uni.navigateTo({
-					url: '/pages/user/'+ page
+					url: '/pages/'+ page
 				})
 			},
 			checkLogin() {

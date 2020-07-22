@@ -189,21 +189,21 @@
 				"navigationBarTitleText": "消息中心"
 			}
 		},
-		{
-			"path": "pages/friends/friends",
-			"style": {
-				"navigationBarTitleText": "密友",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue643",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px"
-						}]
-					}
-				}
-			}
-		},
+		// {
+		// 	"path": "pages/friends/friends",
+		// 	"style": {
+		// 		"navigationBarTitleText": "密友",
+		// 		"app-plus": {
+		// 			"titleNView": {
+		// 				"buttons": [{
+		// 					"text": "\ue643",
+		// 					"fontSrc": "/static/iconfont.ttf",
+		// 					"fontSize": "24px"
+		// 				}]
+		// 			}
+		// 		}
+		// 	}
+		// },
 		// {
 		// 	"path": "pages/friends/apply",
 		// 	"style": {
@@ -341,10 +341,11 @@
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{
-							"text": "\ue716",
+							"text": "\ue614 身份/地址",
 							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px",
-							"width": "35px"
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
 						}]
 					}
 				}
@@ -367,24 +368,59 @@
 			}
 		},
 		{
+			"path": "pages/register/restore-id",
+			"style": {
+				"navigationBarTitleText": "恢复身份/地址",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue614 身份/地址",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+		},
+		{
 			"path": "pages/register/create-success",
 			"style": {
 				"navigationBarTitleText": "创建身份/地址成功",
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{
-							"text": "\ue716",
+							"text": "\ue614 身份/地址",
 							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px",
-							"width": "35px"
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
 						}]
 					}
 				}
 			}
 		}, {
-			"path": "pages/zhuji/zhuji",
+			"path": "pages/mnemonic/index",
 			"style": {
 				"navigationBarTitleText": "私钥的助记词",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue614 身份/地址",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
+						}]
+					}
+				}
+			}
+			
+		}, {
+			"path": "pages/mnemonic/verify",
+			"style": {
+				"navigationBarTitleText": "验证您备份的助记词",
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{

@@ -1,5 +1,5 @@
 <template>
-	<view class="common-bg zhuji">
+	<view class="common-bg zhuji-verify">
 		<view class="zhuji-tip">
 			请按顺序填写您备份的助记词
 		</view>
@@ -7,7 +7,9 @@
 			<view v-for="(item, index) in cards" class="zhuji-card">
 				<view class="card-inner">
 					<view class="card-no">{{index+1}}</view>
-					<view class="card-word">City</view>
+					<view class="card-input">
+						<u-input v-model="item.value" placeholder=""/>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -15,10 +17,16 @@
 			<image src="../../static/success.png" class="status-image"></image>
 			<view class="status-text">助记词顺序正确!</view>
 		</view>
-		<view class="verify-result">
+<!-- 		<view class="verify-result">
 			<image src="../../static/error.png" class="status-image"></image>
 			<view class="status-text">助记词顺序错误，请重新输入!</view>
-		</view>
+		</view> -->
+		<u-modal @confirm="confirm" @cancel="show = false" :value="show" title="请输入密文" show-cancel-button>
+			<view class="enter-password">
+				<u-input v-model="password" type="password" password-icon placeholder="密文"></u-input>
+				<view style="color: red">{{message}}</view>
+			</view>
+		</u-modal>
 		<button type="default" class="submit-button" @click="submit">确认</button>
 	</view>
 </template>
@@ -27,20 +35,45 @@
 	export default {
 		data() {
 			return {
-				cards:[1,2,3,4,5,6,7,8,9,10,11,12]
+				cards: new Array(12).fill('').map(v => {
+					return {
+						value : ''
+					};
+				}),
+				show: false,
+				password: '',
+				message: ''
 			}
+		},
+		created() {
 		},
 		methods: {
 			submit() {
-				
+				this.show = true;
+			},
+			confirm() {
+				let password = this.password.trim();
+				if(password === '') return;
+				this.$u.post('/mnemonic/loginAccount', {
+					password,
+					mnemonic: this.cards.map(v => v.value).join(' ')
+				}).then(res => {
+					uni.switchTab({
+						url: '/'
+					})
+				})
 			}
 		}
 	}
 </script>
 
-<style lang="scss">
-	.zhuji{
+<style lang="scss" scoped>
+	.zhuji-verify{
 		padding: 30rpx;
+		
+		.enter-password{
+			padding: 30rpx;
+		}
 		.zhuji-tip{
 			font-size: 28rpx;
 			color: #555454;
@@ -72,7 +105,8 @@
 						color: #212BFC;
 						font-size: 22rpx;
 					}
-					.card-word{
+					.card-input{
+						margin-top: 20rpx;
 						font-size: 26rpx;
 						font-weight: bold;
 						color: #555454;
