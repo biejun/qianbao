@@ -2,33 +2,36 @@
 	<view class="game-account">
 		<view class="amount-wrap">
 			<view class="current-type">
-				游戏账户
+				{{$t('totalAssets')}}
 			</view>
 			<view class="current-amount">
 				<view>
 					{{amount}}
 				</view>
-				<view class="">
-					<u-button type="error" @click="goAccount" plain size="mini">
-						<u-icon name="plus"></u-icon> 划转
-					</u-button>
+				<view class="right-btn" @click="goAccount">
+					{{$t('Transfer')}}
 				</view>
 			</view>
 		</view>
 		<view class="withdrawal-date-cate">
 			<view class="reward">
-				收支明细
+				{{$t('detail')}}
 			</view>
 			<view class="date-tags">
-				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
-				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
-				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">{{$t('all')}}</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">{{$t('oneMonth')}}</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
 		<view class="withdrawal-list">
 			<u-cell-group v-if="detail.length">
-				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" center :label="item.createTime | dateFormat">
-					<view class="withdrawal-amount is-add">
+				<u-cell-item v-for="(item, index) in detail" :key="index" 
+				:title="item.changeType === 1 ? $t('Income') : $t('Expenditure')" center :use-label-slot="true" :arrow="false">
+					<view slot="label">
+						<view>{{item.businessRemark}}</view>
+						<view>{{item.createTime | dateFormat}}</view>
+					</view>
+					<view class="withdrawal-amount" :class="item.changeType == 1 ? 'is-add' : ''">
 						{{item.changeType == 1 ? '+' : '-'}}{{item.amount}}
 					</view>
 				</u-cell-item>
@@ -45,7 +48,45 @@
 			return {
 				dateType: 0,
 				detail: [],
-				amount: 0
+				amount: 0,
+				i18n: {
+					zh: {
+						totalAssets: '总资产',
+						all: '全部',
+						oneMonth: "一个月",
+						threeMonths: "三个月",
+						Withdrawalrecord: "提币记录",
+						Rechargerecord: "充币记录",
+						Transfer: "转入转出",
+						detail: "收支明细",
+						time: "时间",
+						currency: "币种",
+						recipient: "接收",
+						quantity: "数量",
+						digitalAccount: '钱包账户',
+						Income: '收入',
+						Expenditure: '支出',
+						gameAccount: "游戏账户",
+					},
+					en: {
+						totalAssets: 'Total Assets',
+						all: 'All',
+						oneMonth: "One Mon",
+						threeMonths: "Three Mos.",
+						Withdrawalrecord: "Withdrawal record",
+						Rechargerecord: "Recharge record",
+						Transfer: "Transfer in/out",
+						detail: "Detail",
+						time: "Time",
+						currency: "Currency",
+						recipient: "Recipient",
+						quantity: "Quantity",
+						digitalAccount: "Wallet Account",
+						Income: 'Income',
+						Expenditure: 'Expenditure',
+						gameAccount: "Game Account",
+					}
+				}
 			}
 		},
 		onLoad(options) {
@@ -58,14 +99,15 @@
 		},
 		created() {
 			this.getData();
+			this.setNavBarTitle('gameAccount');
 		},
-		onNavigationBarButtonTap(e) {
-			// e.index 拿到当前点击顶部按钮的索引
-			// 取消红点或者角标 
-			if(e.index === 0) {
-				this.goAccount();
-			}
-		},
+		// onNavigationBarButtonTap(e) {
+		// 	// e.index 拿到当前点击顶部按钮的索引
+		// 	// 取消红点或者角标 
+		// 	if(e.index === 0) {
+		// 		this.goAccount();
+		// 	}
+		// },
 		methods: {
 			goAccount() {
 				uni.navigateTo({
@@ -87,6 +129,16 @@
 
 <style lang="scss" scoped>
 	.game-account{
+		
+		.right-btn{
+			margin-top: -20rpx;
+			border: 4rpx solid #fff;
+			border-radius: 10rpx;
+			padding: 0 30rpx;
+			font-size: 30rpx;
+			height: 70rpx;
+			line-height: 60rpx;
+		}
 		
 		.amount-wrap{
 			height: 240rpx;
@@ -148,6 +200,14 @@
 			.reward{
 				font-size: 28rpx;
 				color: #333;
+			}
+		}
+		
+		.withdrawal-amount{
+			color: #333;
+			
+			&.is-add{
+				color: #F1333D;
 			}
 		}
 	}

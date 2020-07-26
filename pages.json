@@ -52,6 +52,12 @@
 			}
 		},
 		{
+			"path": "pages/index/coin/learnEx",
+			"style": {
+				"navigationBarTitleText": "了解兑换"
+			}
+		},
+		{
 			"path": "pages/index/coin/success",
 			"style": {
 
@@ -80,23 +86,31 @@
 			"style": {
 				"navigationBarTitleText": "游戏账户",
 				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue716",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px",
-							"width": "35px"
-						}]
-					}
-				}
+				"navigationBarTextStyle": "white"
+				// "app-plus": {
+				// 	"titleNView": {
+				// 		"buttons": [{
+				// 			"text": "\ue716",
+				// 			"fontSrc": "/static/iconfont.ttf",
+				// 			"fontSize": "24px",
+				// 			"width": "35px"
+				// 		}]
+				// 	}
+				// }
+			}
+		},
+		{
+			"path": "pages/index/account/cunKuanBao",
+			"style": {
+				"navigationBarTitleText": "存款宝",
+				"navigationBarBackgroundColor": "#F6D365",
+				"navigationBarTextStyle": "white"
 			}
 		},
 		{
 			"path": "pages/index/coin/exchange",
 			"style": {
-				"navigationBarTitleText": "资产列表",
+				"navigationBarTitleText": "货币兑换",
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{
@@ -111,7 +125,18 @@
 		{
 			"path": "pages/index/coin/transaction",
 			"style": {
-				"navigationBarTitleText": "兑换明细"
+				"navigationBarTitleText": "兑换记录",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue614 了解兑换",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
+						}]
+					}
+				}
 			}
 		},
 		{
@@ -141,36 +166,36 @@
 				"navigationBarTitleText": "充币记录"
 			}
 		},
-		{
-			"path": "pages/user/profile",
-			"style": {
-				"navigationBarTitleText": "个人资料"
-			}
-		},
-		{
-			"path": "pages/user/security",
-			"style": {
-				"navigationBarTitleText": "账号与安全"
-			}
-		},
-		{
-			"path": "pages/user/security/modifyPhone",
-			"style": {
-				"navigationBarTitleText": "修改手机号"
-			}
-		},
-		{
-			"path": "pages/user/security/modifyLoginPassword",
-			"style": {
-				"navigationBarTitleText": "修改登录密码"
-			}
-		},
-		{
-			"path": "pages/user/security/modifyPayPassword",
-			"style": {
-				"navigationBarTitleText": "修改支付密码"
-			}
-		},
+		// {
+		// 	"path": "pages/user/profile",
+		// 	"style": {
+		// 		"navigationBarTitleText": "个人资料"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/user/security",
+		// 	"style": {
+		// 		"navigationBarTitleText": "账号与安全"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/user/security/modifyPhone",
+		// 	"style": {
+		// 		"navigationBarTitleText": "修改手机号"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/user/security/modifyLoginPassword",
+		// 	"style": {
+		// 		"navigationBarTitleText": "修改登录密码"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/user/security/modifyPayPassword",
+		// 	"style": {
+		// 		"navigationBarTitleText": "修改支付密码"
+		// 	}
+		// },
 		{
 			"path": "pages/user/setting",
 			"style": {
@@ -186,7 +211,7 @@
 		{
 			"path": "pages/user/notify",
 			"style": {
-				"navigationBarTitleText": "消息中心"
+				"navigationBarTitleText": "消息通知"
 			}
 		},
 		// {
@@ -226,28 +251,29 @@
 			"path": "pages/ecology/lecai/index",
 			"style": {
 				"navigationBarTitleText": "哈希乐彩",
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"text": "\ue716",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px",
-							"width": "35px"
-						}]
-					}
-				}
+				"navigationStyle": "custom"
+				// "app-plus": {
+				// 	"titleNView": {
+				// 		"buttons": [{
+				// 			"text": "\ue716",
+				// 			"fontSrc": "/static/iconfont.ttf",
+				// 			"fontSize": "24px",
+				// 			"width": "35px"
+				// 		}]
+				// 	}
+				// }
 			}
 		},
 		{
 			"path": "pages/ecology/my/transfer",
 			"style": {
-				"navigationBarTitleText": "划转"
+				"navigationBarTitleText": "转入/转出" // 存钱宝 to 钱包账户
 			}
 		},
 		{
 			"path": "pages/ecology/my/index",
 			"style": {
-				"navigationBarTitleText": "游戏账号中心"
+				"navigationBarTitleText": "转入/转出"
 			}
 		},
 		{
@@ -259,13 +285,35 @@
 		{
 			"path": "pages/ecology/bet/index",
 			"style": {
-				"navigationBarTitleText": "我要投注"
+				"navigationBarTitleText": "我要投注",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue614 规则玩法",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
+						}]
+					}
+				}
 			}
 		},
 		{
 			"path": "pages/ecology/bet/select",
 			"style": {
-				"navigationBarTitleText": "玩法选择"
+				"navigationBarTitleText": "玩法选择",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "\ue614 规则玩法",
+							"fontSrc": "/static/iconfont.ttf",
+							"fontSize": "14px",
+							"color": "#C04546",
+							"width": "auto"
+						}]
+					}
+				}
 			}
 		},
 		{
@@ -323,6 +371,11 @@
 			"style": {
 				"navigationBarTitleText": "选择区号"
 			}
+		},{
+			"path": "pages/user/share",
+			"style": {
+				"navigationBarTitleText": "分享"
+			}
 		},
 		{
 			"path": "pages/user/index",
@@ -333,6 +386,12 @@
 		}, {
 			"path": "pages/register/register",
 			"style": {}
+		},
+		{
+			"path": "pages/user/idAndAddress",
+			"style": {
+				"navigationBarTitleText": "身份/地址"
+			}
 		},
 		{
 			"path": "pages/register/create-id",
@@ -365,6 +424,12 @@
 				// 		}]
 				// 	}
 				// }
+			}
+		},
+		{
+			"path": "pages/register/learn-more",
+			"style": {
+				"navigationBarTitleText": "如何创建身份/地址？"
 			}
 		},
 		{
@@ -433,6 +498,9 @@
 					}
 				}
 			}
+		}, {
+			"path": "pages/ecology/gameLoad",
+			"style": {}
 		}
 	],
 	"tabBar": {
@@ -446,10 +514,10 @@
 				"text": "钱包"
 			},
 			{
-				"pagePath": "pages/ecology/index",
+				"pagePath": "pages/ecology/gameLoad",
 				"iconPath": "static/tabbar/icon_shengtai@2x.png",
 				"selectedIconPath": "static/tabbar/icon_shengtaixz@2x.png",
-				"text": "生态"
+				"text": "游戏"
 			},
 			{
 				"pagePath": "pages/user/index",
@@ -467,11 +535,11 @@
 		"backgroundColor": "#F8F8F8"
 	},
 	"condition": { //模式配置，仅开发期间生效
-		"current": 0, //当前激活的模式(list 的索引项)
-		"list": [{
-			"name": "提币", //模式名称
-			"path": "pages/register/register", //启动页面，必选
-			"query": "" //启动参数，在页面的onLoad函数里面得到
-		}]
+		// "current": -1, //当前激活的模式(list 的索引项)
+		// "list": [{
+		// 	"name": "提币", //模式名称
+		// 	"path": "pages/register/register", //启动页面，必选
+		// 	"query": "" //启动参数，在页面的onLoad函数里面得到
+		// }]
 	}
 }

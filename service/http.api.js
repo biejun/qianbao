@@ -19,12 +19,20 @@ const install = (Vue, vm) => {
   let getCoinAddress = (coinName) => vm.$u.get('/wRecordRecharge/getCoinAddress/'+coinName); // 获取充币地址
   let getUserAmount = () => vm.$u.get('/uUserAccount/userAmount'); // 获取用户资金列表
   let getAccountDetail = (accountType, type) => vm.$u.get(`/uUserAccount/getAccountDetail/${accountType}/${type}`);
+  let getAmountByCoinName = (coinName) => vm.$u.get(`/uUserAccount/getUserAmountByCoinName/${coinName}`);
+  let getUserRate = () => vm.$u.get(`/uUserAccount/getUserRate`);
+  let getVersion = (type, versionNo) => vm.$u.get(`/appVersion/getNewVersion/${type}/${versionNo}`);
+  let getUserInvite = (type) => vm.$u.get(`/uUser/userInvite/${type}`);
 	vm.$u.api = {
 		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
 		getCoinList, getupdateUrl, getLogout, getregister,
 		getCoinAddress, getuserInvite,
 		getUserAmount,
-		getAccountDetail
+		getAccountDetail,
+		getAmountByCoinName,
+		getUserRate,
+		getVersion,
+		getUserInvite
 	};
 }
 

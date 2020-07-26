@@ -20,7 +20,7 @@
 			</view>
 			<view class="hedaer-assets">
 				<view class="account-wrap">
-					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
+					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalAmount)">
 						<view class="account-item-text">
 							<image src="../../static/index/content/icon_qianbao.png" class="small-icon"></image>
 							{{$t('digitalAccount')}}
@@ -30,8 +30,8 @@
 						</view>
 						<view class="account-item-number">
 							
-							<text>{{totalDigitalAmount}}</text>
-							<text class="account-item-unit">USDT</text>
+							<text>{{totalAmount}}</text>
+							<text class="account-item-unit">GCN</text>
 						</view>
 					</view>
 					<view class="account-item" @click="goUrl('index/account/gameAccount?amount='+totalGameAmount)">
@@ -46,27 +46,27 @@
 					</view>
 				</view>
 				<view class="account-wrap total-balance">
-					<view class="account-item" @click="goUrl('index/account/digitalAccount?amount='+totalDigitalAmount)">
+					<view class="account-item" @click="goUrl('index/account/cunKuanBao?amount='+totalYBB)">
 						<view class="account-item-text">
 							<image src="../../static/index/content/icon_card.png" class="small-icon"></image>
 							{{$t('cunKuanBao')}}
-							<view class="total-balance-text">
-								1.86%年化
+							<view class="total-balance-text" :class="[vuex_lang === 'en' ? 'en' : '']">
+								{{ckRate.yubiBaoRate}}%{{$t('AnnualizedRate')}}
 							</view>
 						</view>
 						<view class="account-item-number">
-							<text>{{totalDigitalAmount}}</text>
+							<text>{{totalYBB}}</text>
 							<text class="account-item-unit">GCN</text>
 						</view>
 					</view>
 					<view class="account-item account-returns">
 						<view class="return-item">
-							<view class="return-item-name">日收益</view>
-							<view class="return-item-value">+1.00 GCN</view>
+							<view class="return-item-name">{{$t('DailyYield')}}</view>
+							<view class="return-item-value">{{ckRate.yestodayEarn}} GCN</view>
 						</view>
 						<view class="return-item">
-							<view class="return-item-name">累计收益</view>
-							<view class="return-item-value">+1.00 GCN</view>
+							<view class="return-item-name">{{$t('CumulativeIncome')}}</view>
+							<view class="return-item-value">{{ckRate.totalEarn}} GCN</view>
 						</view>
 					</view>
 				</view>
@@ -128,6 +128,14 @@
 				</view> -->
 			</view>
 		</view>
+		<u-modal v-model="showWelcome" title="" :show-confirm-button="false">
+			<view class="welcome-use">
+				<image src="../../static/logo.png" class="app-logo"></image>
+				<view class="welcome-text">欢迎使用区块玩家</view>
+				<view class="welcome-text">您将在这里自由管理您的资产</view>
+				<button type="default" class="start-use" @click="startUse">开始使用</button>
+			</view>
+		</u-modal>
 <!-- 		<u-popup v-model="show" mode="left" border-radius="14" length="50%">
 			<popup></popup>
 		</u-popup> -->
@@ -145,51 +153,64 @@
 		},
 		data() {
 			return {
-				listitem: ['服务器暂停服务', '平明送客楚山孤', '洛阳亲友如相问', '一片冰心在玉壶'],
+				listitem: [],
 				show: false,
 				list: [],
 				totalAmount: 0,
 				totalUSDT: 0,
 				totalGameAmount: 0,
-				totalDigitalAmount: 0,
+				//totalDigitalAmount: 0,
+				totalYBB: 0,
 				dropdownShow: false,
+				showWelcome: false,
 				i18n: {
 					zh: {
 						totalAssets: '总资产',
-						digitalAccount: '数字账户',
+						digitalAccount: '钱包账户',
 						gameAccount: "游戏账户",
 						recharge: "充币",
 						withdrawal: "提币",
-						assetList: "资产列表",
+						assetList: "货币兑换",
 						exchange: "兑换",
 						tabbar: {
 							wallet: "钱包",
 							ecology: "生态",
 							my: "我的"
 						},
-						cunKuanBao: '存款宝'
+						cunKuanBao: '存款宝',
+						DailyYield: "日收益",
+						CumulativeIncome: "累计收益",
+						AnnualizedRate: "年化"
 					},
 					en: {
 						totalAssets: 'Total Assets',
-						digitalAccount: "Digital Account",
-						gameAccount: "Game Account",
+						digitalAccount: "Wallet",
+						gameAccount: "Game",
 						recharge: "Recharge",
 						withdrawal: "Withdrawal",
-						assetList: "Asset List",
+						assetList: "Currency Exchange",
 						exchange: "Exchange",
 						tabbar: {
 							wallet: "Wallet",
 							ecology: "Ecology",
 							my: "My"
 						},
-						cunKuanBao: 'Cun Kuan Bao'
+						cunKuanBao: 'CunKuan Bao',
+						DailyYield: "Yield",
+						CumulativeIncome: "Cumulative",
+						AnnualizedRate: "Annualized Rate"
 					}
 				},
+				ckRate: {
+					yubiBaoRate: 0,
+					totalEarn: 0,
+					yestodayEarn: 0
+				}
 			}
 		},
 		onLoad() {
-			// this.checkLogin();
-			// this.getNotifyData();
+			this.checkLogin();
+			this.getNotifyData();
 		},
 		watch: {
 			vuex_lang() {
@@ -200,7 +221,9 @@
 			this.initTab();
 		},
 		onShow() {
-			//this.getUserAmount();
+			this.getUserAmount();
+			this.getAmountByCoinName();
+			this.getUserRate();
 		},
 		methods: {
 			scanCode() {
@@ -218,27 +241,43 @@
 			},
 			// 公告
 			getNotifyData() {
-				this.$u.get('/notice/getNotice/' + 2).then(res => {
-					this.listitem = res.data;
+				this.$u.get('/notice/getNotice').then(res => {
+					this.listitem = res.data.filter(v =>  v.noticeType === 2)
+						.map(v => v.noticeTitle);
 				})
-				this.$u.get('/gGameBase/getOrderReward').then(res => {
-					this.listitem = res.data.map(v => v.userPhone + '中奖'+v.stakeAmount);
-				})
+				// this.$u.get('/gGameBase/getOrderReward').then(res => {
+				// 	this.listitem = res.data.map(v => v.userPhone + '中奖'+v.stakeAmount);
+				// })
 			},
 			getMore() {
 				uni.navigateTo({
 					url: '/pages/user/notify?type=2'
 				})
 			},
-			
+			getAmountByCoinName() {
+				this.$u.api.getAmountByCoinName('GCN').then(res => {
+					
+				})
+			},
+			getUserRate() {
+				this.$u.api.getUserRate().then(res => {
+					this.ckRate = res.data;
+				})
+			},
 			bodyClick() {
 				this.dropdownShow = false;
 			},
-			checkLogin() {
+			startUse() {
+				this.showWelcome = false;
 				if (!this.vuex_hasLogin) {
 					uni.navigateTo({
-						url: '/pages/login/login'
+						url: '/pages/register/register'
 					})
+				}
+			},
+			checkLogin() {
+				if (!this.vuex_hasLogin) {
+					this.showWelcome = true;
 					return false;
 				}
 				return true;
@@ -256,22 +295,25 @@
 					this.list = res.data;
 					let totalAmount = 0;
 					let totalGameAmount = 0;
-					let totalDigitalAmount = 0;
-					let totalUSDT = 0;
+					//let totalDigitalAmount = 0;
+					//let totalUSDT = 0;
+					let totalYBB = 0;
 					res.data.forEach(v => {
 						let usdtAmount = v.usdtAmount || 0;
 						let gameAmount = v.gameAmount || 0;
 						let usdtGameAmount = v.usdtGameAmount || 0;
 						let cnyAmount = v.cnyAmount || 0;
-						totalAmount = accAdd(totalAmount, cnyAmount); // 持有总USDT 相当于 GCN 的总资产
+						let yubiBaoAmount = v.yubiBaoAmount || 0;
+						
+						totalAmount = accAdd(totalAmount, cnyAmount).toFixed(2); // 持有总USDT 相当于 GCN 的总资产
 						totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
-						totalDigitalAmount = accAdd(totalDigitalAmount, usdtAmount); // USDT 总资产
-						totalUSDT = accAdd(totalUSDT, accAdd(usdtAmount, usdtGameAmount));
+						//totalDigitalAmount = accAdd(totalDigitalAmount, usdtAmount).toFixed(2); // USDT 总资产
+						totalYBB = accAdd(totalYBB, yubiBaoAmount);
 					});
 					this.totalAmount = totalAmount;
 					this.totalGameAmount = totalGameAmount;
-					this.totalDigitalAmount = totalDigitalAmount;
-					this.totalUSDT = totalUSDT;
+					//this.totalDigitalAmount = totalDigitalAmount;
+					this.totalYBB = totalYBB;
 				}, res => {
 					if (res.code === 401) {
 						this.$u.vuex('vuex_hasLogin', false);
@@ -428,6 +470,12 @@
 								font-size: 20rpx;
 								color: #EF323C;
 								margin-left: 5rpx;
+								&.en{
+									position: absolute;
+									left: 82%;
+									top: -10rpx;
+									width: 100%;
+								}
 							}
 						}
 
@@ -509,7 +557,7 @@
 		}
 
 		.header-bottom {
-			height: 140rpx;
+			height: 180rpx;
 			// border-bottom: 10rpx solid #fff;
 		}
 
@@ -647,5 +695,28 @@
 		// 	flex: 0 0 45%;
 		// 	font-size: 34rpx!important;
 		// }
+		
+		.welcome-use{
+			padding: 10rpx 30rpx 60rpx 30rpx;
+			text-align: center;
+			
+			.app-logo{
+				width: 160rpx;
+				height: 160rpx;
+				margin-bottom: 15rpx;
+			}
+			
+			.welcome-text{
+				color: #6C6C6C;
+				font-size: 28rpx;
+			}
+			
+			.start-use{
+				margin-top: 50rpx;
+				font-size: 32rpx;
+				background-color: #EDB418;
+				color: #fff;
+			}
+		}
 	}
 </style>

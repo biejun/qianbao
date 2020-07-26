@@ -26,7 +26,7 @@
 				</view>
 			</view>
 		</view>
-		<button class="tc-submit" @click="submit" :disabled="isLoading">{{$t('ConfirmPayment')}}</button>
+		<view class="tc-submit" @click="submit" :disabled="isLoading">{{$t('ConfirmPayment')}}</view>
 	</view>
 </template>
 
@@ -48,7 +48,7 @@
 						Bet: "注",
 						ConfirmPayment: "确认支付",
 						Period: "{0} 期",
-						Orderprocessing: "订单处理中"
+						Orderprocessing: "正在处理订单..."
 					},
 					en: {
 						BettingDetails: "Betting details",
@@ -57,7 +57,7 @@
 						Bet: "Bet",
 						ConfirmPayment: "Confirm Payment",
 						Period: "No. {0}",
-						Orderprocessing: "Order processing"
+						Orderprocessing: "Order processing..."
 					}
 				},
 			}
@@ -81,6 +81,14 @@
 							stakeNumber: multiple
 						});
 					}else if(options.t === '1'){
+						let fs = options.fs;
+						let limit = options.wayType;
+						let res = combination(fs.split(','), limit);
+						o.stakeDetailList = res.map(v => ({
+							stakeNo: v,
+							stakeNumber: multiple
+						}));
+					}else if(options.t === '2'){
 						let limit = options.wayType;
 						let tm = options.tm.split(','), dm = options.dm.split(',');
 						let res = toGroup(dm, tm, limit - dm.length);
@@ -139,15 +147,18 @@
 					totalNumber: this.totalNum.multiple,
 					totalAmount: this.totalNum.amount,
 					wayDesc: this.name,
-					wayType: this.wayType
+					wayType: this.wayType,
+					currentNumber: this.vuex_bet_period - 1
 				}).then(res => {
 					uni.hideLoading();
-					this.isLoading = true;
+					this.isLoading = false;
 					uni.navigateTo({
-						url: './success'
+						url: './success?back=3'
 					})
 				}, err => {
-					this.isLoading = true;
+					uni.hideLoading();
+					this.isLoading = false;
+					this.$u.toast(err.msg);
 				})
 			}
 		}
@@ -205,7 +216,7 @@
 			text-align: center;
 			color: #fff;
 			font-size: 32rpx;
-			background-color: #F1343E;
+			background-color: #fcc82b;
 			position: fixed;
 			bottom: 0;
 			left: 0;

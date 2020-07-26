@@ -8,13 +8,16 @@
 			class="tabs">
 		</u-tabs>
 		<view class="way-wrap">
-			<view v-if="type === 1" class="way-tab">
+			<view v-if="type === 1" class="way-tab renxuan">
 				<view class="way-tab-item"
 					:class="[tab1 === 0 ? 'is-active' : '']" 
 					@click="tab1 = 0">{{$t('Commonplay')}}</view>
+				<view class="way-tab-item"
+					:class="[tab1 === 1 ? 'is-active' : '']"  
+					@click="tab1 = 1">{{$t('MultipleBets')}}</view>
 				<view class="way-tab-item" 
-					:class="[tab1 === 1 ? 'is-active' : '']" 
-					@click="tab1 = 1">{{$t('Daretoplay')}}</view>
+					:class="[tab1 === 2 ? 'is-active' : '']" 
+					@click="tab1 = 2">{{$t('Daretoplay')}}</view>
 			</view>
 			<view v-if="type === 2" class="way-tab">
 				<view class="way-tab-item" 
@@ -40,6 +43,20 @@
 					</view>
 				</template>
 				<template v-if="tab1 === 1">
+					<view class="ball-list">
+						<view class="ball-item" 
+							v-for="(item, index) in balls" :key="index"
+							@click="fushi(item)">
+							<view class="ball" :class="fs.indexOf(item) > -1 ? 'active' : ''">
+								{{item}}
+							</view>
+						</view>
+					</view>
+					<view class="select-tip">
+						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
+					</view>
+				</template>
+				<template v-if="tab1 === 2">
 					<view clasa="ball-title">{{$t('Important')}}</view>
 					<view class="ball-list">
 						<view class="ball-item" 
@@ -116,16 +133,19 @@
 					<view><u-number-box v-model="multiple" :min="1" :max="50"></u-number-box></view>
 				</view>
 				
-				<view class="submit" @click="submit">{{$t('Submit')}}</view>
+				<view class="confirm-submit" @click="submit">{{$t('Submit')}}</view>
 			</view>
 		</u-popup>
-		<view class="submit is-fixed" @click="submit">{{$t('Submit')}}</view>
+		<view class="button-group">
+			<view class="random-btn" @click="random">{{$t('Random')}}</view>
+			<view class="submit-btn" @click="submit">{{$t('Submit')}}</view>
+		</view>
 	</view>
 </template>
 
 <script>
 	import dragSorts from '@/common/HM-dragSorts/HM-dragSorts.vue';
-	import { combination, toGroup } from '@/common/utils.js';
+	import { combination, toGroup, getRandomArray } from '@/common/utils.js';
 	const makeBalls = () => [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a','b','c','d','e','f'];
 	export default {
 		components: { dragSorts },
@@ -166,7 +186,10 @@
 						Multiple: "投注倍数",
 						Append: "追号期数",
 						title: "追号/倍数选择",
-						Submit: "提交投注"
+						Submit: "提交投注",
+						Random: '机选',
+						mostNum: '最多只能选择{0}个号码',
+						pleaseSelect: "请选择号码"
 					},
 					en: {
 						Commonplay: "Common play",
@@ -182,7 +205,10 @@
 						Multiple: "Multiple",
 						Append: "Append",
 						title: "Add number / multiple selection",
-						Submit: "Submit"
+						Submit: "Submit",
+						Random: 'Random',
+						mostNum: 'You can only select {0} numbers at most',
+						pleaseSelect: "Please select a number"
 					}
 				},
 			}
@@ -233,7 +259,7 @@
 					this.rx.splice(i, 1);
 				}else{
 					if(this.rx.length >= maxNum) {
-						this.$u.toast('最多只能选择'+maxNum+'个号码');
+						this.$u.toast(this.$t('mostNum').replace('{0}', maxNum));
 						return;
 					}
 					this.rx.push(num);
@@ -247,7 +273,7 @@
 					this.zx.splice(i, 1);
 				}else{
 					if(this.zx.length >= maxNum) {
-						this.$u.toast('最多只能选择'+maxNum+'个号码');
+						this.$u.toast(this.$t('mostNum').replace('{0}', maxNum));
 						return;
 					}
 					this.zx.push(num);
@@ -256,13 +282,15 @@
 			},
 			fushi(num) {
 				let maxNum = 13;
-				let size = this.list[this.current].wayType === 7 ? 6 : 1;
+				let wayType = this.list[this.current].wayType;
+				// 如果复式投注来自任选(type = 1 就是任选页面) size 为 wayType 的值
+				let size = this.type === 1 ? wayType : wayType === 7 ? 6 : 1;
 				let i = this.fs.indexOf(num);
 				if(i > -1) {
 					this.fs.splice(i, 1);
 				}else{
 					if(this.fs.length >= maxNum) {
-						this.$u.toast('最多只能选择'+maxNum+'个号码');
+						this.$u.toast(this.$t('mostNum').replace('{0}', maxNum));
 						return;
 					}
 					this.fs.push(num);
@@ -283,7 +311,7 @@
 					this.tm.splice(i, 1);
 				}else{
 					if((this.tm.length + dmLen) >= maxNum) {
-						this.$u.toast('最多只能选择'+maxNum+'个号码');
+						this.$u.toast(this.$t('mostNum').replace('{0}', maxNum));
 						return;
 					}
 					this.tm.push(num);
@@ -303,7 +331,7 @@
 					this.dm.splice(i, 1);
 				}else{
 					if(this.dm.length >= maxNum) {
-						this.$u.toast('最多只能选择'+maxNum+'个号码');
+						this.$u.toast(this.$t('mostNum').replace('{0}', maxNum));
 						return;
 					}
 					this.dm.push(num);
@@ -312,8 +340,54 @@
 			confirm() {
 				
 			},
+			// 机选 随机给
+			random() {
+				let current = this.current;
+				let balls = makeBalls();
+				this.change(current);
+				if(this.type === 1) {
+					if(this.tab1 === 0) {
+						let limit = this.list[current].wayType;
+						let ma = getRandomArray(balls, limit);
+						for(let i = 0; i < ma.length; i++) {
+							this.renxuan(ma[i]);
+						}
+					}else if(this.tab1 === 1) {
+						let limit = this.list[current].wayType;
+						let ma = getRandomArray(balls, limit);
+						for(let i = 0; i < ma.length; i++) {
+							this.fushi(ma[i]);
+						}
+					}else if(this.tab1 === 2) {
+						let limit = this.list[current].wayType;
+						let randDm = Math.ceil(Math.random()*(limit-1));
+						let dm = getRandomArray(balls, randDm);
+						for(let i = 0; i < dm.length; i++) {
+							this.danma(dm[i]);
+						}
+						let tm = getRandomArray(balls, limit - randDm);
+						for(let i = 0; i < tm.length; i++) {
+							this.tuoma(tm[i]);
+						}
+					}
+				}else if(this.type === 2) {
+					let limit = this.list[current].wayType === 7 ? 6 : 1;
+					if(this.tab2 === 0) {
+						let ma = getRandomArray(balls, limit);
+						for(let i = 0; i < ma.length; i++) {
+							this.zhixuan(ma[i]);
+						}
+					}else if(this.tab2 === 1) {
+						let ma = getRandomArray(balls, limit);
+						for(let i = 0; i < ma.length; i++) {
+							this.fushi(ma[i]);
+						}
+					}
+				}
+			},
 			submit() {
 				if(this.len === 0) {
+					this.$u.toast(this.$t('pleaseSelect'));
 					return;
 				}
 				if(!this.show) {
@@ -328,19 +402,31 @@
 						let rx = this.rx;
 						if(!rx.length) {
 							// 没有选好
+							this.$u.toast(this.$t('pleaseSelect'));
 							return;
 						}
 						uni.navigateTo({
 							url: url+'&rx='+rx.join(',')+'&type=1&t=0'
 						})
 					}else if(this.tab1 === 1) {
-						let tm = this.tm, dm = this.dm;
-						if(!tm.length || !dm.length) {
+						let fs = this.fs;
+						if(!fs.length) {
 							// 没有选好
+							this.$u.toast(this.$t('pleaseSelect'));
 							return;
 						}
 						uni.navigateTo({
-							url: url+'&dm='+dm.join(',')+'&tm='+tm.join(',')+'&type=1&t=1'
+							url: url+'&fs='+fs.join(',')+'&type=1&t=1'
+						})
+					}else if(this.tab1 === 2) {
+						let tm = this.tm, dm = this.dm;
+						if(!tm.length || !dm.length) {
+							// 没有选好
+							this.$u.toast(this.$t('pleaseSelect'));
+							return;
+						}
+						uni.navigateTo({
+							url: url+'&dm='+dm.join(',')+'&tm='+tm.join(',')+'&type=1&t=2'
 						})
 					}
 				}else if(this.type === 2) {
@@ -348,6 +434,7 @@
 						let zx = this.zx;
 						if(!zx.length) {
 							// 没有选好
+							this.$u.toast(this.$t('pleaseSelect'));
 							return;
 						}
 						uni.navigateTo({
@@ -357,6 +444,7 @@
 						let fs = this.fs;
 						if(!fs.length) {
 							// 没有选好
+							this.$u.toast(this.$t('pleaseSelect'));
 							return;
 						}
 						uni.navigateTo({
@@ -365,7 +453,15 @@
 					}					
 				}
 			}
-		}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: './way'
+				})
+			}
+		},
 	}
 </script>
 
@@ -387,6 +483,10 @@
 				border-radius: 40rpx;
 				overflow: hidden;
 				
+				&.renxuan{
+					width: 500rpx;
+				}
+				
 				.way-tab-item{
 					background-color: #f3f3f3;
 					flex: 1;
@@ -396,7 +496,7 @@
 					color: #A5A5A5;
 					
 					&.is-active {
-						background-color: #F1343E;
+						background-color: $uni-color-primary;
 						color: #fff;
 					}
 				}
@@ -419,8 +519,8 @@
 						text-align: center;
 						border-radius:50%;
 						&.active{
-							border-color: #F1343E;
-							background-color: #F1343E;
+							border-color: $uni-color-primary;
+							background-color: $uni-color-primary;
 							color: #fff;
 						}
 					}
@@ -428,20 +528,31 @@
 			}
 		}
 		
-		.submit{
+		.button-group{
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			display: flex;
 			height: 86rpx;
 			line-height: 86rpx;
 			text-align: center;
-			color: #fff;
-			font-size: 32rpx;
-			background-color: #F1343E;
-			&.is-fixed{
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				right: 0;
+			
+			.random-btn{
+				width: 240rpx;
+				background-color: #E9B306;
+				color: #fff;
+				font-size: 32rpx;
+			}
+			
+			.submit-btn{
+				flex: 1;
+				color: #fff;
+				font-size: 32rpx;
+				background-color: $uni-color-primary;
 			}
 		}
+		
 		.select-tip{
 			font-size: 24rpx;
 			color: #999;
@@ -470,6 +581,16 @@
 				margin-top: 15rpx;
 			}
 		}
+	}
+	
+	.confirm-submit{
+		color: #fff;
+		font-size: 32rpx;
+		background-color: $uni-color-primary;
+		height: 80rpx;
+		line-height: 80rpx;
+		text-align: center;
+		border-radius: 4rpx;
 	}
 	
 	.touzhu-popover{

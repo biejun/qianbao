@@ -86,6 +86,17 @@ export function toGroup(arr1 = [], arr2 = [], size) {
 	return resultArr;
 }
 
+export function getRandomArray(arr, count) {
+    var shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
+    while (i-- > min) {
+        index = Math.floor((i + 1) * Math.random());
+        temp = shuffled[index];
+        shuffled[index] = shuffled[i];
+        shuffled[i] = temp;
+    }
+    return shuffled.slice(min);
+}
+
 // 精度计算  begin
 
 //加法函数
@@ -165,5 +176,5 @@ export const accDiv = function(arg1, arg2) {
     }
 	r1 = Number(arg1.toString().replace(".", ""));
 	r2 = Number(arg2.toString().replace(".", ""));
-	return (r1 / r2) * Math.pow(10, t2 - t1);
+	return accMul(r1 / r2, Math.pow(10, t2 - t1));
 }

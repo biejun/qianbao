@@ -2,18 +2,18 @@
 	<view class="common-bg withdraw-add">
 		<view class="withdraw-add-inner">
 			<view class="current-assets">
-				<view class="total-balance">
-					<view class="total-balance-number">
-						{{totalAsset}}
-					</view>
-					<view class="total-balance-unit">
-						{{currentCoin}}
-					</view>
-				</view>
-<!-- 				<view class="total-balance-translate">
-					≈{{totalGCN}} GCN
-				</view> -->
 				<view class="account-wrap">
+					<view class="account-item total-balance">
+						<view class="total-balance-number">
+							{{totalAsset}}
+						</view>
+						<view class="total-balance-unit">
+							{{currentCoin}}
+						</view>
+<!-- 						<view class="total-balance-translate">
+							≈{{totalGCN}} GCN
+						</view> -->
+					</view>
 					<view class="account-item">
 						<view class="account-item-text">
 							{{$t('CurrentlyAvailable')}}
@@ -23,7 +23,7 @@
 							<text>{{currentCoin}}</text>
 						</view>
 					</view>
-					<view class="account-item">
+<!-- 					<view class="account-item">
 						<view class="account-item-text">
 							{{$t('CurrentFreeze')}}
 						</view>
@@ -31,16 +31,39 @@
 							<text>{{totalFreezeAmount}}</text>
 							<text>{{currentCoin}}</text>
 						</view>
+					</view> -->
+				</view>
+			</view>
+			<view class="dropdown-addon" :class="coinMethodShow ? 'is-fixed' : ''">
+				<view class="dropdown-header">
+					<view class="dropdown-header__left">
+						{{$t('SwitchingMode')}}
+					</view>
+					<view class="dropdown-header__right" 
+						@click="coinMethodShow = !coinMethodShow">
+						<text>{{type === 1? $t('Internal') : $t('External')}}</text>
+						<u-icon name="arrow-up-fill" class="icon" :class="coinMethodShow ? '' : 'is-down'"></u-icon>
+					</view>
+				</view>
+				<view v-show="coinMethodShow" class="dropdown-content">
+					<view class="dropdown-content-item" 
+					 @click="selectMethod(1)"
+					 :class="type === 1 ? 'current' : ''">
+						{{$t('Internal')}}
+					</view>
+					<view class="dropdown-content-item" @click="selectMethod(2)"
+						:class="type === 2 ? 'current' : ''">
+						{{$t('External')}}
 					</view>
 				</view>
 			</view>
 			<view class="dropdown-addon" :class="coinListShow ? 'is-fixed' : ''">
 				<view class="dropdown-header">
 					<view class="dropdown-header__left">
-						{{currentCoin}}
+						{{$t('SwitchCurrency')}}
 					</view>
 					<view class="dropdown-header__right" @click="coinListShow = !coinListShow">
-						<text>{{$t('SwitchCurrency')}}</text>
+						<text>{{currentCoin}}</text>
 						<u-icon name="arrow-up-fill" class="icon" :class="coinListShow ? '' : 'is-down'"></u-icon>
 					</view>
 				</view>
@@ -48,31 +71,14 @@
 					<view v-for="item in coinList" 
 						class="dropdown-content-item" 
 						@click="selectCoin(item)"
+						:class="item.coinName === currentCoin ? 'current' : ''"
 						:key="item.id">
 						{{item.coinName}}
 					</view>
 				</view>
 			</view>
-			<view class="dropdown-addon" :class="coinMethodShow ? 'is-fixed' : ''">
-				<view class="dropdown-header">
-					<view class="dropdown-header__left">
-						{{type === 1? $t('Internal') : $t('External')}}
-					</view>
-					<view class="dropdown-header__right" @click="coinMethodShow = !coinMethodShow">
-						<text>{{$t('SwitchingMode')}}</text>
-						<u-icon name="arrow-up-fill" class="icon" :class="coinMethodShow ? '' : 'is-down'"></u-icon>
-					</view>
-				</view>
-				<view v-show="coinMethodShow" class="dropdown-content">
-					<view class="dropdown-content-item" @click="selectMethod(1)">
-						{{$t('Internal')}}
-					</view>
-					<view class="dropdown-content-item" @click="selectMethod(2)">
-						{{$t('External')}}
-					</view>
-				</view>
-			</view>
-			<u-cell-group v-if="type === 1" class="withdraw-form-wrap" :border="false">
+			<view v-if="currentCoin === 'GCN'" class="warn-tips">{{$t('WarnGCN')}}</view>
+<!-- 			<u-cell-group v-if="type === 1" class="withdraw-form-wrap" :border="false">
 				<u-cell-item 
 					:title="$t('CountryRegion')"
 					value="+86 中国">
@@ -82,9 +88,6 @@
 					:label="$t('Phone')"
 					:placeholder="$t('phonePleaseHolder')"
 				>
-<!-- 					<view slot="right">
-						dsfsdf
-					</view> -->
 				</u-field>
 				<u-field
 					v-model="form.num"
@@ -100,9 +103,9 @@
 				>
 				</u-field>
 				<view class="withdraw-tips">{{$t('feeTip')}}</view>
-			</u-cell-group>
+			</u-cell-group> -->
 			
-			<u-cell-group v-if="type === 2" class="withdraw-form-wrap" :border="false">
+			<u-cell-group class="withdraw-form-wrap" :border="false">
 				<u-field
 					v-model="form.address"
 					:label="$t('address')"
@@ -119,17 +122,23 @@
 				<u-field
 					:value="outFee"
 					:label="$t('Fee')"
+					class="disable-field"
 					:disabled="true"
 				>
 				</u-field>
 				<view class="withdraw-tips">{{$t('feeTip')}}</view>
 			</u-cell-group>
 			<view class="withdraw-wrap">
-				<button type="warn" class="withdraw-wrap-button" @click="submit" :disabled="disabled">{{$t('Submit')}}</button>
+				<button type="default" class="withdraw-wrap-button" @click="submit" :disabled="disabled">{{$t('Submit')}}</button>
 			</view>
 		</view>
 		<u-mask :show="coinListShow" z-index="100"></u-mask>
 		<u-mask :show="coinMethodShow" z-index="100"></u-mask>
+		<u-modal :value="showPassword" @confirm="confirmPassword" @cancel="showPassword = false" :show-cancel-button="true" title="请输入密文">
+			<view class="enter-password">
+				<u-input v-model="form.password" type="password" class="enter-input" password-icon placeholder="密文"></u-input>
+			</view>
+		</u-modal>
 	</view>
 </template>
 
@@ -139,6 +148,7 @@
 			return {
 				coinListShow: false,
 				coinMethodShow: false,
+				showPassword: false,
 				currentCoin: '',
 				coinList: [],
 				totalAmount: 0,
@@ -149,30 +159,31 @@
 				form: {
 					address: '',
 					num: '',
-					phone: ''
+					password: ''
 				},
 				inFee: 0,
 				outFee: 0,
 				i18n: {
 					zh: {
-						SwitchCurrency: '切换币种',
+						SwitchCurrency: '币种',
 						withdrawal: "提币",
 						CurrentlyAvailable: "当前可用",
-						SwitchingMode: "切换方式",
-						Internal: "对内提币",
-						External: "对外提币",
+						SwitchingMode: "货币流向",
+						Internal: "区块玩家内互转 ",
+						External: "交易所/外部钱包",
 						CurrentFreeze: "当前冻结",
 						CountryRegion: "国家/地区",
 						Phone: "手机号码",
 						withdrawalNumber: "提币数量",
-						Fee: "手续费",
+						Fee: "矿工费",
 						address: "地址",
 						phonePleaseHolder: "请输入手机号码",
 						withdrawalNumberPleaseNum: "请输入提币数量",
 						addressPleaseNum: "请输入转账地址",
-						feeTip: "手续费将从兑出数量中扣减",
+						feeTip: "矿工费将从兑出数量中扣减",
 						MaximumExtractable: "最多可提取",
-						Submit: "确定"
+						Submit: "确定",
+						WarnGCN: "提示：GCN不支持交易所，勿把GCN提币至交易所！"
 					},
 					en: {
 						SwitchCurrency: 'Switch Currency',
@@ -184,7 +195,7 @@
 						CurrentFreeze: "Current Freeze",
 						CountryRegion: "Country Region",
 						Phone: "Phone",
-						withdrawalNumber: "Number of withdrawal",
+						withdrawalNumber: "Number",
 						Fee: "Fee",
 						address: "Address",
 						phonePleaseHolder: "Please enter your mobile number",
@@ -192,7 +203,8 @@
 						addressPleaseNum: "Please enter the transfer address",
 						feeTip: "Service charge will be deducted from the quantity",
 						MaximumExtractable: "Maximum extractable",
-						Submit: "Submit"
+						Submit: "Submit",
+						WarnGCN: "Warning：GCN does not support external exchange！"
 					}
 				},
 			}
@@ -230,6 +242,12 @@
 				this.type = type;
 				this.coinMethodShow = false;
 			},
+			confirmPassword() {
+				let password = this.form.password.trim();
+				if(password === '') return;
+				this.showPassword = false;
+				this.submit();
+			},
 			submit() {
 				let amount = Number(this.form.num);
 				if(!amount) {
@@ -241,22 +259,20 @@
 					return;
 				}
 				if(this.type === 1) {
-					if(!this.form.phone) {
-						this.$u.toast("请输入手机号码");
+					if(!this.form.password) {
+						this.showPassword = true;
 						return;
 					}
-					let msg = this.type === 1 ? '提币成功，内部提币无需审核' : '提币申请已提交，等待系统审核';
 					this.$u.post('/wRecordTransferIn/withDrawIn', {
 						amount: amount,
-						phone: this.form.phone,
-						phoneArea: '+86',
+						password: this.form.password,
+						toAddress: this.form.address,
 						coinName: this.currentCoin,
 						fee: this.inFee,
 					}).then(res => {
-						uni.navigateTo({
-							url: './success?back=2&msg='+msg
-						})
+						this.form.password = '';
 					},err => {
+						this.form.password = '';
 						this.$u.toast(err.msg);
 					})
 				}else if(this.type === 2) {
@@ -266,9 +282,7 @@
 						fee: this.outFee,
 						toAddress: this.form.address
 					}).then(res => {
-						uni.navigateTo({
-							url: './success?back=2&msg='+msg
-						})
+						
 					}, err => {
 						this.$u.toast(err.msg);
 					})
@@ -306,6 +320,12 @@
 			.withdraw-wrap-button{
 				border-radius: 50rpx;
 				font-size: 32rpx;
+				background-color: #FFC000;
+				color: #fff;
+				&[disabled]{
+					background-color: #F7DA79;
+					border-color: #F7DA79;
+				}
 			}
 		}
 		
@@ -339,7 +359,6 @@
 				color: #A5A5A5;
 				padding-top: 10rpx;
 				padding-bottom: 20rpx;
-				border-bottom: 2rpx solid #F3F3F3;
 			}
 			.account-wrap{
 				display: flex;
@@ -399,6 +418,13 @@
 		}
 	}
 	
+	.warn-tips{
+		margin-top: -6px;
+		margin-bottom: 30rpx;
+		color: #F1333D;
+		font-size: 22rpx;
+	}
+	
 	// 带笼罩层的下拉
 	.dropdown-addon{
 		margin-bottom: 30rpx;
@@ -412,13 +438,13 @@
 			padding: 26rpx 30rpx;
 			
 			&__left{
-				font-size: 32rpx;
-				font-weight: bold;
+				font-size: 28rpx;
+				color: #A5A5A5;
 			}
 			
 			&__right{
-				font-size: 28rpx;
-				color: #A5A5A5;
+				font-size: 32rpx;
+				font-weight: bold;
 				> *{
 					vertical-align: middle;
 				}
@@ -438,6 +464,7 @@
 			
 			.dropdown-header{
 				border-radius: 10rpx 10rpx 0 0;
+				background-color: #f3f3f3;
 			}
 		}
 		.dropdown-content{
@@ -453,7 +480,27 @@
 				padding: 20rpx 0;
 				font-size: 32rpx;
 				font-weight: bold;
+				&.current{
+					color: $uni-color-primary;
+				}
 			}
 		}
+	}
+	
+	.enter-password{
+		padding: 40rpx;
+		.enter-input{
+			padding: 10px;
+			border-bottom: 1px solid #f3f3f3;
+		}
+		.message-tip{
+			font-size: 22rpx;
+			padding: 10rpx;
+			color: $uni-color-error;
+		}
+	}
+	
+	/deep/ .disable-field{
+		color: #A5A5A5;
 	}
 </style>

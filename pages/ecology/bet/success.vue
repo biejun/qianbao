@@ -5,7 +5,7 @@
 			<view class="success-text">{{$t('Bettingsuccessful')}}</view>
 		</view>
 		<view class="go-back">
-			<button type="warn" @click="goBack">{{$t('GoHome')}}</button>
+			<button type="default" class="btn" @click="goBack">{{$t('GoHome')}}</button>
 		</view>
 	</view>
 </template>
@@ -47,8 +47,9 @@
 			flex-direction: column;
 			
 			.img{
-				width: 200rpx;
+				width: 180rpx;
 				height: 200rpx;
+				margin-bottom: 20rpx;
 			}
 			
 			.success-text{
@@ -58,6 +59,12 @@
 		
 		.go-back{
 			padding: 30rpx;
+			
+			.btn{
+				background-color: $uni-color-primary;
+				color: #fff;
+				font-size: 34rpx;
+			}
 		}
 	}
 </style>

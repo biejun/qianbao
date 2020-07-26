@@ -1,18 +1,18 @@
 <template>
 	<view class="lecai-my-index">
 		<view class="my-assets">
-			<view class="assets-title">{{$t('QuantityAvailable')}}</view>
+			<view class="assets-title">{{isReverse ? $t('gameAccount') : $t('digitalAccount')}}{{$t('QuantityAvailable')}}</view>
 			<view class="asset-amount">
-				{{totalGameAmount}}
+				{{isReverse ? totalGameAmount: totalAmount}}
 				<text class="asset-unit">GCN</text>
 			</view>
-			<view class="asset-result">
+<!-- 			<view class="asset-result">
 				{{$t('QuantityToBeSettled')}}: {{totalFreezeAmount}} GCN
-			</view>
+			</view> -->
 		</view>
 		<view class="buttons">
-			<u-button type="error" plain class="btn-plain" @click="goUrl('./transfer?amount='+totalAmount)">{{$t('TransferInto')}}</u-button>
-			<u-button type="error" @click="goUrl('./transfer?isReverse=1&amount='+totalGameAmount)">{{$t('TransferOut')}}</u-button>
+			<u-button type="warning" :plain="isReverse" @click="isReverse=false">{{$t('TransferInto')}}</u-button>
+			<u-button type="warning" :plain="!isReverse" @click="isReverse = true">{{$t('TransferOut')}}</u-button>
 		</view>
 	
 		<div class="transfer-child-title">{{$t('Chooseanaccount')}}</div>
@@ -32,7 +32,7 @@
 		</div>
 		<div class="transfer-child-title">{{$t('Currentlyavailable')}} <span class="transfer-balance">{{sunCount}}</span>
 			<text class="all-in" @click="allIn">{{$t('All')}}</text></div>
-		<u-button type="error" class="submitBtn" @click="exchange">{{$t('Transfer')}}</u-button>
+		<u-button class="submitBtn" @click="exchange">{{$t('Transfer')}}</u-button>
 		<u-toast ref="uToast" />
 	</view>
 </template>
@@ -46,11 +46,10 @@
 				totalGameAmount: 0,
 				totalFreezeAmount: 0,
 				isReverse: false,
-				exchangeNum: 0,
-				sunCount: 0,
+				exchangeNum: '',
 				i18n: {
 					zh: {
-						QuantityAvailable: "可转出数量",
+						QuantityAvailable: "可用数量",
 						QuantityToBeSettled: "待结算数量",
 						TransferInto: "转入",
 						TransferOut: "转出",
@@ -59,7 +58,7 @@
 						Quantity:"数量",
 						From: "从",
 						To: "到",
-						digitalAccount: '数字账户',
+						digitalAccount: '钱包账户',
 						gameAccount: "游戏账户",
 						Currentlyavailable: "当前可用",
 						All: "全部",
@@ -93,6 +92,16 @@
 		created() {
 			this.getCoinList();
 		},
+		computed: {
+			sunCount() {
+				return this.isReverse ? this.totalGameAmount : this.totalAmount
+			}
+		},
+		watch: {
+			isReverse() {
+				this.exchangeNum = ''
+			}
+		},
 		methods: {
 			goUrl(page) {
 				uni.navigateTo({
@@ -112,6 +121,12 @@
 						title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
 						type: 'success',
 					})
+					if(this.isReverse) {
+						this.totalGameAmount -= Number(this.exchangeNum)
+					}else{
+						this.totalAmount-= Number(this.exchangeNum)
+					}
+					this.exchangeNum = '';
 				}, err => {
 					this.$refs.uToast.show({
 						title: err.msg,
@@ -145,6 +160,7 @@
 <style lang="scss">
 	.lecai-my-index{
 		padding: 30rpx;
+		overflow: auto;
 		.my-assets{
 			padding: 100rpx 0;
 			
@@ -172,13 +188,13 @@
 		}
 		.buttons{
 			display: flex;
+			margin-bottom: 80rpx;
 			
 			.u-btn{
 				width: 44%;
 			}
-			.u-btn.btn-plain{
+			.u-btn.u-btn--warning--plain{
 				background-color: #fff!important;
-				border: 2rpx solid #FA4444!important;
 			}
 		}
 		
@@ -290,6 +306,18 @@
 		
 		.submitBtn{
 			margin-top:100upx;
+			font-size: 32rpx;
+			background-color: #FFC000;
+			color: #fff;
+		}
+		/deep/ .u-btn--warning{
+			border-color: #FFC000;
+			background-color: #FFC000;
+			color: #fff;
+		}
+		/deep/ .u-btn--warning--plain{
+			color: #FFC000!important;
+			border-color:  #FFC000!important;
 		}
 	}
 </style>

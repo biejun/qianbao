@@ -1,19 +1,29 @@
 <template>
-	<div class="transfer-page">
-		<div class="transfer-child-title">{{$t('SelectCurrency')}}</div>
-		<view class="current-coin">
-			<image src="../../../static/index/content/icon_gcn.png" mode="" class="coin-icon"></image>
-			<view class="coin-name">GCN</view>
+	<view class="lecai-my-index">
+		<view class="my-assets">
+			<view class="assets-title">{{isReverse ? $t('ckAccount') : $t('digitalAccount')}}{{$t('QuantityAvailable')}}</view>
+			<view class="asset-amount">
+				{{isReverse ? totalYBB: totalAmount}}
+				<text class="asset-unit">GCN</text>
+			</view>
+<!-- 			<view class="asset-result">
+				{{$t('QuantityToBeSettled')}}: {{totalFreezeAmount}} GCN
+			</view> -->
 		</view>
+		<view class="buttons">
+			<u-button type="warning" :plain="isReverse" @click="isReverse=false">{{$t('TransferInto')}}</u-button>
+			<u-button type="warning" :plain="!isReverse" @click="isReverse = true">{{$t('TransferOut')}}</u-button>
+		</view>
+	
 		<div class="transfer-child-title">{{$t('Chooseanaccount')}}</div>
 		<div class="transfer-wrap">
 			<div class="transfer-item">
 				<span class="transfer-name">{{$t('From')}}</span>
-				<span>{{isReverse ? $t('gameAccount') : $t('digitalAccount')}}</span>
+				<span>{{isReverse ? $t('ckAccount') : $t('digitalAccount')}}</span>
 			</div>
 			<div class="transfer-item">
 				<span class="transfer-name">{{$t('To')}}</span>
-				<span>{{isReverse ? $t('digitalAccount') : $t('gameAccount')}}</span>
+				<span>{{isReverse ? $t('digitalAccount') : $t('ckAccount')}}</span>
 			</div>
 		</div>
 		<div class="transfer-child-title">{{$t('Quantity')}}</div>
@@ -22,9 +32,9 @@
 		</div>
 		<div class="transfer-child-title">{{$t('Currentlyavailable')}} <span class="transfer-balance">{{sunCount}}</span>
 			<text class="all-in" @click="allIn">{{$t('All')}}</text></div>
-		<u-button type="error" class="submitBtn" @click="exchange">{{$t('Transfer')}}</u-button>
+		<u-button class="submitBtn" @click="exchange">{{$t('Transfer')}}</u-button>
 		<u-toast ref="uToast" />
-	</div>
+	</view>
 </template>
 
 <script>
@@ -32,18 +42,24 @@
 	export default {
 		data() {
 			return {
+				totalAmount: 0,
+				totalYBB: 0,
+				totalFreezeAmount: 0,
 				isReverse: false,
-				exchangeNum: 0,
-				sunCount: 0,
+				exchangeNum: '',
 				i18n: {
 					zh: {
+						QuantityAvailable: "可用数量",
+						QuantityToBeSettled: "待结算数量",
+						TransferInto: "转入",
+						TransferOut: "转出",
 						SelectCurrency: "选择币种",
 						Chooseanaccount: "选择账户",
 						Quantity:"数量",
 						From: "从",
 						To: "到",
-						digitalAccount: '数字账户',
-						gameAccount: "游戏账户",
+						digitalAccount: '钱包账户',
+						ckAccount: "存款宝",
 						Currentlyavailable: "当前可用",
 						All: "全部",
 						Transfer:"划转",
@@ -52,13 +68,17 @@
 						trIn: "转入成功"
 					},
 					en: {
+						QuantityAvailable: "Quantity Available",
+						QuantityToBeSettled: "Quantity to be settled",
+						TransferInto: "Transfer in",
+						TransferOut: "Transfer out",
 						SelectCurrency: "Select currency",
 						Chooseanaccount: "Choose an account",
 						Quantity:"Quantity",
 						From: "From",
 						To: "To",
 						digitalAccount: "Digital Account",
-						gameAccount: "Game Account",
+						ckAccount: "CunKuan Bao",
 						Currentlyavailable: "Currently available",
 						All: "All",
 						Transfer: "Transfer",
@@ -69,11 +89,25 @@
 				},
 			}
 		},
-		onLoad(options) {
-			this.isReverse = Boolean(options.isReverse);
-			this.sunCount = options.amount;
+		created() {
+			this.getAmountByCoinName();
+		},
+		computed: {
+			sunCount() {
+				return this.isReverse ? this.totalYBB : this.totalAmount
+			}
+		},
+		watch: {
+			isReverse() {
+				this.exchangeNum = ''
+			}
 		},
 		methods: {
+			goUrl(page) {
+				uni.navigateTo({
+					url: page
+				})
+			},
 			allIn() {
 				this.exchangeNum = this.sunCount;
 			},
@@ -81,26 +115,95 @@
 				this.$u.post('/uUserAccount/exchangeAmount', {
 					coinName: 'GCN',
 					exchangeAmount: this.exchangeNum,
-					exchangeType: this.isReverse ? 2 : 1
+					exchangeType: this.isReverse ? 4 : 3
 				}).then(res => {
 					this.$refs.uToast.show({
 						title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
 						type: 'success',
 					})
+					if(this.isReverse) {
+						this.totalYBB = this.totalYBB - Number(this.exchangeNum)
+					}else{
+						this.totalAmount = this.totalAmount - Number(this.exchangeNum)
+					}
+					this.exchangeNum = '';
 				}, err => {
 					this.$refs.uToast.show({
 						title: err.msg,
 						type: 'error',
 					})
 				})
-			}
+			},
+			getAmountByCoinName() {
+				this.$u.api.getAmountByCoinName('GCN').then(res => {
+					if(!res.data) return;
+					this.totalAmount = res.data.amount;
+					this.totalYBB = res.data.yubiBaoAmount;
+				})
+			},
+			// getCoinList() {
+			// 	this.$u.api.getUserAmount().then(res => {
+			// 		if(res.data.length) {
+			// 			let totalYBB = 0;
+			// 			let totalFreezeAmount = 0;
+			// 			let totalAmount = 0;
+			// 			res.data.forEach(v => {
+			// 				if(v.coinName === 'GCN') {
+			// 					totalYBB = v.yubiBaoAmount || 0;
+			// 					totalFreezeAmount = v.frozenAmount || 0;
+			// 					totalAmount = v.amount || 0;
+			// 				}
+			// 			});
+			// 			this.totalAmount = totalAmount;
+			// 			this.totalYBB = totalYBB;
+			// 			this.totalFreezeAmount = totalFreezeAmount;
+			// 		}
+			// 	})
+			// }
 		}
 	}
 </script>
 
 <style lang="scss">
-	.transfer-page{
-		padding: 30px;
+	.lecai-my-index{
+		padding: 30rpx;
+		overflow: auto;
+		.my-assets{
+			padding: 100rpx 0;
+			
+			.assets-title{
+				text-align: center;
+				font-size: 30rpx;
+				color: #343434;
+			}
+			.asset-amount{
+				text-align: center;
+				font-size: 52rpx;
+				color: #343434;
+				
+				.asset-unit{
+					font-size: 24rpx;
+					margin-left: 15rpx;
+				}
+			}
+			.asset-result{
+				margin-top: 20rpx;
+				font-size: 24rpx;
+				color: #A5A5A5;
+				text-align: center;
+			}
+		}
+		.buttons{
+			display: flex;
+			margin-bottom: 80rpx;
+			
+			.u-btn{
+				width: 44%;
+			}
+			.u-btn.u-btn--warning--plain{
+				background-color: #fff!important;
+			}
+		}
 		
 		.all-in{
 			color: blue;
@@ -210,6 +313,18 @@
 		
 		.submitBtn{
 			margin-top:100upx;
+			font-size: 32rpx;
+			background-color: #FFC000;
+			color: #fff;
+		}
+		/deep/ .u-btn--warning{
+			border-color: #FFC000;
+			background-color: #FFC000;
+			color: #fff;
+		}
+		/deep/ .u-btn--warning--plain{
+			color: #FFC000!important;
+			border-color:  #FFC000!important;
 		}
 	}
 </style>

@@ -9,7 +9,7 @@
 				<u-avatar :src="item.coinImg" slot="icon" size="mini"></u-avatar>
 				<view slot="right-icon" class="actions">
 					<view @click="setCoinName(item)">
-						<u-switch v-model="item.switch" active-color="#F1333D" inactive-color="#F3F3F3" @change="handleChange"></u-switch>
+						<u-switch v-model="item.switch" active-color="#fcc82b" inactive-color="#F3F3F3" @change="handleChange"></u-switch>
 					</view>
 				</view>
 			</u-cell-item>

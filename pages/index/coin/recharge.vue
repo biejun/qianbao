@@ -2,8 +2,8 @@
 	<view class="common-bg recharge-add" @click="coinListShow = false">
 		<view class="recharge-add-inner">
 			<view class="recharge-message">
-				<text class="message-text">把比BTC、ETH、USDT等主流数字货币充入到区块玩家 身份下多链钱包中! </text>
-				<navigator class="message-btn" url="./learnRecharge"><u-icon name="question-circle"></u-icon> 了解充币</navigator>
+				<text class="message-text">{{$t('rechargeTip')}}</text>
+				<navigator class="message-btn" url="./learnRecharge"><u-icon name="question-circle"></u-icon> {{$t('Learnmore')}}</navigator>
 			</view>
 			<view class="dropdown-addon" :class="coinListShow ? 'is-fixed' : ''">
 				<view class="dropdown-header">
@@ -55,13 +55,19 @@
 						SwitchCurrency: '切换币种',
 						RechargeAddress: '充值地址',
 						CopyAddress: "复制地址",
-						recharge: "充币"
+						recharge: "充币",
+						rechargeTip: "支持BTC、ETH、USDT等主流数字货币充入到区块玩家 身份下多链钱包中!",
+						Learnmore: "了解充币",
+						copySuccess: "复制成功"
 					},
 					en: {
 						SwitchCurrency: 'Switch Currency',
 						RechargeAddress: 'Recharge Address',
 						CopyAddress: "Copy Address",
-						recharge: "Recharge"
+						recharge: "Recharge",
+						rechargeTip: "Support BTC, ETH, usdt and other mainstream digital currencies into the wallets under \"block players\"",
+						Learnmore: "Learn more",
+						copySuccess: "Copied!"
 					}
 				},
 			}
@@ -95,7 +101,7 @@
 			},
 			getCoinAddress(coinName) {
 				this.$u.api.getCoinAddress(coinName).then(res => {
-					this.rechargeAddress = res.data;
+					this.rechargeAddress = res.data.address;
 					qrcode.make({
 						canvasId: 'qrcode',
 						text: this.rechargeAddress,
@@ -115,7 +121,7 @@
 					uni.setClipboardData({
 					    data: this.rechargeAddress,
 					    success() {
-							this.$u.toast('已复制！');
+							this.$u.toast(this.$t('copySuccess'));
 					    }
 					});
 				}

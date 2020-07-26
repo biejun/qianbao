@@ -4,11 +4,12 @@
 		<view class="create-YUS2">
 			<view class="input-D3GZ">密文</view>
 			<view class="input-DDEW">
-				<u-input v-model="password" type="password" password-icon/>
+				<u-input v-model="password" placeholder="" type="password" password-icon/>
 			</view>
 		</view>
-		<view class="create-tips">密文尽量简短，易记，如：〞区块玩家〞，密文关系到货币转账安全，请妥善保存和记忆!</view>
-		<button type="default" class="submit-button" @click="submit">创建</button>
+		<view class="create-tips">密文尽量简短，易记，如：“区块玩家”，密文关系到货币转账安全，请妥善保存和记忆!</view>
+		<button type="default" class="submit-button" :disabled="isSubmit" @click="submit">
+			{{isSubmit ? '创建中...' : '创建'}}</button>
 	</view>
 </template>
 
@@ -16,13 +17,19 @@
 	export default{
 		data() {
 			return {
-				password: ''
+				password: '',
+				isSubmit: false
 			}
 		},
 		methods: {
 			submit() {
 				let password = this.password.trim();
 				if(password === '') return;
+				if(this.isSubmit) {
+					return;
+				}else{
+					this.isSubmit = true;
+				}
 				this.$u.post('/mnemonic/createAccount', {
 					password: this.password
 				}).then(res => {
@@ -34,10 +41,21 @@
 					uni.navigateTo({
 						url: '/pages/register/create-success'
 					})
+					this.isSubmit = false;
+				},err => {
+					this.isSubmit = false;
 				})
 
 			}
-		}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: './learn-more'
+				})
+			}
+		},
 	}
 </script>
 

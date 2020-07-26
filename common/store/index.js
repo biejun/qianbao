@@ -50,9 +50,10 @@ const store = new Vuex.Store({
 		vuex_game_id: 0,
 		vuex_exchange_image: '',
 		vuex_lang: lifeData.vuex_lang || 'zh',
-		vuex_mnemonic: [],
-		vuex_privateKey: '',
-		vuex_address: ''
+		vuex_mnemonic: lifeData.vuex_mnemonic || [],
+		vuex_privateKey: lifeData.vuex_privateKey || '',
+		vuex_address: lifeData.vuex_address || '',
+		vuex_statusCode: ''
 	},
 
 	mutations: {
@@ -75,6 +76,9 @@ const store = new Vuex.Store({
 			}
 			// 保存变量到本地，见顶部函数定义
 			saveLifeData(saveKey, state[saveKey])
+		},
+		'SET_STATUS_CODE'(state, code) {
+			state.vuex_statusCode = code;
 		}
 	}
 })

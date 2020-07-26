@@ -38,6 +38,7 @@ const install = (Vue, vm) => {
 			// 如果把originalData设置为了true，这里return回什么，this.$u.post的then回调中就会得到什么
 			return res;
 		} else {
+			vm.$store.commit('SET_STATUS_CODE', res.code);
 			return false;
 		}
 	}

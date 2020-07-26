@@ -1,26 +1,35 @@
 <template>
 	<view class="lecai-kaijiang">
-<!-- 		<u-navbar :is-back="false" title="" :custom-back="goUserCenter">
+		<u-navbar title="" :custom-back="goHome">
 			<view class="header-navbar">
-				<view class="navbar-icon" @click="goUserCenter">
-					<u-icon name="account" size="40"></u-icon>
-				</view>
-				<view class="navbar-title">哈希乐彩</view>
 				<view></view>
+				<view class="navbar-title">{{$t('hashLecai')}}</view>
+				<view @click="goUserCenter">
+					<image src="../../../static/1212.png" class="navbar-icon"></image>
+				</view>
 			</view>
-		</u-navbar> -->
+		</u-navbar>
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
-				{{$t('Period').replace('{0}', info.currentNumber)}} {{$t('Lottery').replace('{0}', dateFormat(info.openTime))}}
+				{{$t('Period').replace('{0}', ymd(info.openTime) + no(info.currentNumber))}} <!-- {{$t('Lottery').replace('{0}', dateFormat(info.openTime))}} -->
 			</view>
-			<view class="header-notify" @click="goUrl('user/notify')">
-				<image src="../../../static/icon_xiaoxi.png" class="notify-icon"></image>
+			<view class="header-notify">
+				<navigator class="message-btn" url="/pages/ecology/bet/way"><u-icon name="question-circle"></u-icon> {{$t('rules')}}</navigator>
+				<image src="../../../static/icon_xiaoxi.png" class="notify-icon" @click="goUrl('user/notify')"></image>
 			</view>
 		</view>
 		<view class="kai-jiang border-bottom-10">
-			<view class="title">{{$t('PrizeNumber')}}</view>
-			<view class="numbers">
+			<view v-if="info.openRewardNo" class="title">{{$t('PrizeNumber')}}</view>
+			<view v-else class="title">{{$t('WaitingPrize')}}</view>
+			<view v-if="info.openRewardNo" class="numbers">
 				<div class="item" v-for="(item, index) in info.openRewardNo.split(',')" :key="index">
+					<view class="num">
+						{{item}}
+					</view>
+				</div>
+			</view>
+			<view v-else class="numbers">
+				<div class="item" v-for="(item, index) in new Array(6).fill('')" :key="index">
 					<view class="num">
 						{{item}}
 					</view>
@@ -30,15 +39,19 @@
 				<view class="kai-jiang-pd30">
 					<view class="kai-row">
 						<view class="kai-item-name">{{$t('WinningHash')}}：</view>
-						<view class="kai-item-value">{{info.openRewardHash}}</view>
+						<view class="kai-item-value">{{info.openRewardHash || '-'}}</view>
 					</view>
 					<view class="kai-row">
 						<view class="kai-item-name">{{$t('BlockHeight')}}：</view>
-						<view class="kai-item-value">{{info.blockNumber}}</view>
-						<view @click="copy" class="copy-text">{{$t('Copy')}}</view>
+						<view class="kai-item-value">{{info.blockNumber || '-'}}</view>
+						<view v-if="info.blockNumber" @click="copy" class="copy-text">{{$t('Copy')}}</view>
 					</view>
 				</view>
 			</view>
+		</view>
+		<view class="next">
+			<text class="mr-10">{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? ymd(nextOpenTime) + no(info.currentNumber+1) : '-')}}</text>
+			<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
 		</view>
 		<view class="kai-jiang">
 			<view class="title">{{$t('PrizeDetails')}}</view>
@@ -70,10 +83,6 @@
 						{{$t('SalesVolume')}}
 					</view>
 				</view>
-			</view>
-			<view class="next">
-				<text>{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? info.currentNumber+1 : '-')}}</text>
-				<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
 			</view>
 			<view class="kai-detail-table-head">
 				<view class="kai-detail-row">
@@ -117,12 +126,24 @@
 				({{remainTime > 0 ? $t('closed') : endTime + $t('End')}})
 			</view>
 		</view>
+		<u-modal title="" :show-confirm-button="false" v-model="showNext">
+			<view class="msg-wrap">
+				<view class="msg-text">{{$t('stopSubmit')}}</view>
+				<view class="msg-text">{{$t('nextIssue')}}</view>
+				<view class="footer-button">
+					<view class="btn cancel-btn" @click="showNext = false">{{$t('cancel')}}</view>
+					<view class="btn submit-btn" @click="goNextSelect">{{$t('Bet2')}}</view>
+				</view>
+			</view>
+		</u-modal>
 	</view>
 </template>
 
 <script>
 	import { dateFormat } from '@/common/utils.js';
+	import UIcon from 'uview-ui/components/u-icon/u-icon'
 	export default{
+		components: {UIcon},
 		data() {
 			return {
 				info: {
@@ -136,9 +157,10 @@
 					createTime: '',
 					blockNumber: '',
 					beginTime: '',
-					endTime: ''
+					endTime: '',
 				},
 				detail: [],
+				showNext: false,
 				i18n: {
 					zh: {
 						PrizeNumber: '开奖号码',
@@ -159,13 +181,20 @@
 						MyBet: "我的投注",
 						Bet: "我要投注",
 						closed: "已结束",
-						End: "截止"
+						End: "截止",
+						hashLecai: "哈希乐彩",
+						rules: "规则玩法",
+						stopSubmit: "当期已停止投注！",
+						nextIssue: "请投注下期",
+						Bet2: "投注",
+						cancel: "取消",
+						WaitingPrize: "等待开奖"
 					},
 					en: {
 						PrizeNumber: 'Prize Number',
 						Period: "No. {0}",
-						WinningHash:"Winning Hash",
-						BlockHeight: "Block Height",
+						WinningHash:"Hash",
+						BlockHeight: "Height",
 						PrizeDetails: "Prize details",
 						Jackpot: "Jackpot",
 						SalesVolume: "Sales volume",
@@ -180,7 +209,14 @@
 						MyBet: "My Bet",
 						Bet: "Bet",
 						closed: "Closed",
-						End: "End"
+						End: "End",
+						hashLecai: "Hash Lotto",
+						rules: "Rules of play",
+						stopSubmit: "The current period has stopped betting!",
+						nextIssue: "Please bet on the next issue",
+						Bet2: "Bet",
+						cancel: "Cancel",
+						WaitingPrize: "Waiting for lucky numbers"
 					}
 				},
 			}
@@ -195,6 +231,12 @@
 		created() {
 			this.getGameBaseInfo();
 			this.getGameDetail();
+		},
+		onBackPress() {
+			uni.switchTab({
+				url: '/pages/index/index'
+			});
+			return true;
 		},
 		computed: {
 			remainTime() {
@@ -219,6 +261,13 @@
 		methods: {
 			dateFormat(val) {
 				return dateFormat(val, 'Y-m-d H:i:s')
+			},
+			ymd(val) {
+				return dateFormat(val, 'Ym');
+			},
+			no(val) {
+				if(!val) return '';
+				return val < 10 ? '0'+ val : val; 
 			},
 			getGameBaseInfo() {
 				this.$u.get('/gGameBase/getGameBase').then(res => {
@@ -248,11 +297,20 @@
 				    }
 				});
 			},
+			goNextSelect() {
+				this.$u.vuex('vuex_game_id', '');
+				this.$u.vuex('vuex_bet_period', this.info.currentNumber+1);
+				uni.navigateTo({
+					url: '../bet/select'
+				})
+			},
 			goSelect() {
 				if(this.remainTime < 0) {
 					uni.navigateTo({
 						url: '../bet/select'
 					})
+				}else{
+					this.showNext = true;
 				}
 			},
 			goMy() {
@@ -264,6 +322,11 @@
 				uni.navigateTo({
 					url: '/pages/'+ page
 				})
+			},
+			goHome() {
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
 			}
 		}
 	}
@@ -272,6 +335,9 @@
 <style lang="scss">
 	
 	.lecai-kaijiang{
+		.mr-10{
+			margin-right: 10rpx;
+		}
 		.header-navbar{
 			display: flex;
 			justify-content: space-between;
@@ -282,6 +348,10 @@
 			.navbar-title{
 				font-size: 32rpx;
 				font-weight: bold;
+			}
+			.navbar-icon{
+				width: 40rpx;
+				height: 40rpx;
 			}
 		}
 		.border-bottom-10{
@@ -302,6 +372,15 @@
 				width: 36rpx;
 				height: 36rpx;
 			}
+		}
+		
+		.next{
+			height:80rpx;
+			line-height: 80rpx;
+			font-size:28rpx;
+			color:rgba(52,52,52,1);
+			border-bottom: 10rpx solid #f3f3f3;
+			text-align: center;
 		}
 		
 		.kai-jiang{
@@ -417,19 +496,6 @@
 						align-items: center;
 					}
 				}
-				
-				.next{
-					border-top: 1px solid #f3f3f3;
-					padding: 20rpx 0;
-					height:26rpx;
-					font-size:28rpx;
-					font-weight:500;
-					color:rgba(52,52,52,1);
-					
-					text{
-						margin-right: 10rpx;
-					}
-				}
 			}
 		}
 		.footer-item{
@@ -456,6 +522,47 @@
 				height: 98rpx;
 				line-height: 98rpx;
 				text-align: center;
+			}
+		}
+		
+		.message-btn{
+			margin-right: 15rpx;
+			color: #F1333D;
+			display: inline-block;
+		}
+		
+		.msg-wrap{
+			padding: 30rpx 30rpx 60rpx 30rpx;
+			
+			.msg-text{
+				font-size: 32rpx;
+				margin-bottom: 20rpx;
+				color: #333;
+				text-align: center;
+			}
+			
+			.footer-button{
+				display: flex;
+				justify-content: center;
+				padding-top: 40rpx;
+				
+				.btn{
+					height: 60rpx;
+					line-height: 60rpx;
+					margin-left: 20rpx;
+					margin-right: 20rpx;
+					color: #fff;
+					width: 160rpx;
+					font-size: 30rpx;
+					text-align: center;
+				}
+				
+				.cancel-btn{
+					background-color: #DEDBDC;
+				}
+				.submit-btn{
+					background-color: $uni-color-primary;
+				}
 			}
 		}
 	}

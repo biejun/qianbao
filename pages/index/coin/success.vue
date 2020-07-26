@@ -5,7 +5,7 @@
 			<view class="success-text">{{msg}}</view>
 		</view>
 		<view class="go-back">
-			<button type="warn" @click="goBack">返回首页</button>
+			<button type="default" class="btn" @click="goBack">返回首页</button>
 		</view>
 	</view>
 </template>
@@ -48,8 +48,9 @@
 			flex-direction: column;
 			
 			.img{
-				width: 200rpx;
+				width: 180rpx;
 				height: 200rpx;
+				margin-bottom: 20rpx;
 			}
 			
 			.success-text{
@@ -59,6 +60,12 @@
 		
 		.go-back{
 			padding: 30rpx;
+			
+			.btn{
+				background-color: $uni-color-primary;
+				color: #fff;
+				font-size: 32rpx;
+			}
 		}
 	}
 </style>

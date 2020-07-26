@@ -28,7 +28,6 @@ Vue.mixin({
 		},
 		$t(property, defaultValue) {
 			let obj = this.i18n[this.vuex_lang];
-			console.log(this.vuex_lang)
 			defaultValue = defaultValue || property;
 			if (!obj) { return defaultValue}
 			if(property.indexOf('.') > 0) {

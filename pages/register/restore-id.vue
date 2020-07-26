@@ -5,10 +5,10 @@
 			<view class="create-YUS2">
 				<view class="input-D3GZ">密文</view>
 				<view class="input-DDEW">
-					<u-input v-model="password" type="password" password-icon/>
+					<u-input v-model="password" placeholder="" type="password"></u-input>
 				</view>
 			</view>
-			<view class="create-tips">密文尽量简短，易记，如：〞区块玩家〞，密文关系到货币转账安全，请妥善保存和记忆!</view>
+			<view class="create-tips">密文尽量简短，易记，如：“区块玩家”，密文关系到货币转账安全，请妥善保存和记忆!</view>
 		</view>
 		<view class="zhuji">
 			<view class="zhuji-tip">
@@ -19,20 +19,24 @@
 					<view class="card-inner">
 						<view class="card-no">{{index+1}}</view>
 						<view class="card-input">
-							<u-input v-model="item.value" placeholder=""/>
+							<u-input v-model="item.value" placeholder="" input-align="center" :clearable="false"/>
 						</view>
 					</view>
 				</view>
 			</view>
-<!-- 			<view class="verify-result">
-				<image src="../../static/success.png" class="status-image"></image>
-				<view class="status-text">助记词顺序正确!</view>
-			</view>
-			<view class="verify-result">
-				<image src="../../static/error.png" class="status-image"></image>
-				<view class="status-text">助记词顺序错误，请重新输入!</view>
-			</view> -->
 			<button type="default" class="submit-button" @click="submit">确认</button>
+			<u-modal v-model="show" title="" :show-confirm-button="false">
+				<view class="restore-res">
+					<view v-show="status === 1" class="verify-result">
+						<image src="../../static/success.png" class="status-image"></image>
+						<view class="status-text">恢复身份完成!</view>
+					</view>
+					<view v-show="status === 2" class="verify-result">
+						<image src="../../static/error.png" class="status-image"></image>
+						<view class="status-text">助记词顺序错误，请重新输入!</view>
+					</view>
+				</view>
+			</u-modal>
 		</view>
 	</view>
 </template>
@@ -46,7 +50,9 @@
 						value : ''
 					};
 				}),
-				password: ''
+				password: '',
+				status: 0,
+				show: false
 			}
 		},
 		methods: {
@@ -55,21 +61,56 @@
 				if(password === '') return;
 				this.$u.post('/mnemonic/importAccount', {
 					password,
-					mnemonic: this.cards.map(v => v.value).join(' ')
+					mnemonic: this.cards.map(v => v.value.trim()).join(' ')
 				}).then(res => {
-					uni.switchTab({
-						url: '/'
-					})
+					this.$u.vuex('vuex_mnemonic', res.data.mnemonic.split(' '))
+					this.$u.vuex('vuex_privateKey', res.data.privateKey)
+					this.$u.vuex('vuex_token', res.data.token)
+					this.$u.vuex('vuex_address', res.data.address)
+					this.$u.vuex('vuex_hasLogin', true);
+					this.show = true;
+					this.status = 1;
+					setTimeout(() => {
+						uni.switchTab({
+							url: '/pages/index/index'
+						})
+					}, 400)
 				}, err => {
-					
+					this.show = true
+					this.status = 2;
 				})
 			}
-		}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: './learn-more'
+				})
+			}
+		},
 	}
 </script>
 
 <style lang="scss">
 	.restore-page{
+		.restore-res{
+			padding-bottom: 50rpx;
+			.verify-result{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				.status-image{
+					width: 140rpx;
+					height: 158rpx;
+				}
+				.status-text{
+					margin-top: 15rpx;
+					color: #333;
+					font-size: 30rpx;
+				}
+			}
+		}
 		.create-id{
 			padding: 20rpx 30rpx;
 			.create-tips{

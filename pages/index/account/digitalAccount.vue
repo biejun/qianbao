@@ -2,45 +2,48 @@
 	<view class="digital-account" @click="showDropdown = false">
 		<view class="amount-wrap">
 			<view class="current-type">
-				数字账户
+				{{$t('totalAssets')}}
 			</view>
 			<view class="current-amount">
 				<view>
 					{{amount}}
 				</view>
-<!-- 				<view class="right-coin" @click.stop="showDropdown = !showDropdown">
-					{{currentCoin}}
-					<u-icon name="arrow-down" size="20"></u-icon>
-					<view class="dropdown" v-show="showDropdown">
-						<view class="dropdown-item">
-							BTC
-						</view>
-					</view>
-				</view> -->
+				<view class="right-btn" @click="goUrl('ecology/my/index')">
+					{{$t('Transfer')}}
+				</view>
 			</view>
+		</view>
+		<view class="record-entry">
+			<view class="record-btn" @click="goUrl('index/coin/withdrawDetail')">{{$t('Withdrawalrecord')}}</view>
+			<view class="record-btn" @click="goUrl('index/coin/rechargeDetail')">{{$t('Rechargerecord')}}</view>
 		</view>
 		<view class="withdrawal-date-cate">
 			<view class="reward">
-				收支明细
+				{{$t('detail')}}
 			</view>
 			<view class="date-tags">
-				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
-				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
-				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">{{$t('all')}}</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">{{$t('oneMonth')}}</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
 		<view class="withdrawal-list">
-			<u-cell-group v-if="detail.length">
-				<u-cell-item v-for="(item, index) in detail" :key="index" :title="item.businessRemark" :label="item.createTime | dateFormat" :arrow="false">
-					<view class="withdrawal-amount is-add">
-						{{item.changeType == 1 ? '+' : '-'}}{{item.amount}}
-					</view>
-<!-- 					<view>
-						手续费：{{item.fee}}
-					</view>
-					<view>月</view> -->
-				</u-cell-item>
-			</u-cell-group>
+			<u-table v-if="detail.length" border-color="#fff">
+				<u-tr>
+					<u-th>{{$t('time')}}</u-th>
+					<u-th>{{$t('currency')}}</u-th>
+					<u-th>{{$t('recipient')}}</u-th>
+					<u-th>{{$t('quantity')}}</u-th>
+				</u-tr>
+				<u-tr v-for="(item, index) in detail" :key="item.id">
+					<u-td>{{item.createTime | dateFormat}}</u-td>
+					<u-td>{{item.coinName}}</u-td>
+					<u-td>{{item.businessRemark}}</u-td>
+					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">
+					 {{item.changeType == 1 ? '+' : '-'}}{{item.amount}}
+					</u-td>
+				</u-tr>
+			</u-table>
 			<u-empty v-else text="暂无数据" mode="list"></u-empty>
 		</view>
 	</view>
@@ -68,7 +71,39 @@
 					// }
 				],
 				amount: 0,
-				showDropdown: false
+				showDropdown: false,
+				i18n: {
+					zh: {
+						totalAssets: '总资产',
+						all: '全部',
+						oneMonth: "一个月",
+						threeMonths: "三个月",
+						Withdrawalrecord: "提币记录",
+						Rechargerecord: "充币记录",
+						Transfer: "转入转出",
+						detail: "收支明细",
+						time: "时间",
+						currency: "币种",
+						recipient: "接收",
+						quantity: "数量",
+						digitalAccount: '钱包账户'
+					},
+					en: {
+						totalAssets: 'Total Assets',
+						all: 'All',
+						oneMonth: "One Mon",
+						threeMonths: "Three Mos.",
+						Withdrawalrecord: "Withdrawal record",
+						Rechargerecord: "Recharge record",
+						Transfer: "Transfer in/out",
+						detail: "Detail",
+						time: "Time",
+						currency: "Currency",
+						recipient: "Recipient",
+						quantity: "Quantity",
+						digitalAccount: "Wallet Account",
+					}
+				}
 			}
 		},
 		onLoad(options) {
@@ -76,21 +111,22 @@
 		},
 		created() {
 			this.getData();
+			this.setNavBarTitle('digitalAccount');
 		},
 		filters: {
 			dateFormat(val) {
 				return dateFormat(val, 'Y-m-d H:i:s');
 			}
 		},
-		onNavigationBarButtonTap(e) {
-			// e.index 拿到当前点击顶部按钮的索引
-			// 取消红点或者角标 
-			if(e.index === 0) {
-				uni.navigateTo({
-					url: '/pages/ecology/my/index'
-				})
-			}
-		},
+		// onNavigationBarButtonTap(e) {
+		// 	// e.index 拿到当前点击顶部按钮的索引
+		// 	// 取消红点或者角标 
+		// 	if(e.index === 0) {
+		// 		uni.navigateTo({
+		// 			url: '/pages/ecology/my/index'
+		// 		})
+		// 	}
+		// },
 		methods: {
 			getData() {
 				this.$u.api.getAccountDetail(1, this.dateType).then(res => {
@@ -100,7 +136,12 @@
 			changeDateType(type) {
 				this.dateType = type;
 				this.getData();
-			}
+			},
+			goUrl(page) {
+				uni.navigateTo({
+					url: '/pages/' + page
+				})
+			},
 		}
 	}
 </script>
@@ -108,25 +149,14 @@
 <style lang="scss" scoped>
 	.digital-account{
 		
-		.right-coin{
-			position: relative;
-			
-			.dropdown{
-				position: absolute;
-				top: 100%;
-				width: 250rpx;
-				right: 0;
-				padding: 10rpx;
-				background-color: #fff;
-				border-radius: 10rpx;
-				box-shadow: 0 1px 10px rgba(0,0,0,.1);
-				
-				.dropdown-item{
-					padding: 10rpx 15rpx;
-					font-size: 34rpx;
-					color: #333;
-				}
-			}
+		.right-btn{
+			margin-top: -20rpx;
+			border: 4rpx solid #fff;
+			border-radius: 10rpx;
+			padding: 0 30rpx;
+			font-size: 30rpx;
+			height: 70rpx;
+			line-height: 60rpx;
 		}
 		
 		.amount-wrap{
@@ -144,6 +174,12 @@
 				display: flex;
 				justify-content: space-between;
 			}
+		}
+		/deep/ .u-tr{
+			border-bottom: 1px solid #eee;
+		}
+		/deep/ .u-th{
+			background-color: #fff;
 		}
 		
 		.withdrawal-date-cate{
@@ -193,6 +229,22 @@
 		}
 		.withdrawal-amount{
 			color: #333;
+			&.is-add{
+				color: #FF0707;
+			}
+		}
+	}
+	.record-entry{
+		padding: 10rpx;
+		display: flex;
+		justify-content: center;
+		
+		.record-btn{
+			padding: 10rpx 20rpx;
+			border: 2rpx solid #a5a5a5;
+			margin-left: 10rpx;
+			margin-right: 10rpx;
+			border-radius: 10rpx;
 		}
 	}
 </style>

@@ -29,7 +29,15 @@
 					url: '/pages/mnemonic/index'
 				})
 			}
-		}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: './learn-more'
+				})
+			}
+		},
 	}
 </script>
 

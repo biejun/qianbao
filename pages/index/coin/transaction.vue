@@ -1,5 +1,12 @@
 <template>
 	<view class="common-bg transaction">
+		<view class="filter">
+			<view class="date-tags">
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+			</view>
+		</view>
 		<view v-if="list.length" class="data-flow">
 			<view v-for="item in list" class="data-flow-item" :key="item.id">
 				<view class="space data-header">
@@ -30,7 +37,8 @@
 	export default{
 		data() {
 			return {
-				list: []
+				list: [],
+				dateType: 0,
 			}
 		},
 		created() {
@@ -46,13 +54,46 @@
 				this.$u.post('/wRecordRecharge/exchangeRecord').then(res => {
 					this.list = res.data;
 				})
-			}
-		}
+			},
+			changeDateType(type) {
+				this.dateType = type;
+				this.getRecords();
+			},
+		},
+		onNavigationBarButtonTap(e) {
+			uni.navigateTo({
+				url: './learnEx'
+			})
+		},
 	}
 </script>
 
 <style lang="scss" scoped>
 	.transaction{
+		.filter{
+			display: flex;
+			justify-content: center;
+			padding: 15rpx 0;
+			background-color: #fff;
+			border-bottom: 2rpx solid #ededed;
+		}
+		.date-tags{
+			display: flex;
+			
+			.date-tag{
+				height: 40rpx;
+				padding: 0 20rpx;
+				border: 2rpx solid #A5A5A5;
+				border-radius: 20rpx;
+				font-size: 22rpx;
+				margin-left: 16rpx;
+				line-height: 38rpx;
+				&.is-active{
+					color: $uni-color-primary;
+					border-color: $uni-color-primary;
+				}
+			}
+		}
 		.data-flow{
 			background-color: #fff;
 			padding: 0 30rpx;

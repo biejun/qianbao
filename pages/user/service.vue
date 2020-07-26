@@ -1,10 +1,10 @@
 <template>
-	<view class="service">
-		<view class="kfh">如遇到问题，请使用微信联系客服</view>
-   <image src="../../static/index/userCenter/icon_kefu.png" mode=""></image>
-		<!-- <image src="../../static/kf.jpg" mode=""></image> -->
-		<view class="kfh">微信</view>
-		<view class="kfh">客服号：{{txt}}<text @click="copy(txt)">复制</text></view>
+	<view class="common-bg service">
+		<view class="reply-wrap">
+			<view class="message-input-bar">
+				<input type="input" v-model="value" class="msg-input">
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -12,36 +12,47 @@
 	export default {
 		data() {
 			return {
-				txt:"asdasdasdasdasd"
+				value: ''
 			};
 		},
 		methods:{
-			copy(value){
-			uni.setClipboardData({
-							data: value
-				});
-			}
+
 		}
 	}
 </script>
 
 <style lang="scss">
 	.service{
+		position: relative;
 		text-align: center;
-		padding: 150rpx;
 		height: 100%;
-		font-size: 30rpx;
-		image{
-			width: 210rpx;
-			height: 210rpx;
-			padding: 50rpx;
-		}
-		.kfh{
-			font-size: 30rpx;
-			text{
-				color: #1296DB;
-				padding-left: 20rpx;
+		
+		.reply-wrap{
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 110rpx;
+			display: flex;
+			align-items: center;
+			padding: 0 20rpx;
+			background-color: #EFEFEF;
+			
+			.message-input-bar{
+				//padding-right: 20rpx;
+				flex: 1;
 			}
+			
+			.msg-input{
+				text-align: left;
+				height: 80rpx;
+				background-color: #FFFFFF;
+				border-radius: 10rpx;
+				padding: 0 30rpx;
+			}
+			// .msg-button{
+				
+			// }
 		}
 	}
 </style>

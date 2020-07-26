@@ -1,6 +1,6 @@
 <template>
 	<view class="lecai-select">
-		<view class="select-wrap">
+<!-- 		<view class="select-wrap">
 			<view class="select-title">
 				{{$t('AD')}}
 			</view>
@@ -8,9 +8,9 @@
 				<text>{{$t('Introduction')}}</text>
 				<u-icon name="question-circle"></u-icon>
 			</view>
-		</view>
+		</view> -->
 		<view class="wan">
-			<view class="title">{{$t('Introduction')}}</view>
+			<view class="title">{{$t('Optionalplay')}}</view>
 			<view class="wan-list">
 				<view class="wan-item" v-for="item in group1" 
 					:class="['rx'+item.wayType]"
@@ -83,7 +83,15 @@
 					url: '../bet/index?type='+type+'&wayType='+item.wayType
 				})
 			}
-		}
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: './way'
+				})
+			}
+		},
 	}
 </script>
 
@@ -111,7 +119,7 @@
 		.wan{
 			
 			.title{
-				font-size: 28rpx;
+				font-size: 34rpx;
 				color: #343434;
 				padding: 15rpx 0;
 			}
@@ -127,7 +135,7 @@
 					flex: 1 0 40%;
 					max-width: 315rpx;
 					margin: 0 30rpx 20rpx 30rpx;
-					background-color: #F1343E;
+					background-color: #fcc82b;
 					height: 180rpx;
 					border-radius: 26rpx;
 					padding: 30rpx 40rpx;

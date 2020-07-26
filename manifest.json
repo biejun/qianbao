@@ -1,6 +1,6 @@
 {
-    "name" : "qianbao",
-    "appid" : "__UNI__04D98BB",
+    "name" : "区块玩家",
+    "appid" : "__UNI__277E9AD",
     "description" : "",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -12,7 +12,7 @@
         "compilerVersion" : 3,
         "splashscreen" : {
             "alwaysShowBeforeRender" : true,
-            "waiting" : true,
+            "waiting" : false,
             "autoclose" : true,
             "delay" : 0
         },

@@ -14,12 +14,6 @@
 			<view>*请勿将助记词在联网环境中分享和存储，避免恶意软件窃取</view>
 		</view>
 		<button type="default" class="submit-button" @click="submit">确认备份</button>
-		<u-modal @confirm="confirm" @cancel="show = false" :value="show" title="请输入密文" show-cancel-button>
-			<view class="enter-password">
-				<u-input v-model="password" type="password" password-icon placeholder="密文"></u-input>
-				<view style="color: red">{{message}}</view>
-			</view>
-		</u-modal>
 	</view>
 </template>
 
@@ -28,35 +22,47 @@
 		data() {
 			return {
 				cards: [],
-				show: false,
-				password: '',
-				message: ''
+				redirectUrl: '/pages/index/index'
 			}
+		},
+		onLoad(options) {
+			this.redirectUrl = options.redirect || '/pages/index/index';
 		},
 		created() {
 			if(this.vuex_mnemonic.length) {
 				this.cards = this.vuex_mnemonic;
 			}
 		},
-		methods: {
-			submit() {
-				this.show = true;
-			},
-			confirm() {
-				let password = this.password.trim();
-				this.$u.post('mnemonic/exportAccount', {
-					password
-				}).then(res => {
-					console.log(res)
-					this.show = false
-					uni.switchTab({
-						url: '/'
-					})
-				}, err => {
-					this.message = err.msg;
-					console.log(err)
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: '/pages/register/learn-more'
 				})
 			}
+		},
+		methods: {
+			submit() {
+				let redirectUrl = this.redirectUrl;
+				uni.navigateTo({
+					url: './verify'+(redirectUrl ? '?redirect=' +decodeURIComponent(redirectUrl) : '')
+				})
+			},
+			// confirm() {
+			// 	let password = this.password.trim();
+			// 	this.$u.post('mnemonic/exportAccount', {
+			// 		password
+			// 	}).then(res => {
+			// 		console.log(res)
+			// 		this.show = false
+			// 		uni.switchTab({
+			// 			url: '/'
+			// 		})
+			// 	}, err => {
+			// 		this.message = err.msg;
+			// 		console.log(err)
+			// 	})
+			// }
 		}
 	}
 </script>

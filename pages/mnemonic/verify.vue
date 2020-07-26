@@ -5,28 +5,31 @@
 		</view>
 		<view class="zhuji-cardWall">
 			<view v-for="(item, index) in cards" class="zhuji-card">
-				<view class="card-inner">
+				<view class="card-inner" 
+				  :class="{ hasError: eqWord(item.value, index) }">
 					<view class="card-no">{{index+1}}</view>
 					<view class="card-input">
-						<u-input v-model="item.value" placeholder=""/>
+						<u-input v-model="item.value" placeholder="" input-align="center" :clearable="false"/>
 					</view>
 				</view>
 			</view>
 		</view>
-		<view class="verify-result">
-			<image src="../../static/success.png" class="status-image"></image>
-			<view class="status-text">助记词顺序正确!</view>
+		<view class="verify-wrap">
+			<view v-show="status === 1" class="verify-result">
+				<image src="../../static/success.png" class="status-image"></image>
+				<view class="status-text">助记词顺序正确!</view>
+			</view>
+			<view v-show="status === 2" class="verify-result">
+				<image src="../../static/error.png" class="status-image"></image>
+				<view class="status-text">助记词顺序错误，请重新输入!</view>
+			</view>
 		</view>
-<!-- 		<view class="verify-result">
-			<image src="../../static/error.png" class="status-image"></image>
-			<view class="status-text">助记词顺序错误，请重新输入!</view>
-		</view> -->
-		<u-modal @confirm="confirm" @cancel="show = false" :value="show" title="请输入密文" show-cancel-button>
+<!-- 		<u-modal v-model="show" title="请输入密文" :show-confirm-button="false">
 			<view class="enter-password">
 				<u-input v-model="password" type="password" password-icon placeholder="密文"></u-input>
 				<view style="color: red">{{message}}</view>
 			</view>
-		</u-modal>
+		</u-modal> -->
 		<button type="default" class="submit-button" @click="submit">确认</button>
 	</view>
 </template>
@@ -40,28 +43,43 @@
 						value : ''
 					};
 				}),
-				show: false,
-				password: '',
-				message: ''
+				status: 0,
+				redirectUrl: '/pages/index/index'
 			}
 		},
-		created() {
+		onLoad(options) {
+			this.redirectUrl = options.redirect || '/pages/index/index';
+		},
+		onNavigationBarButtonTap(e) {
+			// e.index 拿到当前点击顶部按钮的索引
+			if(e.index === 0) {
+				uni.navigateTo({
+					url: '/pages/register/learn-more'
+				})
+			}
 		},
 		methods: {
-			submit() {
-				this.show = true;
+			eqWord(val, index) {
+				let word = this.vuex_mnemonic[index];
+				let isUndef = typeof word === 'undefined';
+				if(isUndef) return false;
+				let wordLen = word.length, valLen = val.trim().length;
+				return valLen >= wordLen && word !== val;
 			},
-			confirm() {
-				let password = this.password.trim();
-				if(password === '') return;
-				this.$u.post('/mnemonic/loginAccount', {
-					password,
-					mnemonic: this.cards.map(v => v.value).join(' ')
-				}).then(res => {
-					uni.switchTab({
-						url: '/'
-					})
-				})
+			submit() {
+				let storeMnemonicStr = this.vuex_mnemonic.join(' ');
+				let inputMnemonicStr = this.cards.map(v => v.value.trim() ).join(' ');
+				if(storeMnemonicStr === inputMnemonicStr) {
+					this.$u.vuex('vuex_hasLogin', true);
+					this.status = 1;
+					setTimeout(() => {
+						uni.switchTab({
+							url: this.redirectUrl
+						})
+					}, 400)
+				}else{
+					this.status = 2;
+				}
 			}
 		}
 	}
@@ -109,23 +127,38 @@
 						margin-top: 20rpx;
 						font-size: 26rpx;
 						font-weight: bold;
-						color: #555454;
+						text-align: center;
+					}
+					
+					&.hasError{
+						background-color: #f9e6e6;
+						
+						.card-input{
+							/deep/ .u-input__input{
+								color: #cb6a6a;
+							}
+						}
 					}
 				}
 			}
 		}
 		.submit-button{
-			margin-top: 100rpx;
+			margin-top: 50rpx;
 			font-size: 32rpx;
 			background-color: #FFC000;
 			color: #fff;
+		}
+		.verify-wrap{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 280rpx;
 		}
 		.verify-result{
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			margin-top: 120rpx;
 			.status-image{
 				width: 140rpx;
 				height: 158rpx;
