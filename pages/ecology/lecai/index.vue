@@ -93,7 +93,7 @@
 						{{$t('WinningRules')}}
 					</view>
 					<view class="kai-detail-cell">
-						{{$t('WinningRules')}}
+						{{$t('NumberWinners')}}
 					</view>
 					<view class="kai-detail-cell">
 						{{$t('SingleBetAmount')}}(GCN)
