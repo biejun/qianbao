@@ -42,7 +42,7 @@
 </template>
 
 <script>
-	import { dateFormat } from '@/common/utils.js';
+	import { dateFormat, accAdd } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -89,9 +89,6 @@
 				}
 			}
 		},
-		onLoad(options) {
-			this.amount = options.amount;
-		},
 		filters: {
 			dateFormat(val) {
 				return dateFormat(val, 'Y-m-d H:i:s');
@@ -99,7 +96,15 @@
 		},
 		created() {
 			this.getData();
+			this.getUserAmount();
 			this.setNavBarTitle('gameAccount');
+		},
+		onPullDownRefresh() {
+			this.getData();
+			this.getUserAmount();
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		// onNavigationBarButtonTap(e) {
 		// 	// e.index 拿到当前点击顶部按钮的索引
@@ -117,6 +122,18 @@
 			getData() {
 				this.$u.api.getAccountDetail(2, this.dateType).then(res => {
 					this.detail = res.data;
+				})
+			},
+			getUserAmount() {
+				this.$u.api.getUserAmount().then(res => {
+					let totalGameAmount = 0;
+					res.data.forEach(v => {
+						let gameAmount = v.gameAmount || 0;
+						totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
+					});
+					console.log(totalGameAmount)
+					this.amount = totalGameAmount;
+					//this.totalGameAmount = totalGameAmount;
 				})
 			},
 			changeDateType(type) {

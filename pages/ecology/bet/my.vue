@@ -50,6 +50,7 @@
 				</u-cell-group>
 			</view>
 		</template>
+		<u-empty v-if="noContent" text="暂无记录" mode="history"></u-empty>
 		<u-popup v-model="showFilter" mode="right">
 			<view class="filter-wrap">
 				<view class="filter-header">
@@ -168,6 +169,7 @@
 						Submit: "Search"
 					}
 				},
+				noContent: false
 			}
 		},
 		created() {
@@ -231,6 +233,7 @@
 			},
 			getData() {
 				let url = this.type === 1 ? '/gGameOrder/getOrderDetailWithOrder' : '/gGameOrder/getOrderDetailWithNumber';
+				this.noContent = false;
 				this.$u.post(url, {
 					beginTime: this.beginTime,
 					endTime: this.endTime,
@@ -260,6 +263,8 @@
 							v.stakeAmount = stakeAmount;
 							return v;
 						});
+						
+						this.noContent = !this.data1.length;
 
 						console.log(this.data1)
 					} else if (this.type === 2) {
@@ -285,6 +290,7 @@
 							})
 							return v;
 						});
+						this.noContent = !this.data2.length;
 					}
 				})
 			}

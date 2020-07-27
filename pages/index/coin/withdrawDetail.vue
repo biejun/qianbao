@@ -51,7 +51,6 @@
 					<u-td width="4%"><u-icon name="arrow-right"></u-icon></u-td>
 				</u-tr>
 			</u-table>
-			<u-empty v-if="data1.length === 0" text="暂无记录" mode="history"></u-empty>
 		</view>
 		<view v-if="type === 2" class="record-list">
 			<u-table v-if="data2.length" border-color="#fff">
@@ -85,8 +84,8 @@
 					<view class="record-status">{{item.status | statusText}}</view>
 				</view>
 			</view> -->
-			<u-empty v-if="data2.length === 0" text="暂无记录" mode="history"></u-empty>
 		</view>
+		<u-empty v-if="noContent" text="暂无记录" mode="history"></u-empty>
 		<u-modal v-model="showDetail" confirm-text="关闭" :title="detail ? detail.coinName : '交易明细'">
 			<view v-if="detail && type === 1" class="detail-view">
 				<view class="detail-item mb-10">
@@ -272,6 +271,7 @@
 				},
 				coinList: [],
 				dateType: 0,
+				noContent: false
 			}
 		},
 		onLoad(options) {
@@ -339,11 +339,14 @@
 			},
 			getData() {
 				let url = this.type === 1 ? '/wRecordTransferIn/getTransferIn/' : '/wRecordTransferOut/getTransferOut/';
+				this.noContent = false;
 				this.$u.get(url + this.coinName+'/'+this.dateType).then(res => {
 					if(this.type === 1) {
 						this.data1 = res.data;
+						this.noContent = !this.data1.length;
 					}else if(this.type === 2) {
 						this.data2 = res.data;
+						this.noContent = !this.data2.length;
 						//this.data2 = res.data;
 					}
 				},err => {
@@ -438,7 +441,6 @@
 		
 		.record-list{
 			padding: 12rpx 30rpx;
-			min-height: 500rpx;
 		}
 		
 		.record-item{

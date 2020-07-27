@@ -121,11 +121,7 @@
 						title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
 						type: 'success',
 					})
-					if(this.isReverse) {
-						this.totalYBB = this.totalYBB - Number(this.exchangeNum)
-					}else{
-						this.totalAmount = this.totalAmount - Number(this.exchangeNum)
-					}
+					this.getAmountByCoinName();
 					this.exchangeNum = '';
 				}, err => {
 					this.$refs.uToast.show({

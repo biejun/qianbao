@@ -191,33 +191,33 @@
 					this.userBalance.YBB = res.data.yubiBaoAmount;
 				})
 			},
-			getUserAmount() {
-				this.$u.api.getUserAmount().then(res => {
-					this.list = res.data;
-					let totalAmount = 0;
-					let totalGameAmount = 0;
-					//let totalUSDT = 0;
-					let totalYBB = 0;
-					res.data.forEach(v => {
-						//let usdtAmount = v.usdtAmount || 0;
-						let gameAmount = v.gameAmount || 0;
-						let cnyAmount = v.cnyAmount || 0;
-						let yubiBaoAmount = v.yubiBaoAmount || 0;
+			// getUserAmount() {
+			// 	this.$u.api.getUserAmount().then(res => {
+			// 		this.list = res.data;
+			// 		let totalAmount = 0;
+			// 		let totalGameAmount = 0;
+			// 		//let totalUSDT = 0;
+			// 		let totalYBB = 0;
+			// 		res.data.forEach(v => {
+			// 			//let usdtAmount = v.usdtAmount || 0;
+			// 			let gameAmount = v.gameAmount || 0;
+			// 			let cnyAmount = v.cnyAmount || 0;
+			// 			let yubiBaoAmount = v.yubiBaoAmount || 0;
 						
-						totalAmount = accAdd(totalAmount, cnyAmount).toFixed(2); // 持有总USDT 相当于 GCN 的总资产
-						totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
-						//totalDigitalAmount = accAdd(totalDigitalAmount, usdtAmount).toFixed(2); // USDT 总资产
-						totalYBB = accAdd(totalYBB, yubiBaoAmount);
-					});
-					this.totalAmount = totalAmount;
-					this.totalGameAmount = totalGameAmount;
-					this.totalYBB = totalYBB;
-				}, res => {
-					if (res.code === 401) {
-						this.$u.vuex('vuex_hasLogin', false);
-					}
-				})
-			},
+			// 			totalAmount = accAdd(totalAmount, cnyAmount).toFixed(2); // 持有总USDT 相当于 GCN 的总资产
+			// 			totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
+			// 			//totalDigitalAmount = accAdd(totalDigitalAmount, usdtAmount).toFixed(2); // USDT 总资产
+			// 			totalYBB = accAdd(totalYBB, yubiBaoAmount);
+			// 		});
+			// 		this.totalAmount = totalAmount;
+			// 		this.totalGameAmount = totalGameAmount;
+			// 		this.totalYBB = totalYBB;
+			// 	}, res => {
+			// 		if (res.code === 401) {
+			// 			this.$u.vuex('vuex_hasLogin', false);
+			// 		}
+			// 	})
+			// },
 			confirmPassword() {
 				let password = this.password.trim();
 				if(password === '') return;

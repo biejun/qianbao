@@ -55,7 +55,7 @@
 </template>
 
 <script>
-	import { dateFormat } from '@/common/utils.js';
+	import { dateFormat, accAdd } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -109,9 +109,9 @@
 				}
 			}
 		},
-		onLoad(options) {
-			this.amount = options.amount;
-		},
+		// onLoad(options) {
+		// 	this.amount = options.amount;
+		// },
 		filters: {
 			dateFormat(val) {
 				return dateFormat(val, 'Y-m-d H:i:s');
@@ -120,7 +120,16 @@
 		created() {
 			this.getData();
 			this.getUserRate();
+			this.getUserAmount();
 			this.setNavBarTitle('cunKuanBao');
+		},
+		onPullDownRefresh() {
+			this.getData();
+			this.getUserRate();
+			this.getUserAmount();
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1500);
 		},
 		// onNavigationBarButtonTap(e) {
 		// 	// e.index 拿到当前点击顶部按钮的索引
@@ -143,6 +152,16 @@
 			getUserRate() {
 				this.$u.api.getUserRate().then(res => {
 					this.ckRate = res.data;
+				})
+			},
+			getUserAmount() {
+				this.$u.api.getUserAmount().then(res => {
+					let totalYBB = 0;
+					res.data.forEach(v => {
+						let yubiBaoAmount = v.yubiBaoAmount || 0;
+						totalYBB = accAdd(totalYBB, yubiBaoAmount);
+					});
+					this.amount = totalYBB;
 				})
 			},
 			changeDateType(type) {

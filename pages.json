@@ -7,7 +7,8 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTextStyle": "white"
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"subNVues":[{
 				// 		// 全局唯一标识
@@ -68,7 +69,8 @@
 			"style": {
 				"navigationBarTitleText": "数字账户",
 				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white"
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"titleNView": {
 				// 		"buttons": [{
@@ -86,7 +88,8 @@
 			"style": {
 				"navigationBarTitleText": "游戏账户",
 				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white"
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"titleNView": {
 				// 		"buttons": [{
@@ -104,7 +107,8 @@
 			"style": {
 				"navigationBarTitleText": "存款宝",
 				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white"
+				"navigationBarTextStyle": "white",
+				"enablePullDownRefresh": true
 			}
 		},
 		{
@@ -251,7 +255,8 @@
 			"path": "pages/ecology/lecai/index",
 			"style": {
 				"navigationBarTitleText": "哈希乐彩",
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"titleNView": {
 				// 		"buttons": [{
@@ -334,44 +339,46 @@
 				"navigationBarTitleText": "投注成功"
 			}
 		},
+		// {
+		// 	"path": "pages/login/login",
+		// 	"style": {
+		// 		"navigationBarTitleText": "登录"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/login/loginzc",
+		// 	"style": {
+		// 		"navigationBarTitleText": "短信登录"
+		// 	}
+		// },
+		// {
+		// 	"path": "pages/login/forgetpassword",
+		// 	"style": {
+		// 		"navigationBarTitleText": "忘记密码"
+		// 	}
+		// }, {
+		// 	"path": "pages/login/registeredinvite",
+		// 	"style": {
+		// 		"navigationBarTitleText": "邀请注册"
+		// 	}
+		// }, {
+		// 	"path": "pages/login/versions",
+		// 	"style": {
+		// 		"navigationBarTitleText": "版本下载"
+		// 	}
+		// }, {
+		// 	"path": "pages/user/security/invitation",
+		// 	"style": {
+		// 		"navigationBarTitleText": "我的邀请码"
+		// 	}
+		// }, 
+		// {
+		// 	"path": "pages/login/description/description",
+		// 	"style": {
+		// 		"navigationBarTitleText": "选择区号"
+		// 	}
+		// },
 		{
-			"path": "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录"
-			}
-		},
-		{
-			"path": "pages/login/loginzc",
-			"style": {
-				"navigationBarTitleText": "短信登录"
-			}
-		},
-		{
-			"path": "pages/login/forgetpassword",
-			"style": {
-				"navigationBarTitleText": "忘记密码"
-			}
-		}, {
-			"path": "pages/login/registeredinvite",
-			"style": {
-				"navigationBarTitleText": "邀请注册"
-			}
-		}, {
-			"path": "pages/login/versions",
-			"style": {
-				"navigationBarTitleText": "版本下载"
-			}
-		}, {
-			"path": "pages/user/security/invitation",
-			"style": {
-				"navigationBarTitleText": "我的邀请码"
-			}
-		}, {
-			"path": "pages/login/description/description",
-			"style": {
-				"navigationBarTitleText": "选择区号"
-			}
-		},{
 			"path": "pages/user/share",
 			"style": {
 				"navigationBarTitleText": "分享"

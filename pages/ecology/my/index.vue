@@ -90,7 +90,7 @@
 			}
 		},
 		created() {
-			this.getCoinList();
+			this.getAmountByCoinName();
 		},
 		computed: {
 			sunCount() {
@@ -121,11 +121,7 @@
 						title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
 						type: 'success',
 					})
-					if(this.isReverse) {
-						this.totalGameAmount -= Number(this.exchangeNum)
-					}else{
-						this.totalAmount-= Number(this.exchangeNum)
-					}
+					this.getAmountByCoinName();
 					this.exchangeNum = '';
 				}, err => {
 					this.$refs.uToast.show({
@@ -134,25 +130,32 @@
 					})
 				})
 			},
-			getCoinList() {
-				this.$u.api.getUserAmount().then(res => {
-					if(res.data.length) {
-						let totalGameAmount = 0;
-						let totalFreezeAmount = 0;
-						let totalAmount = 0;
-						res.data.forEach(v => {
-							if(v.coinName === 'GCN') {
-								totalGameAmount = v.gameAmount || 0;
-								totalFreezeAmount = v.frozenAmount || 0;
-								totalAmount = v.amount || 0;
-							}
-						});
-						this.totalAmount = totalAmount;
-						this.totalGameAmount = totalGameAmount;
-						this.totalFreezeAmount = totalFreezeAmount;
-					}
+			getAmountByCoinName() {
+				this.$u.api.getAmountByCoinName('GCN').then(res => {
+					if(!res.data) return;
+					this.totalAmount = res.data.amount;
+					this.totalGameAmount = res.data.gameAmount;
 				})
-			}
+			},
+			// getCoinList() {
+			// 	this.$u.api.getUserAmount().then(res => {
+			// 		if(res.data.length) {
+			// 			let totalGameAmount = 0;
+			// 			let totalFreezeAmount = 0;
+			// 			let totalAmount = 0;
+			// 			res.data.forEach(v => {
+			// 				if(v.coinName === 'GCN') {
+			// 					totalGameAmount = v.gameAmount || 0;
+			// 					totalFreezeAmount = v.frozenAmount || 0;
+			// 					totalAmount = v.amount || 0;
+			// 				}
+			// 			});
+			// 			this.totalAmount = totalAmount;
+			// 			this.totalGameAmount = totalGameAmount;
+			// 			this.totalFreezeAmount = totalFreezeAmount;
+			// 		}
+			// 	})
+			// }
 		}
 	}
 </script>

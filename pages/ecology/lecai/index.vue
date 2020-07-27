@@ -58,7 +58,7 @@
 			<view class="kai-detail-row">
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">{{info.currentRewardPool}}{{$t('Billion')}}</text>
+						<text class="detail-num">{{info.currentRewardPool}}</text>
 						<text class="detail-unit">GCN</text>
 					</view>
 					<view class="detail-cell-item">
@@ -76,7 +76,7 @@
 				</view> -->
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">{{info.currentSellNumber}}{{$t('Billion')}}</text>
+						<text class="detail-num">{{info.currentSellNumber}}</text>
 						<text class="detail-unit">GCN</text>
 					</view>
 					<view class="detail-cell-item">
@@ -228,9 +228,16 @@
 				this.goUserCenter();
 			}
 		},
-		onShow() {
+		onLoad() {
 			this.getGameBaseInfo();
 			this.getGameDetail();
+		},
+		onPullDownRefresh() {
+			this.getGameBaseInfo();
+			this.getGameDetail();
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1500);
 		},
 		onBackPress() {
 			uni.switchTab({

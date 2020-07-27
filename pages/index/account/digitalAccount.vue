@@ -50,7 +50,7 @@
 </template>
 
 <script>
-	import { dateFormat } from '@/common/utils.js';
+	import { dateFormat, accAdd } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -106,11 +106,16 @@
 				}
 			}
 		},
-		onLoad(options) {
-			this.amount = options.amount;
+		onPullDownRefresh() {
+			this.getData();
+			this.getUserAmount();
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		created() {
 			this.getData();
+			this.getUserAmount();
 			this.setNavBarTitle('digitalAccount');
 		},
 		filters: {
@@ -142,6 +147,20 @@
 					url: '/pages/' + page
 				})
 			},
+			getUserAmount() {
+				this.$u.api.getUserAmount().then(res => {
+					let totalAmount = 0;
+					let totalGameAmount = 0;
+					res.data.forEach(v => {
+						let gameAmount = v.gameAmount || 0;
+						let cnyAmount = v.cnyAmount || 0;
+						totalAmount = accAdd(totalAmount, cnyAmount).toFixed(2); // 持有总USDT 相当于 GCN 的总资产
+						totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
+					});
+					this.amount = totalAmount;
+					//this.totalGameAmount = totalGameAmount;
+				})
+			}
 		}
 	}
 </script>

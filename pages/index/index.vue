@@ -209,8 +209,10 @@
 			}
 		},
 		onLoad() {
-			this.checkLogin();
-			this.getNotifyData();
+			let checkLogin = this.checkLogin();
+			if(checkLogin) {
+				this.getNotifyData();
+			}
 		},
 		watch: {
 			vuex_lang() {
@@ -221,11 +223,20 @@
 			this.initTab();
 		},
 		onShow() {
-			this.getUserAmount();
-			this.getAmountByCoinName();
-			this.getUserRate();
+			this.initData();
+		},
+		onPullDownRefresh() {
+			this.initData();
+			setTimeout(() => {
+				uni.stopPullDownRefresh();
+			}, 1000);
 		},
 		methods: {
+			initData() {
+				this.getUserAmount();
+				this.getAmountByCoinName();
+				this.getUserRate();
+			},
 			scanCode() {
 				uni.scanCode({
 					success: function (res) {
