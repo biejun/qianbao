@@ -29,7 +29,7 @@
 					<u-th width="4%"></u-th>
 				</u-tr>
 				<u-tr v-for="item in data" :key="item.id" @click.native="openDetail(item)">
-					<u-td>{{item.createTime | dateFormat}}</u-td>
+					<u-td>{{item.createTime | dateFormatYMD}}</u-td>
 					<u-td>{{item.coinName}}</u-td>
 					<u-td>{{item.amount}}</u-td>
 					<u-td  width="4%"><u-icon name="arrow-right"></u-icon></u-td>
@@ -123,6 +123,9 @@
 			this.coinName = options.coinName;
 		},
 		filters: {
+			dateFormatYMD(val) {
+				return typeof val === 'number' ? dateFormat(val, 'Y-m-d') : '';
+			},
 			dateFormat(val) {
 				return typeof val === 'number' ? dateFormat(val, 'Y-m-d H:i:s') : '';
 			}

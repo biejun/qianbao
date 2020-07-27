@@ -19,7 +19,7 @@
 			<view v-for="d in data1" class="data-box">
 				<view class="data-title">{{$t('OrderNo')}}：{{d.orderNo}}</view>
 				<u-cell-group v-for="item in d.currentOrderDTOList" :key="item.currentNumber">
-					<u-cell-item :title="$t('Period').replace('{0}', ymd(item.openTime) + no(item.currentNumber))" :value="statusText(item.status)" :arrow="false">
+					<u-cell-item :title="$t('Period').replace('{0}', ymd(item.openTime))" :value="statusText(item.status)" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
 					<u-cell-item v-for="game in item.orders" @click="openDetail(game)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
@@ -35,7 +35,7 @@
 		<template v-if="type === 2">
 			<view v-for="d in data2" class="data-box">
 				<view class="data-sum">
-					<view>{{$t('Period').replace('{0}', ymd(d.openTime) + no(d.currentNumber))}}</view>
+					<view>{{$t('Period').replace('{0}', ymd(d.openTime))}}</view>
 					<view>{{statusText(d.status)}}</view>
 				</view>
 				<u-cell-group v-for="item in d.orderNoTwoDTOList">
@@ -185,7 +185,7 @@
 		},
 		methods: {
 			ymd(val) {
-				return dateFormat(val, 'Ym');
+				return dateFormat(val, 'Ymd');
 			},
 			no(val) {
 				if(!val) return '';

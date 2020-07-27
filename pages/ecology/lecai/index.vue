@@ -11,7 +11,7 @@
 		</u-navbar>
 		<view class="header-item border-bottom-10">
 			<view class="header-num">
-				{{$t('Period').replace('{0}', ymd(info.openTime) + no(info.currentNumber))}} <!-- {{$t('Lottery').replace('{0}', dateFormat(info.openTime))}} -->
+				{{$t('Period').replace('{0}', ymd(info.openTime))}} <!-- {{$t('Lottery').replace('{0}', dateFormat(info.openTime))}} -->
 			</view>
 			<view class="header-notify">
 				<navigator class="message-btn" url="/pages/ecology/bet/way"><u-icon name="question-circle"></u-icon> {{$t('rules')}}</navigator>
@@ -50,7 +50,7 @@
 			</view>
 		</view>
 		<view class="next">
-			<text class="mr-10">{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? ymd(nextOpenTime) + no(info.currentNumber+1) : '-')}}</text>
+			<text class="mr-10">{{$t('NextPeriod')}}：{{$t('Period').replace('{0}', info.currentNumber ? ymd(nextOpenTime) : '-')}}</text>
 			<text>{{$t('Lottery').replace('{0}', dateFormat(nextOpenTime))}}</text>
 		</view>
 		<view class="kai-jiang">
@@ -58,8 +58,8 @@
 			<view class="kai-detail-row">
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">{{info.currentRewardPool}}</text>
-						<text class="detail-unit">{{$t('Billion')}}</text>
+						<text class="detail-num">{{info.currentRewardPool}}{{$t('Billion')}}</text>
+						<text class="detail-unit">GCN</text>
 					</view>
 					<view class="detail-cell-item">
 						{{$t('Jackpot')}}
@@ -76,8 +76,8 @@
 				</view> -->
 				<view class="kai-detail-cell">
 					<view>
-						<text class="detail-num">{{info.currentSellNumber}}</text>
-						<text class="detail-unit">{{$t('Billion')}}</text>
+						<text class="detail-num">{{info.currentSellNumber}}{{$t('Billion')}}</text>
+						<text class="detail-unit">GCN</text>
 					</view>
 					<view class="detail-cell-item">
 						{{$t('SalesVolume')}}
@@ -168,7 +168,7 @@
 						WinningHash:"开奖哈希",
 						BlockHeight: "区块高度",
 						PrizeDetails: "开奖详细",
-						Jackpot: "本期奖池",
+						Jackpot: "奖池",
 						SalesVolume: "本期销售额",
 						Billion: "亿",
 						Copy: "复制",
@@ -228,7 +228,7 @@
 				this.goUserCenter();
 			}
 		},
-		created() {
+		onShow() {
 			this.getGameBaseInfo();
 			this.getGameDetail();
 		},
@@ -263,7 +263,7 @@
 				return dateFormat(val, 'Y-m-d H:i:s')
 			},
 			ymd(val) {
-				return dateFormat(val, 'Ym');
+				return dateFormat(val, 'Ymd');
 			},
 			no(val) {
 				if(!val) return '';

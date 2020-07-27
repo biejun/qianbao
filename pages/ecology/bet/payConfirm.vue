@@ -148,7 +148,7 @@
 					totalAmount: this.totalNum.amount,
 					wayDesc: this.name,
 					wayType: this.wayType,
-					currentNumber: this.vuex_bet_period - 1
+					currentNumber: this.vuex_game_id !== '' ? this.vuex_bet_period : this.vuex_bet_period - 1
 				}).then(res => {
 					uni.hideLoading();
 					this.isLoading = false;

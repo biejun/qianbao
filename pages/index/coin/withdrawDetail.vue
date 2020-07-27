@@ -34,7 +34,7 @@
 		<view v-if="type === 1" class="record-list">
 			<u-table v-if="data1.length" border-color="#fff">
 				<u-tr>
-					<u-th>时间</u-th>
+					<u-th width="210rpx">时间</u-th>
 					<u-th>币种</u-th>
 					<u-th>接收</u-th>
 					<u-th>数量</u-th>
@@ -42,9 +42,9 @@
 				</u-tr>
 				<u-tr v-for="(item, index) in data1" :key="item.id" 
 				 @click.native="openDetail(item)" >
-					<u-td>{{item.createTime | dateFormat}}</u-td>
+					<u-td width="210rpx">{{item.createTime | dateFormatYMD}}</u-td>
 					<u-td>{{item.coinName}}</u-td>
-					<u-td>{{item.businessRemark}}</u-td>
+					<u-td class="text-ellipsis">{{item.toUserAddress}}</u-td>
 					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">
 					 <!-- {{item.changeType == 1 ? '+' : '-'}} -->{{item.amount}}
 					</u-td>
@@ -56,17 +56,17 @@
 		<view v-if="type === 2" class="record-list">
 			<u-table v-if="data2.length" border-color="#fff">
 				<u-tr>
-					<u-th>时间</u-th>
+					<u-th width="210rpx">时间</u-th>
 					<u-th>币种</u-th>
-					<!-- <u-th>接收</u-th> -->
+					<u-th>接收</u-th>
 					<u-th>数量</u-th>
 					<u-th width="4%"></u-th>
 				</u-tr>
 				<u-tr v-for="(item, index) in data2" :key="item.id" 
 				 @click.native="openDetail(item)" >
-					<u-td>{{item.createTime | dateFormat}}</u-td>
+					<u-td width="210rpx">{{item.createTime | dateFormatYMD}}</u-td>
 					<u-td>{{item.coinName}}</u-td>
-					<!-- <u-td>{{item.businessRemark}}</u-td> -->
+					<u-td class="text-ellipsis">{{item.toAddress}}</u-td>
 					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">
 					 <!-- {{item.changeType == 1 ? '+' : '-'}} -->{{item.amount}}
 					</u-td>
@@ -89,97 +89,137 @@
 		</view>
 		<u-modal v-model="showDetail" confirm-text="关闭" :title="detail ? detail.coinName : '交易明细'">
 			<view v-if="detail && type === 1" class="detail-view">
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('id')}}
+					</view>
+					<view class="itemValue">
+						{{detail.id || '-'}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('flow')}}
+					</view>
+					<view class="itemValue">
+						{{dropdownText}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('formAddress')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
-						{{detail.fromAddress || '-'}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+					<view class="itemValue">
+						{{detail.formUserAddress || '-'}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('toAddress')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.toUserAddress || '-'}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('num')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.amount}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
-						{{$t('time')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
-						{{detail.createTime}}
-					</u-col>
-				</u-row>
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('createTime')}}
+					</view>
+					<view class="itemValue">
+						{{detail.createTime | dateFormat}}
+					</view>
+				</view>
 				<view class="note">注：区块玩家内部互转无矿工费！</view>
 			</view>
 			<view v-if="detail && type === 2" class="detail-view">
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('id')}}
+					</view>
+					<view class="itemValue">
+						{{detail.id || '-'}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('flow')}}
+					</view>
+					<view class="itemValue">
+						{{dropdownText}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('formAddress')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.fromAddress || '-'}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('toAddress')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.toAddress || '-'}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('num')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.amount}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('fee')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
-						{{detail.fee}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+					<view class="itemValue">
+						{{detail.chainFee}}
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
+						{{$t('withdrawAmount')}}
+					</view>
+					<view class="itemValue">
+						<view class="bold">{{detail.withdrawAmount}}</view>
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('status')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.status | statusText}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item mb-10">
+					<view class="itemName">
 						{{$t('createTime')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.createTime | dateFormat}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between">
-					<u-col span="6" class="itemName">
+					</view>
+				</view>
+				<view class="detail-item">
+					<view class="itemName">
 						{{$t('finishTime')}}
-					</u-col>
-					<u-col span="6" class="itemValue">
+					</view>
+					<view class="itemValue">
 						{{detail.finishTime | dateFormat}}
-					</u-col>
-				</u-row>
+					</view>
+				</view>
 			</view>
 		</u-modal>
 	</view>
@@ -209,7 +249,10 @@
 						status: "状态",
 						time: "时间",
 						createTime: "提交时间",
-						finishTime: "完成时间"
+						finishTime: "完成时间",
+						id: "交易序号",
+						flow: "货币流向",
+						withdrawAmount: "实际到账"
 					},
 					en: {
 						Internal: "Internal",
@@ -221,7 +264,10 @@
 						status: "Status",
 						time: "Time",
 						createTime: "Create Time",
-						finishTime: "Finish Time"
+						finishTime: "Finish Time",
+						id: "ID",
+						flow:"Direction",
+						withdrawAmount: "Withdraw Amount"
 					}
 				},
 				coinList: [],
@@ -241,6 +287,9 @@
 			}
 		},
 		filters: {
+			dateFormatYMD(val) {
+				return typeof val === 'number' ? dateFormat(val, 'Y-m-d') : '';
+			},
 			dateFormat(val) {
 				return typeof val === 'number' ? dateFormat(val, 'Y-m-d H:i:s') : '';
 			},
@@ -308,6 +357,12 @@
 <style lang="scss">
 	.withdraw-records{
 		height: 100%;
+		
+		.text-ellipsis {
+		  white-space: nowrap;
+		  overflow: hidden;
+		  text-overflow: ellipsis;
+		}
 		.page-header{
 			display: flex;
 			justify-content: space-between;
@@ -418,11 +473,22 @@
 			padding-bottom: 10rpx;
 		}
 		
+		.bold{
+			font-weight: bold;
+		}
+		
 		.detail-view{
 			padding: 20rpx;
+			
+			.detail-item{
+				display: flex;
+				justify-content: space-between;
+			}
+			
 			.itemName{
 				color: #666;
 				font-size: 30rpx;
+				min-width: 130rpx;
 			}
 			.itemValue{
 				color: #333;
