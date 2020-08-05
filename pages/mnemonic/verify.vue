@@ -1,15 +1,15 @@
 <template>
 	<view class="common-bg zhuji-verify">
 		<view class="zhuji-tip">
-			请按顺序填写您备份的助记词
+			{{$t('tip3')}}
 		</view>
 		<view class="zhuji-cardWall">
 			<view v-for="(item, index) in cards" class="zhuji-card">
 				<view class="card-inner" 
-				  :class="{ hasError: eqWord(item.value, index) }">
+				  :class="{ hasError: eqWord(item.value, index) || item.hasError }">
 					<view class="card-no">{{index+1}}</view>
 					<view class="card-input">
-						<u-input v-model="item.value" placeholder="" input-align="center" :clearable="false"/>
+						<u-input v-model="item.value" @click="item.hasError = false" placeholder="" input-align="center" :clearable="false"/>
 					</view>
 				</view>
 			</view>
@@ -17,11 +17,11 @@
 		<view class="verify-wrap">
 			<view v-show="status === 1" class="verify-result">
 				<image src="../../static/success.png" class="status-image"></image>
-				<view class="status-text">助记词顺序正确!</view>
+				<view class="status-text">{{$t('tip4')}}</view>
 			</view>
 			<view v-show="status === 2" class="verify-result">
 				<image src="../../static/error.png" class="status-image"></image>
-				<view class="status-text">助记词顺序错误，请重新输入!</view>
+				<view class="status-text">{{$t('tip5')}}</view>
 			</view>
 		</view>
 <!-- 		<u-modal v-model="show" title="请输入密文" :show-confirm-button="false">
@@ -30,7 +30,9 @@
 				<view style="color: red">{{message}}</view>
 			</view>
 		</u-modal> -->
-		<button type="default" class="submit-button" @click="submit">确认</button>
+		<button type="default" class="submit-button" @click="submit">
+			{{$t('ok')}}
+		</button>
 	</view>
 </template>
 
@@ -40,15 +42,45 @@
 			return {
 				cards: new Array(12).fill('').map(v => {
 					return {
-						value : ''
+						value : '',
+						hasError: false
 					};
 				}),
 				status: 0,
-				redirectUrl: '/pages/index/index'
+				redirectUrl: '/pages/index/index',
+				i18n: {
+					zh: {
+						title: "驗證您備份的助記詞",
+						tip3: "請按順序填寫您備份的助記詞",
+						ok:"確認備份",
+						tip4: "助記詞正確!",
+						tip5: "助記詞錯誤，請重新輸入",
+						helpText: "\ue614 身份/地址"
+					},
+					en: {
+						title: "Verify your backup mnemonics",
+						tip3: "Please fill in the mnemonics of your backup in order",
+						ok:"Confirm backup",
+						tip4: "The mnemonics are correct!",
+						tip5:"Mnemonic error, please re-enter",
+						helpText: "\ue614 Identity/Address"
+					}
+				}
 			}
 		},
 		onLoad(options) {
 			this.redirectUrl = options.redirect || '/pages/index/index';
+		},
+		created() {
+			this.setNavBarTitle('title');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(0, {
+				text: this.$t('helpText')
+			})
+			// #endif
 		},
 		onNavigationBarButtonTap(e) {
 			// e.index 拿到当前点击顶部按钮的索引
@@ -60,17 +92,35 @@
 		},
 		methods: {
 			eqWord(val, index) {
+				val = val.trim();
 				let word = this.vuex_mnemonic[index];
 				let isUndef = typeof word === 'undefined';
 				if(isUndef) return false;
-				let wordLen = word.length, valLen = val.trim().length;
-				return valLen >= wordLen && word !== val;
+				let wordLen = word.length, valLen = val.length;
+				return valLen >= wordLen && word.toLowerCase() != val.toLowerCase();
+			},
+			// 比对两个数组
+			equals(arr1, arr2) {
+			  if (!arr2) return false;
+			  if (arr1.length != arr2.length) return false;
+			  let status = true;
+			  for (let i = 0, l = arr1.length; i < l; i++) {
+				if (arr1[i] != arr2[i]) {
+					this.cards[i].hasError = true;
+					status = false;
+				}
+			  }
+			  return status;
 			},
 			submit() {
-				let storeMnemonicStr = this.vuex_mnemonic.join(' ');
-				let inputMnemonicStr = this.cards.map(v => v.value.trim() ).join(' ');
-				if(storeMnemonicStr === inputMnemonicStr) {
-					this.$u.vuex('vuex_hasLogin', true);
+				let storeMnemonic = this.vuex_mnemonic;
+				let inputMnemonic = this.cards.map(v => v.value.trim());
+				if(this.equals(storeMnemonic, inputMnemonic)) {
+					try{
+						this.$u.vuex('vuex_hasLogin', true);
+					}catch(e) {
+						
+					}
 					this.status = 1;
 					setTimeout(() => {
 						uni.switchTab({
@@ -147,6 +197,18 @@
 			font-size: 32rpx;
 			background-color: #FFC000;
 			color: #fff;
+			
+			&:after{
+				border-color: #FFC000;
+			}
+			
+			&[disabled]{
+				background-color: #F7DA79;
+				border-color: #F7DA79;
+				&:after{
+					border-color: #F7DA79;
+				}
+			}
 		}
 		.verify-wrap{
 			display: flex;

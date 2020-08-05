@@ -13,7 +13,7 @@ try {
 } catch (e) {}
 
 // 需要永久存储，且下次APP启动需要取出的，在state中的变量名
-let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_from', 'vuex_hasLogin', 'vue_phone','vuex_img', 'vuex_lang','vuex_privateKey', 'vuex_address', 'vuex_mnemonic'];
+let saveStateKeys = ['vuex_user', 'vuex_token', 'vuex_hasLogin', 'vuex_lang','vuex_privateKey', 'vuex_address', 'vuex_mnemonic', 'vuex_firstUse', 'vuex_agreeTerm'];
 
 // 保存变量到本地存储中
 const saveLifeData = function(key, value) {
@@ -33,27 +33,20 @@ const store = new Vuex.Store({
 	state: {
 		// 如果上面从本地获取的lifeData对象下有对应的属性，就赋值给state中对应的变量
 		// 加上vuex_前缀，是防止变量名冲突，也让人一目了然
-		vuex_user: lifeData.vuex_user ? lifeData.vuex_user : {
-			name: ''
-		},
 		vuex_hasLogin: lifeData.vuex_hasLogin ? lifeData.vuex_hasLogin : false, // 用户是否登录
 		vuex_token: lifeData.vuex_token ? lifeData.vuex_token : '', // token
-		vue_phone: lifeData.vue_phone ? lifeData.vue_phone : '', // 手机号
 		vuex_version: '1.0.1',
-    vuex_img: lifeData.vuex_img ? lifeData.vuex_img : '',
-		vuex_from: lifeData.vuex_from ? lifeData.vuex_from : {
-			userName: "昵称",
-			sex: '女',
-			birthday: '1992.02.22'
-		},
 		vuex_bet_period: 0,
 		vuex_game_id: 0,
+		vuex_bet_opentime: 0,
 		vuex_exchange_image: '',
 		vuex_lang: lifeData.vuex_lang || 'zh',
 		vuex_mnemonic: lifeData.vuex_mnemonic || [],
 		vuex_privateKey: lifeData.vuex_privateKey || '',
 		vuex_address: lifeData.vuex_address || '',
-		vuex_statusCode: ''
+		vuex_statusCode: '',
+		vuex_firstUse: typeof lifeData.vuex_firstUse !== 'undefined' ? lifeData.vuex_firstUse : true,
+		vuex_agreeTerm: lifeData.vuex_agreeTerm && lifeData.vuex_agreeTerm !== '' ? lifeData.vuex_agreeTerm : false,
 	},
 
 	mutations: {

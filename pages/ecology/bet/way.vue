@@ -1,11 +1,11 @@
 <template>
 	<view class="lecai-way">
-		<view class="way-item">
-			<view v-for="item in list" :key="item.id">
-				<view class="way-title">
-					{{item.wayName}}
+		<view  v-for="item in list" :key="item.id"  class="way-item">
+			<view class="way">
+				<view class="way-title" @click="item.isfold = !item.isfold">
+					{{item.wayName}} <u-icon :name="item.isfold ? 'arrow-down' : 'arrow-up'" class="fold"></u-icon>
 				</view>
-				<view class="way-desc">
+				<view class="way-desc" v-show="item.isfold">
 					{{item.wayDesc}}
 				</view>
 			</view>
@@ -19,17 +19,31 @@
 	export default{
 		data() {
 			return {
-				list: []
+				list: [],
+				i18n: {
+					zh: {
+						title: "玩法介紹"
+					},
+					en: {
+						title: "Introduce"
+					}
+				},
 			}
 		},
 		onLoad() {
 			this.getWay();
 		},
+		created() {
+			this.setNavBarTitle('title');
+		},
 		methods: {
 			getWay() {
 				this.$u.get('/gGameOrder/getWay').then(res => {
 					//console.log(res);
-					this.list = res.data;
+					this.list = res.data.map(v => {
+						v.isfold = true;
+						return v;
+					});
 				})
 			},
 		}
@@ -41,6 +55,13 @@
 		.way-item{
 			background-color: #fff;
 			padding: 20rpx 30rpx;
+			border-bottom: 1rpx solid #F3F3F3;
+			
+			.fold{
+				font-size: 20rpx;
+				margin-left: 15rpx;
+				vertical-align: 5rpx;
+			}
 			
 			.way-title{
 				font-size: 34rpx;
@@ -52,7 +73,7 @@
 				font-size: 30rpx;
 				color: #343434;
 				padding: 20rpx 0;
-				border-bottom: 1rpx solid #F3F3F3;
+				
 			}
 		}
 	}

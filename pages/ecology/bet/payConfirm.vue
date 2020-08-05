@@ -4,9 +4,9 @@
 		<view class="tc-wrap">
 			<view class="tc-title">{{$t('BettingDetails')}}</view>
 			<view class="tc-item" v-for="item in form" :key="item.currentNumber">
-				<view class="tc-period">{{$t('Period').replace('{0}', item.currentNumber)}}</view>
+				<view class="tc-period">{{$t('Period').replace('{0}', ymd(item.openTime))}}</view>
 				<view class="tc-list" v-for="(row, index) in item.stakeDetailList" :key="index">
-					<view>
+					<view class="stakeNo">
 						{{row.stakeNo}}
 					</view>
 					<view>
@@ -32,6 +32,7 @@
 
 <script>
 	import { combination, toGroup } from '@/common/utils.js';
+	import { dateFormat } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -42,13 +43,15 @@
 				isLoading: false,
 				i18n: {
 					zh: {
-						BettingDetails: "投注详细",
-						Paymenttokens: "支付代币数",
+						BettingDetails: "投註詳細",
+						Paymenttokens: "支付代幣數",
 						Total: "共",
-						Bet: "注",
-						ConfirmPayment: "确认支付",
+						Bet: "註",
+						ConfirmPayment: "確認支付",
 						Period: "{0} 期",
-						Orderprocessing: "正在处理订单..."
+						Orderprocessing: "正在處理訂單...",
+						Loading: "加載中...",
+						betConfirm: "投註確認"
 					},
 					en: {
 						BettingDetails: "Betting details",
@@ -57,7 +60,9 @@
 						Bet: "Bet",
 						ConfirmPayment: "Confirm Payment",
 						Period: "No. {0}",
-						Orderprocessing: "Order processing..."
+						Orderprocessing: "Order processing...",
+						Loading: "Loading...",
+						betConfirm: "Bet confirmation"
 					}
 				},
 			}
@@ -65,13 +70,23 @@
 		onLoad(options) {
 			this.name = options.name;
 			this.wayType = Number(options.wayType);
+			uni.showLoading({
+			    title: this.$t('Loading')
+			});
 			let gameId = this.vuex_game_id;
 			let periods = Number(options.periods);
 			let multiple = Number(options.multiple);
 			let arr  = [], tp = this.vuex_bet_period + (periods - 1);
+			let openTime;
 			for(let i = this.vuex_bet_period; i <= tp; i++) {
+				if(!openTime) {
+					openTime = new Date(this.vuex_bet_opentime);
+				}else{
+					openTime = new Date(openTime.setDate(openTime.getDate() + 1));
+				}
 				let o = {
 					currentNumber: i,
+					openTime: openTime.getTime(),
 					stakeDetailList: []
 				}
 				if(options.type === '1') {
@@ -120,6 +135,12 @@
 			}
 			this.gameId = gameId;
 			this.form = arr;
+			setTimeout(function () {
+			    uni.hideLoading();
+			}, 800);
+		},
+		created() {
+			this.setNavBarTitle('betConfirm');
 		},
 		computed: {
 			totalNum() {
@@ -136,6 +157,9 @@
 			}
 		},
 		methods: {
+			ymd(val) {
+				return dateFormat(val, 'Ymd');
+			},
 			submit() {
 				uni.showLoading({
 				    title: this.$t('Orderprocessing')
@@ -180,6 +204,9 @@
 			padding: 20rpx 30rpx;
 			font-size: 30rpx;
 			color: #333;
+		}
+		.stakeNo{
+			font-weight: 700;
 		}
 		.tc-item{
 			padding: 0 30rpx;

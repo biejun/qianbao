@@ -2,8 +2,8 @@
     "name" : "区块玩家",
     "appid" : "__UNI__277E9AD",
     "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.0.6",
+    "versionCode" : 150,
     "transformPx" : false,
     /* 5+App特有相关 */
     "app-plus" : {
@@ -83,6 +83,13 @@
                         "spotlight@2x" : "unpackage/res/icons/80x80.png",
                         "spotlight@3x" : "unpackage/res/icons/120x120.png"
                     }
+                }
+            },
+            "splashscreen" : {
+                "android" : {
+                    "hdpi" : "static/qdtp.9.png",
+                    "xxhdpi" : "static/qdtp.9.png",
+                    "xhdpi" : "static/qdtp.9.png"
                 }
             }
         }

@@ -19,7 +19,7 @@
 			</view>
 			<u-empty v-else text="暂无数据" mode="list"></u-empty>
 		</view> -->
-		<view class="notify-wrap">
+		<view class="notify-wrap" :class="[data.length ? '' :'no-data' ]">
 			<view v-if="data.length" class="content-wrap">
 				<view class="content-box" v-for="item in data" :key="item.id">
 					<view class="content-header">
@@ -31,7 +31,7 @@
 					</view>
 				</view>
 			</view>
-			<u-empty v-else text="暂无消息" mode="list"></u-empty>
+			<u-empty v-else :text="$t('noData')" mode="list"></u-empty>
 		</view>
 	</view>
 </template>
@@ -56,8 +56,21 @@
 				],
 				data: [],
 				curNow: 0,
+				i18n: {
+					zh: {
+						noData: "暫無消息",
+						notify: "消息通知"
+					},
+					en: {
+						noData: "No Data",
+						notify: "Notify"
+					}
+				},
         type:0,
 			}
+		},
+		created() {
+			this.setNavBarTitle('notify');
 		},
     onLoad(op) {
       // if(op.type==2){
@@ -86,8 +99,15 @@
 
 <style lang="scss">
 	.user-notify{
+		overflow: auto;
 		.notify-wrap{
 			padding: 30rpx;
+			
+			&.no-data{
+				/deep/ .u-empty{
+					min-height: 500rpx;
+				}
+			}
 		}
 		.content-wrap{
 			padding-top: 20rpx;

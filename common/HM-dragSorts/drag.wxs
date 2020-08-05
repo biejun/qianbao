@@ -5,6 +5,7 @@ function touchstart(event, instance) {
 		state.point = event.touches[0];
 		state.islongTap = true;
 		state.rowData = rowData;
+		state.startTime = event.timeStamp;
 	}
 	//兼容微信小程序这坑货
 	var rowtype = rowData.type == "A" ? "B" : "A";
@@ -30,6 +31,16 @@ function touchend(event, instance) {
 			offset: state.offset
 		});
 	} else {
+		//console.log(event.timeStamp - state.startTime, state.offset)
+		if(event.timeStamp - state.startTime > 850 && 
+		typeof state.offset === 'undefined' || state.offset == null) {
+			instance.callMethod("handleRemove", {
+				index: state.rowData.index
+			});
+		}
+		if(state.rowData.index == state.offset) {
+			state.offset = null;
+		}
 		resetstyle(state, instance, rowtype);
 		feedbackGenerator(instance); //震动反馈
 		return false;

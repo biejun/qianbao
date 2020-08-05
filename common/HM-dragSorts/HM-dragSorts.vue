@@ -4,6 +4,7 @@
 			<block v-for="(row,index) in dragListA" :key="index">
 				<view class="rowA" :id="'rowA'+index">
 					<view class="num">{{row}}</view>
+					<!-- <view class="close" @click="removeItem(row)"><text class="close-b">×</text></view> -->
 					<!-- #ifndef MP-WEIXIN -->
 						<view class="drag" :data-index="index" data-type="A" :data-isdelay="isdelay" :data-rownum="dragListA.length"
 						 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
@@ -23,6 +24,7 @@
 			<block v-for="(row,index) in dragListB" :key="index">
 				<view class="rowB" :id="'rowB'+index">
 					<view class="num">{{row}}</view>
+					<!-- <view class="close"  @click="removeItem(row)"><text class="close-b">×</text></view> -->
 					<!-- #ifndef MP-WEIXIN -->
 						<view class="drag" :data-index="index" data-type="B" :data-isdelay="isdelay" :data-rownum="dragListB.length"
 						 @touchstart.stop.prevent="drag.touchstart" @touchmove.stop.prevent="drag.touchmove" @touchend.stop.prevent="drag.touchend">
@@ -55,6 +57,10 @@
 			list: {
 				value: Array,
 				default: []
+			},
+			removeItem: {
+				type: Function,
+				default: function() {}
 			}
 		},
 		watch: {
@@ -86,6 +92,18 @@
 			//兼容微信小程序震动
 			vibrate(){
 				uni.vibrateShort()
+			},
+			handleRemove(e) {
+				let row = this.dragListA[e.index];
+				// uni.showModal({
+				//     title: '提示',
+				//     content: '确定要移除'+row+'吗？',
+				//     success: (res) => {
+				//         if (res.confirm) {
+				// 			this.removeItem(row);
+				//         }
+				//     }
+				// });
 			},
 			sort(e) {
 				let tmpList = JSON.parse(JSON.stringify(this.dragListA));
@@ -166,16 +184,38 @@
 				display: flex;
 				width: 40px;
 				height: 40px;
-				border: 1px solid #333;
+				border: 1px solid #EBB204;
 				border-radius: 50%;
 				margin-left: 10rpx;
 				margin-right: 10rpx;
+				background-color: #EBB204;
+				color: #fff;
 				
 				.num{
 					width: 100%;
 					text-align: center;
 					line-height: 40px;
+					font-size: 34rpx;
 				}
+				
+				.close{
+					position: absolute;
+					top: -6rpx;
+					right: -6rpx;
+					width: 30rpx;
+					height: 30rpx;
+					border-radius: 50%;
+					background-color: rgba(0 ,0 ,0, 0.5);
+					text-align: center;
+					font-size: 20rpx;
+					
+					.close-b{
+						vertical-align: 2rpx;
+						margin-left: 2rpx;
+					}
+				}
+
+				
 				
 				.drag{
 					position: absolute;
@@ -191,8 +231,9 @@
 				}
 
 				&.move {
-					box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-					background-color: rgba(255, 255, 255, .8);
+					box-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
+					border: 1px solid $uni-color-warning;
+					background-color: $uni-color-warning;
 				}
 				
 			}

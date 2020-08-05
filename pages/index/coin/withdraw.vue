@@ -3,7 +3,7 @@
 		<view class="withdraw-add-inner">
 			<view class="current-assets">
 				<view class="account-wrap">
-					<view class="account-item total-balance">
+					<view class="total-balance">
 						<view class="total-balance-number">
 							{{totalAsset}}
 						</view>
@@ -77,33 +77,7 @@
 					</view>
 				</view>
 			</view>
-			<view v-if="currentCoin === 'GCN'" class="warn-tips">{{$t('WarnGCN')}}</view>
-<!-- 			<u-cell-group v-if="type === 1" class="withdraw-form-wrap" :border="false">
-				<u-cell-item 
-					:title="$t('CountryRegion')"
-					value="+86 中国">
-				</u-cell-item>
-				<u-field
-					v-model="form.phone"
-					:label="$t('Phone')"
-					:placeholder="$t('phonePleaseHolder')"
-				>
-				</u-field>
-				<u-field
-					v-model="form.num"
-					:label="$t('withdrawalNumber')"
-					:placeholder="$t('withdrawalNumberPleaseNum')"
-				>
-				</u-field>
-				<view class="withdraw-tips">{{$t('MaximumExtractable')}}{{totalAmount}}</view>
-				<u-field
-					:value="inFee"
-					:label="$t('Fee')"
-					:disabled="true"
-				>
-				</u-field>
-				<view class="withdraw-tips">{{$t('feeTip')}}</view>
-			</u-cell-group> -->
+			<view v-if="type === 2 && currentCoin === 'GCN'" class="warn-tips">{{$t('WarnGCN')}}</view>
 			
 			<u-cell-group class="withdraw-form-wrap" :border="false">
 				<u-field
@@ -113,15 +87,18 @@
 				>
 				</u-field>
 				<u-field
+					:border-bottom="false"
 					v-model="form.num"
 					:label="$t('withdrawalNumber')"
 					:placeholder="$t('withdrawalNumberPleaseNum')"
 				>
 				</u-field>
-				<view class="withdraw-tips">{{$t('MaximumExtractable')}}{{totalAmount}}</view>
+				<view class="withdraw-tips">{{$t('MaximumExtractable')}}{{totalAmount}} <text class="item-btn-all" @click="form.num = totalAmount">{{$t('all')}}</text></view>
 				<u-field
 					:value="outFee"
 					:label="$t('Fee')"
+					:border-bottom="false"
+					border-top
 					class="disable-field"
 					:disabled="true"
 				>
@@ -132,11 +109,26 @@
 				<button type="default" class="withdraw-wrap-button" @click="submit" :disabled="disabled">{{$t('Submit')}}</button>
 			</view>
 		</view>
-		<u-mask :show="coinListShow" z-index="100"></u-mask>
-		<u-mask :show="coinMethodShow" z-index="100"></u-mask>
-		<u-modal :value="showPassword" @confirm="confirmPassword" @cancel="showPassword = false" :show-cancel-button="true" title="请输入密文">
+		<u-mask :show="coinListShow" z-index="100" @click="coinListShow = false"></u-mask>
+		<u-mask :show="coinMethodShow" z-index="100" @click="coinMethodShow = false"></u-mask>
+		<u-modal v-model="showStatus" title="" :show-confirm-button="false" mask-close-able>
+			<view class="modal-result">
+				<view v-show="status.type === 1" class="verify-result">
+					<image src="/static/success.png" class="status-image"></image>
+					<view class="status-text">{{status.msg}}</view>
+				</view>
+				<view v-show="status.type === 2" class="verify-result">
+					<image src="/static/error.png" class="status-image"></image>
+					<view class="status-text">{{status.msg}}</view>
+				</view>
+			</view>
+		</u-modal>
+		<u-modal :value="showPassword" @confirm="confirmPassword" @cancel="showPassword = false" :show-cancel-button="true" :title="$t('plsPassword')"  :cancel-text="$t('cancel')" :confirm-text="$t('confirm')" cancel-color="#6D6D6D" confirm-color="#F1353F" :confirm-style="style" :cancel-style="cancelStyle" :title-style="style" :content-style="contentStyle">
 			<view class="enter-password">
-				<u-input v-model="form.password" type="password" class="enter-input" password-icon placeholder="密文"></u-input>
+				<view class="enter-inner">
+					<image src="/static/password.png" class="lock"></image>
+					<u-input v-model="form.password" type="password" class="enter-input" password-icon :placeholder="$t('password')"></u-input>
+				</view>
 			</view>
 		</u-modal>
 	</view>
@@ -146,6 +138,15 @@
 	export default{
 		data() {
 			return {
+				style: {backgroundColor: '#f3f3f3'},
+				contentStyle: {
+					borderBottom: "2rpx solid #DCDCDC",
+					backgroundColor: '#f3f3f3'
+				},
+				cancelStyle: {
+					borderRight: "2rpx solid #DCDCDC",
+					backgroundColor: '#f3f3f3'
+				},
 				coinListShow: false,
 				coinMethodShow: false,
 				showPassword: false,
@@ -163,38 +164,51 @@
 				},
 				inFee: 0,
 				outFee: 0,
+				isSubmit: false,
+				showStatus: false,
+				status:{
+					type: 1,
+					msg: ''
+				},
 				i18n: {
 					zh: {
-						SwitchCurrency: '币种',
-						withdrawal: "提币",
-						CurrentlyAvailable: "当前可用",
-						SwitchingMode: "货币流向",
-						Internal: "区块玩家内互转 ",
-						External: "交易所/外部钱包",
-						CurrentFreeze: "当前冻结",
+						SwitchCurrency: '幣種',
+						withdrawal: "提幣",
+						CurrentlyAvailable: "當前可用",
+						SwitchingMode: "貨幣流向",
+						Internal: "區塊玩家內互轉 ",
+						External: "交易所/外部錢包",
+						CurrentFreeze: "當前凍結",
 						CountryRegion: "国家/地区",
 						Phone: "手机号码",
-						withdrawalNumber: "提币数量",
-						Fee: "矿工费",
+						withdrawalNumber: "提幣數量",
+						Fee: "礦工費",
 						address: "地址",
 						phonePleaseHolder: "请输入手机号码",
-						withdrawalNumberPleaseNum: "请输入提币数量",
-						addressPleaseNum: "请输入转账地址",
-						feeTip: "矿工费将从兑出数量中扣减",
+						withdrawalNumberPleaseNum: "請輸入提幣數量",
+						addressPleaseNum: "請輸入轉賬地址",
+						feeTip: "礦工費將從兌出數量中扣減",
 						MaximumExtractable: "最多可提取",
-						Submit: "确定",
-						WarnGCN: "提示：GCN不支持交易所，勿把GCN提币至交易所！"
+						Submit: "確定",
+						WarnGCN: "提示：GCN不支持交易所，勿把GCN提幣至交易所！",
+						plsPassword: "請輸入密文",
+						password: "密文",
+						cancel: "取消",
+						confirm: "確定",
+						all: "全部",
+						helpText: "\ue614 了解提幣"
 					},
 					en: {
 						SwitchCurrency: 'Switch Currency',
 						withdrawal: "Withdrawal",
 						CurrentlyAvailable: "Currently Available",
 						SwitchingMode: "Switching Mode",
-						Internal: "Internal",
-						External: "External",
+						Internal: "Block player inter turn",
+						External: "Exchange / External Wallet",
 						CurrentFreeze: "Current Freeze",
 						CountryRegion: "Country Region",
 						Phone: "Phone",
+						all: "All",
 						withdrawalNumber: "Number",
 						Fee: "Fee",
 						address: "Address",
@@ -204,24 +218,49 @@
 						feeTip: "Service charge will be deducted from the quantity",
 						MaximumExtractable: "Maximum extractable",
 						Submit: "Submit",
-						WarnGCN: "Warning：GCN does not support external exchange！"
+						WarnGCN: "Warning：GCN does not support external exchange！",
+						plsPassword: "Please input a ciphertext",
+						password: "Ciphertext",
+						cancel: "Cancel",
+						confirm: "Confirm",
+						helpText: "\ue614 Learn about"
 					}
 				},
+			}
+		},
+		onLoad(options) {
+			if(options.address) {
+				this.form.address = options.address;
 			}
 		},
 		created() {
 			this.getCoinList();
 			this.setNavBarTitle('withdrawal');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(1, {
+				text: this.$t('helpText')
+			})
+			// #endif
 		},
 		computed: {
 			disabled() {
-				return this.form.num === '';
+				return this.form.num === '' || this.isSubmit || this.form.address === '';
 			}
 		},
 		onNavigationBarButtonTap(e) {
-			uni.navigateTo({
-				url: './withdrawDetail?coinName='+this.currentCoin
-			})
+			if(e.index == 0) {
+				uni.navigateTo({
+					url: './withdrawDetail?coinName='+this.currentCoin
+				})
+			}
+			if(e.index == 1) {
+				uni.navigateTo({
+					url: './learnWithdraw'
+				})
+			}
 		},
 		methods: {
 			selectCoin(item) {
@@ -248,6 +287,11 @@
 				this.showPassword = false;
 				this.submit();
 			},
+			autoCloseModal() {
+				setTimeout(() => {
+					this.showStatus = false;
+				}, 3000);
+			},
 			submit() {
 				let amount = Number(this.form.num);
 				if(!amount) {
@@ -258,11 +302,12 @@
 					this.$u.toast("提币数量不能超过"+this.totalAmount);
 					return;
 				}
+				if(!this.form.password) {
+					this.showPassword = true;
+					return;
+				}
+				this.isSubmit = true;
 				if(this.type === 1) {
-					if(!this.form.password) {
-						this.showPassword = true;
-						return;
-					}
 					this.$u.post('/wRecordTransferIn/withDrawIn', {
 						amount: amount,
 						password: this.form.password,
@@ -271,20 +316,48 @@
 						fee: this.inFee,
 					}).then(res => {
 						this.form.password = '';
+						this.isSubmit = false;
+						this.showStatus = true;
+						this.status = {
+							type: 1,
+							msg: '提币成功'
+						}
+						this.autoCloseModal();
 					},err => {
 						this.form.password = '';
-						this.$u.toast(err.msg);
+						this.isSubmit = false;
+						this.showStatus = true;
+						this.status = {
+							type: 2,
+							msg: err.msg
+						}
+						this.autoCloseModal();
 					})
 				}else if(this.type === 2) {
 					this.$u.post('/wRecordTransferOut/withDrawOut', {
 						amount: amount,
+						password: this.form.password,
 						coinName: this.currentCoin,
 						fee: this.outFee,
 						toAddress: this.form.address
 					}).then(res => {
-						
+						this.form.password = '';
+						this.isSubmit = false;
+						this.showStatus = true;
+						this.status = {
+							type: 1,
+							msg: '提币成功'
+						}
+						this.autoCloseModal();
 					}, err => {
-						this.$u.toast(err.msg);
+						this.form.password = '';
+						this.isSubmit = false;
+						this.showStatus = true;
+						this.status = {
+							type: 2,
+							msg: err.msg
+						}
+						this.autoCloseModal();
 					})
 				}
 			},
@@ -311,6 +384,32 @@
 </script>
 
 <style lang="scss">
+	
+	.modal-result{
+		padding-bottom: 50rpx;
+		.verify-result{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			.status-image{
+				width: 140rpx;
+				height: 158rpx;
+			}
+			.status-text{
+				margin-top: 15rpx;
+				color: #333;
+				font-size: 30rpx;
+			}
+		}
+	}
+	
+	.item-btn-all{
+		font-size: 28rpx;
+		color: #0F9BE9;
+		margin-left: 10rpx;
+		text-decoration: underline;
+	}
+	
 	.withdraw-add{
 		overflow: auto;
 		
@@ -322,9 +421,15 @@
 				font-size: 32rpx;
 				background-color: #FFC000;
 				color: #fff;
+				&:after{
+					border-color: $uni-color-primary;
+				}
 				&[disabled]{
 					background-color: #F7DA79;
 					border-color: #F7DA79;
+					&:after{
+						border-color: #F7DA79;
+					}
 				}
 			}
 		}
@@ -341,7 +446,10 @@
 			
 			.total-balance{
 				display: flex;
+				flex: 1;
 				align-items: baseline;
+				flex-wrap: wrap;
+				overflow: hidden;
 				&-number{
 					font-size: 52rpx;
 					color: #333333;
@@ -363,11 +471,14 @@
 			.account-wrap{
 				display: flex;
 				justify-content: space-between;
-				padding-top: 20rpx;
+				padding: 20rpx 0;
 				
 				.account-item{
 					position: relative;
-					flex: 1;
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					width: 260rpx;
 					&-text{
 						color: #A5A5A5;
 						font-size: 28rpx;
@@ -399,7 +510,7 @@
 		}
 		
 		.withdraw-form-wrap{
-			padding: 10rpx 0;
+			padding: 30rpx 0;
 			background-color: #fff;
 			border-radius: 10rpx;
 			
@@ -489,9 +600,20 @@
 	
 	.enter-password{
 		padding: 40rpx;
+		.enter-inner{
+			position: relative;
+			border-bottom: 2rpx solid #DCDCDC;
+			.lock{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 55rpx;
+				height: 60rpx;
+			}
+		}
 		.enter-input{
-			padding: 10px;
-			border-bottom: 1px solid #f3f3f3;
+			padding: 10rpx;
+			margin-left: 100rpx;
 		}
 		.message-tip{
 			font-size: 22rpx;

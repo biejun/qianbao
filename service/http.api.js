@@ -21,7 +21,11 @@ const install = (Vue, vm) => {
   let getAccountDetail = (accountType, type) => vm.$u.get(`/uUserAccount/getAccountDetail/${accountType}/${type}`);
   let getAmountByCoinName = (coinName) => vm.$u.get(`/uUserAccount/getUserAmountByCoinName/${coinName}`);
   let getUserRate = () => vm.$u.get(`/uUserAccount/getUserRate`);
-  let getVersion = (type, versionNo) => vm.$u.get(`/appVersion/getNewVersion/${type}/${versionNo}`);
+  let getVersion = (type, versionNo) => vm.$u.post(`/appVersion/getNewVersion`,{
+	  type,
+	  versionNo
+  });
+   let getTextContext = (type) => vm.$u.get(`/bContent/getContent/${type}`);
   let getUserInvite = (type) => vm.$u.get(`/uUser/userInvite/${type}`);
 	vm.$u.api = {
 		getsetPassword, getInfo, getUser, getLog, getImage, getPasswor,getmodification, getsetDeal, getpassword,
@@ -32,7 +36,8 @@ const install = (Vue, vm) => {
 		getAmountByCoinName,
 		getUserRate,
 		getVersion,
-		getUserInvite
+		getUserInvite,
+		getTextContext
 	};
 }
 

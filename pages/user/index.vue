@@ -78,9 +78,12 @@
 					<image src="@/static/user/banben.png" class="cell-icon"></image>
 					<text class="cell-text">{{$t('version')}}</text>
 				</view>
-<!-- 				<view class="cell-content version">
-					最新版本 2.1
-				</view> -->
+				<view v-if="versionNo" class="cell-content version">
+					{{$t('versionNo')}} {{versionNo}}
+				</view>
+				<view v-else class="cell-content current-version">
+					{{$t('currentNo')}} {{currentNo}}
+				</view>
 				<u-icon name="arrow-right" color="#7A777A"></u-icon>
 			</view>
 			<view class="cell-item" @click="goUrl('user/share')">
@@ -90,10 +93,20 @@
 				</view>
 				<u-icon name="arrow-right" color="#7A777A"></u-icon>
 			</view>
+			<view class="cell-item" @click="goUrl('user/setting')">
+				<view class="cell-item-label">
+					<image src="../../static/user/setting.png" class="cell-icon"></image>
+					<text class="cell-text">{{$t('setting')}}</text>
+				</view>
+				<u-icon name="arrow-right" color="#7A777A"></u-icon>
+			</view>
 		</view>
-		<u-modal :value="showBackup" @confirm="confirmPassword" @cancel="showBackup = false" :show-cancel-button="true" title="请输入密文">
+		<u-modal :value="showBackup" @confirm="confirmPassword" @cancel="showBackup = false" :show-cancel-button="true" :title="$t('plsPassword')" :cancel-text="$t('cancel')" :confirm-text="$t('confirm')" cancel-color="#6D6D6D" confirm-color="#F1353F" :confirm-style="style" :cancel-style="cancelStyle" :title-style="style" :content-style="contentStyle">
 			<view class="enter-backup-password">
-				<u-input v-model="password" type="password" class="enter-input" password-icon placeholder="密文"></u-input>
+				<view class="enter-inner">
+					<image src="../../static/password.png" class="lock"></image>
+					<u-input v-model="password" type="password" class="enter-input" password-icon :placeholder="$t('password')"></u-input>
+				</view>
 				<view class="message-tip">{{message}}</view>
 			</view>
 		</u-modal>
@@ -107,19 +120,40 @@
 	export default {
 		data() {
 			return {
+				style: {backgroundColor: '#f3f3f3'},
+				contentStyle: {
+					borderBottom: "2rpx solid #DCDCDC",
+					backgroundColor: '#f3f3f3'
+				},
+				cancelStyle: {
+					borderRight: "2rpx solid #DCDCDC",
+					backgroundColor: '#f3f3f3'
+				},
 				i18n: {
 					zh: {
 						identity: '身份/地址',
-						mnemonic: "助记词",
-						walletAccount: "钱包账户",
-						gameAccount: "游戏账户",
-						cunKuanBao: "存款宝",
+						mnemonic: "助記詞",
+						walletAccount: "錢包賬戶",
+						gameAccount: "遊戲賬戶",
+						cunKuanBao: "存款寶",
 						service: "客服",
-						terms: "条款",
-						termsOfService: "服务条款",
+						terms: "條款",
+						termsOfService: "服務條款",
 						version: "版本",
 						share: "分享",
-						backup: "备份",
+						backup: "備份",
+						plsPassword: "請輸入密文",
+						password: "密文",
+						cancel: "取消",
+						confirm: "確定",
+						setting: "設置",
+						versionNo: "有新版本",
+						currentNo: "當前版本",
+						tabbar: {
+							wallet: "錢包",
+							ecology: "遊戲",
+							my: "我的"
+						},
 					},
 					en: {
 						identity: 'Identity',
@@ -132,11 +166,24 @@
 						termsOfService: "Terms of service",
 						version: "Version",
 						share: "Share",
-						backup: "Backup"
+						backup: "Backup",
+						plsPassword: "Please input a ciphertext",
+						password: "Ciphertext",
+						cancel: "Cancel",
+						confirm: "Confirm",
+						setting: "Setting",
+						versionNo: "New version",
+						currentNo: "Current version",
+						tabbar: {
+							wallet: "Wallet",
+							ecology: "Game",
+							my: "My"
+						},
 					}
 				},
 				showBackup: false,
 				password: '',
+				showPassword: '',
 				message: '',
 				userBalance: {
 					amount: 0,
@@ -146,37 +193,73 @@
 				totalAmount: 0,
 				totalGameAmount: 0,
 				totalYBB: 0,
+				versionNo: '',
+				currentNo: ''
 			}
 		},
 		onLoad() {
 			this.checkLogin();
+			// #ifdef APP-PLUS
+			this.currentNo = plus.runtime.version;
+			// #endif
+			// #ifdef H5
+			this.currentNo = '1.0.0';
+			// #endif
 		},
 		onShow() {
 			this.getAmountByCoinName();
-			this.getUserAmount();
+			this.checkVersion();
+			this.initTab();
 		},
 		methods: {
-			updateVersion() {
-				console.log(plus.os.name)
+			// onPasswordChange(e){
+			// 	let val = e.target.value.replace(/\s+/g,'');
+			// 	this.password = val;
+			// 	this.cachePassword = val.split('');
+			// },
+			checkVersion() {
+				// #ifdef APP-PLUS
 				let isIOS = plus.os.name === 'iOS', version = plus.runtime.version;
 				
 				this.$u.api.getVersion(isIOS ? 2 : 1, version).then(res => {
 					let data = res.data;
-					if(data && data.status) {
-						let openUrl = res.data.url;
-						uni.showModal({
-						    title: '更新提示',
-						    content: res.data.content ? res.data.content : '是否选择更新',
-						    success: (showResult) => {
-						        if (showResult.confirm) {
-						            plus.runtime.openURL(openUrl);
-						        }
-						    }
-						})
-					}else{
-						this.$u.toast('已经是最新版本！');
+					this.versionInfo = data;
+					if(data) {
+						this.versionNo = data.versionNo;
 					}
 				})
+				// #endif
+			},
+			updateVersion() {
+				if(this.versionInfo) {
+					let openUrl = this.versionInfo.url;
+					let content = '';
+					if(this.versionInfo.content) {
+						if(this.versionInfo.content.indexOf(',') > -1) {
+							content = this.versionInfo.content.split(',').map(v => v.trim()).join('\n')
+						}else{
+							content = this.versionInfo.content;
+						}
+					}else{
+						content = '有新版本，是否选择更新';
+					}
+					uni.showModal({
+						title: '更新提示',
+						content: content,
+						success: (showResult) => {
+							if (showResult.confirm) {
+								plus.runtime.openURL(openUrl);
+							}
+						}
+					})
+				}else{
+					this.checkVersion();
+				}
+			},
+			initTab() {
+				this.setTabbarText(0, 'tabbar.wallet');
+				this.setTabbarText(1, 'tabbar.ecology');
+				this.setTabbarText(2, 'tabbar.my');
 			},
 			openBackup() {
 				this.showBackup = true;
@@ -253,10 +336,31 @@
 <style lang="scss" scoped>
 	.enter-backup-password{
 		padding: 40rpx;
-		.enter-input{
-			padding: 10px;
-			border-bottom: 1px solid #f3f3f3;
+		.enter-inner{
+			position: relative;
+			height: 70rpx;
+			border-bottom: 2rpx solid #DCDCDC;
+			.lock{
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 55rpx;
+				height: 60rpx;
+			}
+			.eye{
+				position: absolute;
+				top: 18rpx;
+				right: 0;
+				width: 50rpx;
+				height: 30rpx;
+				z-index: 2;
+			}
+			.enter-input{
+				padding: 10rpx;
+				margin-left: 100rpx;
+			}
 		}
+
 		.message-tip{
 			font-size: 22rpx;
 			padding: 10rpx;
@@ -269,6 +373,8 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
+		height: 100%;
+		overflow: auto;
 	}
 	.user-info{
 		height: 250rpx;
@@ -284,13 +390,14 @@
 	.cell-wrap{
 		margin-top: 20rpx;
 		background-color: #fff;
+		padding: 0 30rpx;
 	}
 	.cell-item{
 		display: flex;
 		flex-direction: row;
-		height: 80rpx;
+		height: 90rpx;
 		align-items: center;
-		padding: 0 30rpx;
+		padding: 0;
 		border-bottom: 2rpx solid #f3f3f3;
 		justify-content: space-between;
 	}
@@ -298,14 +405,15 @@
 		flex-shrink: 0;
 	}
 	.cell-icon{
-		width: 28rpx;
-		height: 28rpx;
+		width: 32rpx;
+		height: 30rpx;
 		vertical-align: middle;
 	}
 	.cell-text{
-		font-size: 28rpx;
+		font-size: 30rpx;
 		margin-left: 20rpx;
 		color: #333;
+		vertical-align: -4rpx;
 	}
 	
 	.cell-content{
@@ -323,6 +431,10 @@
 	}
 	.version{
 		color: #F2424A;
+		font-size: 24rpx;
+	}
+	.current-version{
+		color: #686767;
 		font-size: 24rpx;
 	}
 	.address{

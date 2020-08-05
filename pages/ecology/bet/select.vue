@@ -40,22 +40,35 @@
 				group2: [],
 				i18n: {
 					zh: {
-						Introduction: "玩法介绍",
-						Optionalplay: "任选玩法",
-						Directselection: "直选玩法",
-						AD: "玩法多样，奖金滚滚来！"
+						Introduction: "玩法介紹",
+						Optionalplay: "任選玩法",
+						Directselection: "直選玩法",
+						AD: "玩法多样，奖金滚滚来！",
+						helpText: '\ue614 規則玩法',
+						title: "玩法選擇"
 					},
 					en: {
 						Introduction: "Introduction",
 						Optionalplay: "Optional play",
 						Directselection: "Direct selection",
-						AD: "Play a variety of ways, bonus roll!"
+						AD: "Play a variety of ways, bonus roll!",
+						helpText: '\ue614 Rules play',
+						title: "Choose"
 					}
 				},
 			}
 		},
 		created() {
 			this.getWay();
+			this.setNavBarTitle('title');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(0, {
+				text: this.$t('helpText')
+			})
+			// #endif
 		},
 		methods: {
 			getWay() {

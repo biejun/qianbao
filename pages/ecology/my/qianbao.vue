@@ -1,29 +1,26 @@
 <template>
 	<view class="lecai-my-index">
 		<view class="my-assets">
-			<view class="assets-title">{{$t('ckAccount')}}{{$t('QuantityAvailable')}}</view>
+			<view class="assets-title">{{$t('digitalAccount')}}{{$t('QuantityAvailable')}}</view>
 			<view class="asset-amount">
-				{{totalYBB}}
+				{{totalAmount}}
 				<text class="asset-unit">GCN</text>
 			</view>
-<!-- 			<view class="asset-result">
-				{{$t('QuantityToBeSettled')}}: {{totalFreezeAmount}} GCN
-			</view> -->
 		</view>
 		<view class="buttons">
-			<u-button type="warning" :plain="isReverse" @click="isReverse=false">{{$t('TransferInto')}}</u-button>
-			<u-button type="warning" :plain="!isReverse" @click="isReverse = true">{{$t('TransferOut')}}</u-button>
+			<u-button type="warning" :plain="type != 1" @click="type = 1">{{$t('toGame')}}</u-button>
+			<u-button type="warning" :plain="type != 3" @click="type = 3">{{$t('toCunkuanBao')}}</u-button>
 		</view>
 	
 		<div class="transfer-child-title hei">{{$t('Chooseanaccount')}}</div>
 		<div class="transfer-wrap">
 			<div class="transfer-item">
 				<span class="transfer-name">{{$t('From')}}</span>
-				<span>{{isReverse ? $t('ckAccount') : $t('digitalAccount')}}</span>
+				<span>{{$t('digitalAccount')}}</span>
 			</div>
 			<div class="transfer-item">
 				<span class="transfer-name">{{$t('To')}}</span>
-				<span>{{isReverse ? $t('digitalAccount') : $t('ckAccount')}}</span>
+				<span>{{type == 1 ? $t('gameAccount') : $t('ckAccount')}}</span>
 			</div>
 		</div>
 		<div class="transfer-child-title hei">{{$t('Quantity')}}</div>
@@ -55,9 +52,9 @@
 		data() {
 			return {
 				totalAmount: 0,
-				totalYBB: 0,
+				totalGameAmount: 0,
 				totalFreezeAmount: 0,
-				isReverse: false,
+				type: 1, // 钱包到游戏 是 1 钱包到理财是 3
 				exchangeNum: '',
 				isSubmit: false,
 				showStatus: false,
@@ -78,13 +75,16 @@
 						From: "從",
 						To: "到",
 						digitalAccount: '錢包賬戶',
-						ckAccount: "存款寶",
+						gameAccount: "遊戲賬戶",
 						Currentlyavailable: "當前可用",
 						All: "全部",
 						Transfer:"確認",
 						Exchangequantity: "輸入數量",
 						trOut: "轉出成功",
-						trIn: "轉入成功"
+						trIn: "轉入成功",
+						toGame: "转出至游戏账户",
+						toCunkuanBao: "轉出至存款寶",
+						ckAccount: "存款寶",
 					},
 					en: {
 						title: "Transfer In/Out",
@@ -98,13 +98,16 @@
 						From: "From",
 						To: "To",
 						digitalAccount: "Digital Account",
-						ckAccount: "CunKuan Bao",
+						gameAccount: "Game Account",
 						Currentlyavailable: "Currently available",
 						All: "All",
 						Transfer: "Transfer",
 						Exchangequantity: "Exchange quantity",
 						trOut: "Transfer out successfully",
-						trIn: "Transfer to success"
+						trIn: "Transfer to success",
+						toGame: "To Game",
+						toCunkuanBao: "To CunKuanBao",
+						ckAccount: "CunKuan Bao",
 					}
 				},
 			}
@@ -115,14 +118,14 @@
 		},
 		computed: {
 			sunCount() {
-				return this.isReverse ? this.totalYBB : this.totalAmount
+				return this.totalAmount
 			},
 			disabled() {
 				return this.exchangeNum == '' || this.isSubmit;
 			},
 		},
 		watch: {
-			isReverse() {
+			type() {
 				this.exchangeNum = ''
 			}
 		},
@@ -145,22 +148,22 @@
 				this.$u.post('/uUserAccount/exchangeAmount', {
 					coinName: 'GCN',
 					exchangeAmount: this.exchangeNum,
-					exchangeType: this.isReverse ? 4 : 3
+					exchangeType: this.type
 				}).then(res => {
-					// this.$refs.uToast.show({
-					// 	title: this.isReverse ? this.$t('trOut') : this.$t('trIn'),
-					// 	type: 'success',
-					// })
+					this.getAmountByCoinName();
+					this.exchangeNum = '';
 					this.isSubmit = false;
 					this.showStatus = true;
 					this.status = {
 						type: 1,
-						msg: this.isReverse ? this.$t('trOut') : this.$t('trIn')
+						msg: this.$t('trOut')
 					}
-					this.getAmountByCoinName();
-					this.exchangeNum = '';
 					this.autoCloseModal();
 				}, err => {
+					// this.$refs.uToast.show({
+					// 	title: err.msg,
+					// 	type: 'error',
+					// })
 					this.isSubmit = false;
 					this.showStatus = true;
 					this.status = {
@@ -174,24 +177,24 @@
 				this.$u.api.getAmountByCoinName('GCN').then(res => {
 					if(!res.data) return;
 					this.totalAmount = res.data.amount;
-					this.totalYBB = res.data.yubiBaoAmount;
+					//this.totalGameAmount = res.data.gameAmount;
 				})
 			},
 			// getCoinList() {
 			// 	this.$u.api.getUserAmount().then(res => {
 			// 		if(res.data.length) {
-			// 			let totalYBB = 0;
+			// 			let totalGameAmount = 0;
 			// 			let totalFreezeAmount = 0;
 			// 			let totalAmount = 0;
 			// 			res.data.forEach(v => {
 			// 				if(v.coinName === 'GCN') {
-			// 					totalYBB = v.yubiBaoAmount || 0;
+			// 					totalGameAmount = v.gameAmount || 0;
 			// 					totalFreezeAmount = v.frozenAmount || 0;
 			// 					totalAmount = v.amount || 0;
 			// 				}
 			// 			});
 			// 			this.totalAmount = totalAmount;
-			// 			this.totalYBB = totalYBB;
+			// 			this.totalGameAmount = totalGameAmount;
 			// 			this.totalFreezeAmount = totalFreezeAmount;
 			// 		}
 			// 	})
@@ -241,6 +244,7 @@
 				background-color: #fff!important;
 			}
 		}
+	
 		
 		.all-in{
 			color: #0F9BE9;
@@ -359,9 +363,9 @@
 		.submitBtn{
 			margin-top:100upx;
 			font-size: 32rpx;
+			border-radius: 50rpx;
 			background-color: #FFC000;
 			color: #fff;
-			border-radius: 50rpx;
 			
 			&:after{
 				border-color: $uni-color-primary;
@@ -385,6 +389,7 @@
 			border-color:  #BFBFBF!important;
 		}
 	}
+	
 	.modal-result{
 		padding-bottom: 50rpx;
 		.verify-result{

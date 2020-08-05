@@ -6,7 +6,7 @@
 					<view class="dropdown-button__text" @click.stop="dropdownShow1 = !dropdownShow1">
 						{{coinName}}
 					</view>
-					<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
+					<u-icon @click.native.stop="dropdownShow1 = !dropdownShow1" name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 					<view class="dropdown" v-show="dropdownShow1">
 						<view class="dropdown-item" v-for="item in coinList" @click="changeCoin(item)" :key="item.id">
 							{{item.coinName}}
@@ -15,23 +15,23 @@
 				</view>
 			</view>
 			<view class="date-tags">
-				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
-				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
-				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">{{$t('all')}}</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">{{$t('oneMonth')}}</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
 		<view v-if="data.length" class="record-list">
 			<u-table border-color="#fff">
 				<u-tr>
-					<u-th>时间</u-th>
-					<u-th>币种</u-th>
-					<u-th>金额</u-th>
+					<u-th>{{$t('time')}}</u-th>
+					<u-th>{{$t('currency')}}</u-th>
+					<u-th>{{$t('amount')}}</u-th>
 					<u-th width="4%"></u-th>
 				</u-tr>
 				<u-tr v-for="item in data" :key="item.id" @click.native="openDetail(item)">
 					<u-td>{{item.createTime | dateFormatYMD}}</u-td>
 					<u-td>{{item.coinName}}</u-td>
-					<u-td>{{item.amount}}</u-td>
+					<u-td><text class="is-add">+{{item.amount}}</text></u-td>
 					<u-td  width="4%"><u-icon name="arrow-right"></u-icon></u-td>
 				</u-tr>
 			</u-table>
@@ -48,13 +48,13 @@
 				</view>
 			</view> -->
 		</view>
-		<u-empty v-else text="暂无记录" mode="history"></u-empty>
+		<u-empty v-else :text="$t('noData')" mode="history"></u-empty>
 		
 		<u-modal v-model="showDetail" confirm-text="关闭" :title="detail ? detail.coinName : ''">
 			<view v-if="detail" class="detail-view">
 				<u-row gutter="16" justify="space-between" class="mb-10">
 					<u-col span="6" class="itemName">
-						充值金额
+						{{$t('rechargeAmount')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.amount || '-'}}
@@ -62,7 +62,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between" class="mb-10">
 					<u-col span="6" class="itemName">
-						充值地址
+						{{$t('rechargeAddress')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.toAddress || '-'}}
@@ -70,7 +70,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between" class="mb-10">
 					<u-col span="6" class="itemName">
-						交易HASH
+						{{$t('hash')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.txId || '-'}}
@@ -78,15 +78,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between" class="mb-10">
 					<u-col span="6" class="itemName">
-						充值金额
-					</u-col>
-					<u-col span="6" class="itemValue">
-						{{detail.amount}}
-					</u-col>
-				</u-row>
-				<u-row gutter="16" justify="space-between" class="mb-10">
-					<u-col span="6" class="itemName">
-						区块高度
+						{{$t('blockHeight')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.block}}
@@ -94,7 +86,7 @@
 				</u-row>
 				<u-row gutter="16" justify="space-between">
 					<u-col span="6" class="itemName">
-						时间
+						{{$t('time')}}
 					</u-col>
 					<u-col span="6" class="itemValue">
 						{{detail.createTime | dateFormat}}
@@ -116,11 +108,41 @@
 				showDetail: false,
 				dateType: 0,
 				coinList: [],
-				dropdownShow1: false
+				dropdownShow1: false,
+				i18n: {
+					zh: {
+						all: '全部',
+						oneMonth: "壹個月",
+						threeMonths: "三個月",
+						title: '充幣記錄',
+						rechargeAmount: '充值金額',
+						rechargeAddress: '充值地址',
+						hash: "交易Hash",
+						blockHeight: "區塊高度",
+						time: "時間",
+						noData: '暫無記錄',
+						currency: "幣種",
+						amount: "金額"
+					},
+					en: {
+						all: 'All',
+						oneMonth: "One Mon",
+						threeMonths: "Three Mos.",
+						title: 'Recharge Records',
+						rechargeAmount: 'Recharge Amount',
+						rechargeAddress: 'Recharge Address',
+						hash: "Hash",
+						blockHeight: "Block Height",
+						time: "Time",
+						noData: 'No data',
+						currency: "Currency",
+						amount: "Amount"
+					}
+				}
 			}
 		},
 		onLoad(options) {
-			this.coinName = options.coinName;
+			this.coinName = options.coinName || '';
 		},
 		filters: {
 			dateFormatYMD(val) {
@@ -131,13 +153,15 @@
 			}
 		},
 		created() {
-			this.getData();
 			this.getCoinList();
+			this.getData();
+			this.setNavBarTitle('title');
 		},
 		methods: {
 			openDetail(item) {
-				this.showDetail = true;
-				this.detail = item;
+				uni.navigateTo({
+					url: './rechargeSingleDetail?detail='+JSON.stringify(item)
+				})
 			},
 			changeCoin(item) {
 				this.coinName = item.coinName
@@ -150,9 +174,14 @@
 			getCoinList() {
 				this.$u.api.getCoinList().then(res => {
 					this.coinList = res.data.filter(v => v.allowRecharge == 1);
+					if(this.coinList.length && this.coinName == '') {
+						this.coinName = this.coinList[0].coinName;
+						this.getData();
+					}
 				})
 			},
 			getData() {
+				if(!this.coinName) return;
 				let url = '/wRecordRecharge/getCoinRecord/';
 				this.$u.get(url + this.coinName+'/'+this.dateType).then(res => {
 					this.data = res.data;
@@ -188,7 +217,7 @@
 			align-items: center;
 			&__text{
 				color: #333;
-				font-size: 22rpx;
+				font-size: 26rpx;
 				max-width: 100rpx;
 				height: 30rpx;
 				line-height: 30rpx;
@@ -229,8 +258,8 @@
 				margin-left: 16rpx;
 				line-height: 38rpx;
 				&.is-active{
-					color: $uni-color-primary;
-					border-color: $uni-color-primary;
+					color: #FF0707;
+					border-color: #FF0707;
 				}
 			}
 		}
@@ -286,11 +315,22 @@
 			}
 		}
 		
-		/deep/ .u-tr{
+		/deep/ .u-tr:first-child{
 			border-bottom: 1px solid #eee;
+		}
+		/deep/ .u-tr{
+			border-bottom: 1px solid #f3f3f3;
 		}
 		/deep/ .u-th{
 			background-color: #fff;
+			padding: 20rpx 0!important;
+		}
+		
+		/deep/ .u-td{
+			padding: 30rpx 0!important;
+		}
+		.is-add{
+			color: #FF0707!important;
 		}
 	}
 </style>

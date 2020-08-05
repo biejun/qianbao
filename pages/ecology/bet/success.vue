@@ -16,20 +16,23 @@
 			return {
 				i18n: {
 					zh: {
-						Bettingsuccessful: "投注成功",
-						GoHome: "返回首页"
+						Bettingsuccessful: "投註成功",
+						GoHome: "繼續投註"
 					},
 					en: {
 						Bettingsuccessful: "Betting successful",
-						GoHome: "Go Home"
+						GoHome: "Keep betting"
 					}
 				},
 			}
 		},
+		created() {
+			setTimeout(this.goBack, 3000);
+		},
 		methods: {
 			goBack() {
 				uni.navigateBack({
-					delta: 4
+					delta: 2
 				})
 			}
 		}
@@ -61,7 +64,7 @@
 			padding: 30rpx;
 			
 			.btn{
-				background-color: $uni-color-primary;
+				background-color: #fcc82b;
 				color: #fff;
 				font-size: 34rpx;
 			}

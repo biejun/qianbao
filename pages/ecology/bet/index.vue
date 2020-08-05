@@ -25,7 +25,7 @@
 					@click="tab2 = 0">{{$t('Commonplay')}}</view>
 				<view class="way-tab-item" 
 					:class="[tab2 === 1 ? 'is-active' : '']"  
-					@click="tab2 = 1">{{$t('MultipleBets')}}</view>
+					@click="tab2 = 1" v-show="current != 6">{{$t('MultipleBets')}}</view>
 			</view>
 			<template v-if="type === 1">
 				<template v-if="tab1 === 0">
@@ -97,9 +97,9 @@
 					<view class="select-tip">
 						{{$t('Currentlyselected')}}<text class="num">{{len}}</text>{{$t('Bet')}}，{{$t('Total')}}<text class="num">{{totalGCN}}</text>GCN
 					</view>
-					<view class="drag-balls" v-if="zx.length > 1">
+					<view class="drag-balls" v-if="zx.length > 0 && current === 6">
 						<view class="drag-title">{{$t('Sort')}}</view>
-						<dragSorts :list="zx" @confirm="confirm"></dragSorts>
+						<dragSorts :list="zx" @confirm="confirm" :removeItem="zhixuan"></dragSorts>
 						<view class="drag-desc">{{$t('SortTip')}}</view>
 					</view>
 				</template>
@@ -174,22 +174,24 @@
 				i18n: {
 					zh: {
 						Commonplay: "普通玩法",
-						Daretoplay: "拖胆玩法",
-						Important: "胆码选择",
-						Secondary: "拖码选择",
-						MultipleBets: "复式投注",
-						Currentlyselected: "您当前选择了",
-						Bet: "注",
-						Total: "总共",
+						Daretoplay: "膽拖玩法",
+						Important: "膽碼選擇",
+						Secondary: "拖碼選擇",
+						MultipleBets: "復式投註",
+						Currentlyselected: "您當前選擇了",
+						Bet: "註",
+						Total: "總共",
 						Sort: "排序",
-						SortTip: "手指拖动进行排序",
-						Multiple: "投注倍数",
-						Append: "追号期数",
-						title: "追号/倍数选择",
-						Submit: "提交投注",
-						Random: '机选',
-						mostNum: '最多只能选择{0}个号码',
-						pleaseSelect: "请选择号码"
+						SortTip: "手指拖動進行排序",
+						Multiple: "投註倍數",
+						Append: "追號期數",
+						title: "追號/倍數選擇",
+						Submit: "提交投註",
+						Random: '機選',
+						mostNum: '最多只能選擇{0}個號碼',
+						pleaseSelect: "請選擇號碼",
+						helpText: '\ue614 規則玩法',
+						betting: "我要投注"
 					},
 					en: {
 						Commonplay: "Common play",
@@ -208,7 +210,9 @@
 						Submit: "Submit",
 						Random: 'Random',
 						mostNum: 'You can only select {0} numbers at most',
-						pleaseSelect: "Please select a number"
+						pleaseSelect: "Please select a number",
+						helpText: '\ue614 Rules play',
+						betting: "Betting"
 					}
 				},
 			}
@@ -222,6 +226,17 @@
 			this.type = Number(options.type);
 			this.wayType = Number(options.wayType);
 			this.getWay();
+		},
+		created() {
+			this.setNavBarTitle('betting');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(0, {
+				text: this.$t('helpText')
+			})
+			// #endif	
 		},
 		methods: {
 			getWay() {
@@ -281,7 +296,7 @@
 				this.len = maxNum === this.zx.length ? 1 : 0;
 			},
 			fushi(num) {
-				let maxNum = 13;
+				let maxNum = 12;
 				let wayType = this.list[this.current].wayType;
 				// 如果复式投注来自任选(type = 1 就是任选页面) size 为 wayType 的值
 				let size = this.type === 1 ? wayType : wayType === 7 ? 6 : 1;
@@ -303,7 +318,7 @@
 				}
 			},
 			tuoma(num) {
-				let maxNum = 13;
+				let maxNum = 12;
 				let size = this.list[this.current].wayType;
 				let i = this.tm.indexOf(num);
 				let dmLen = this.dm.length;
@@ -507,17 +522,20 @@
 				flex-wrap: wrap;
 				margin-top: 15rpx;
 				margin-bottom: 15rpx;
+				margin-left: -10rpx;
+				margin-right: -10rpx;
 				.ball-item{
 					flex:1 0 12.5%;
 					min-width: 12.5%;
-					padding: 10rpx;
+					padding: 14rpx 10rpx;
 					.ball{
 						border: 1rpx solid #333;
-						width: 60rpx;
-						height: 60rpx;
-						line-height: 60rpx;
+						width: 70rpx;
+						height: 70rpx;
+						line-height: 70rpx;
 						text-align: center;
 						border-radius:50%;
+						font-size: 32rpx;
 						&.active{
 							border-color: $uni-color-primary;
 							background-color: $uni-color-primary;
@@ -549,7 +567,7 @@
 				flex: 1;
 				color: #fff;
 				font-size: 32rpx;
-				background-color: $uni-color-primary;
+				background-color: #FFC000;
 			}
 		}
 		

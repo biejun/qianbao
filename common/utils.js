@@ -9,6 +9,17 @@ export function getNowTime() {
 	return year + '-' + month + '-' + day + ' ' + hour + ':' + minute + ':' + second;
 }
 
+export function toDecimal(num, decimal) {
+  num = num.toString()
+  let index = num.indexOf('.')
+  if (index !== -1) {
+    num = num.substring(0, decimal + index + 1)
+  } else {
+    num = num.substring(0)
+  }
+  return parseFloat(num).toFixed(decimal)
+}
+
 /*
  ** 时间戳转换成指定格式日期
  ** eg. 

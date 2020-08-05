@@ -2,9 +2,42 @@
 	export default {
 		onLaunch: function() {
 			console.log('App Launch')
+			// #ifdef APP-PLUS
+			let isIOS = plus.os.name === 'iOS', version = plus.runtime.version;
+			
+			this.$u.api.getVersion(isIOS ? 2 : 1, version).then(res => {
+				let data = res.data;
+				if(data && data.status) {
+					let openUrl = res.data.url;
+					let content = '';
+					if(res.data.content) {
+						if(res.data.content.indexOf(',') > -1) {
+							content = res.data.content.split(',').map(v => v.trim()).join('\n')
+						}else{
+							content = res.data.content;
+						}
+					}else{
+						content = '有新版本，是否选择更新';
+					}
+					uni.showModal({
+					    title: '更新提示',
+					    content: content,
+					    success: (showResult) => {
+					        if (showResult.confirm) {
+					            plus.runtime.openURL(openUrl);
+					        }
+					    }
+					})
+				}
+			})
+			// #endif
 		},
 		onShow: function() {
-			console.log('App Show')
+			if(this.vuex_hasLogin) {
+				uni.switchTab({
+					url: '/pages/index/index'
+				})
+			}
 		},
 		watch: {
 			vuex_statusCode(nCode, oCode) {

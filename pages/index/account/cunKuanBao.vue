@@ -1,6 +1,16 @@
 <template>
 	<view class="game-account">
 		<view class="amount-wrap">
+			<u-navbar
+			:background="{background:'linear-gradient(180deg,rgba(246,211,101,1), rgba(248 ,198, 110,0.45))'}"
+			 back-icon-size="40rpx"
+			 back-icon-color="#fff"
+			 :back-text-style="{verticalAlign: '-10rpx'}"
+			 title-color="#fff"
+			 :border-bottom="false" 
+			 class="navbar"
+			 :title="$t('cunKuanBao')">
+			</u-navbar>
 			<view class="amount-top">
 				<view class="current-type">
 					{{$t('totalAssets')}}
@@ -18,11 +28,11 @@
 			<view class="amount-bottom">
 				<div class="income-item">
 					<view class="label">{{$t('DailyYield')}}</view>
-					<view class="value">{{ckRate.yestodayEarn}}</view>
+					<view class="value">+{{ckRate.yestodayEarn}} GCN</view>
 				</div>
 				<div class="income-item">
 					<view class="label">{{$t('CumulativeIncome')}}</view>
-					<view class="value">{{ckRate.totalEarn}}</view>
+					<view class="value">+{{ckRate.totalEarn}} GCN</view>
 				</div>
 			</view>
 		</view>
@@ -36,7 +46,7 @@
 				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
-		<view class="withdrawal-list">
+		<view class="withdrawal-list" :class="[detail.length ? '' :'no-data' ]">
 			<u-table v-if="detail.length" border-color="#fff">
 				<u-tr>
 					<u-th>{{$t('time')}}</u-th>
@@ -49,7 +59,7 @@
 					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">{{item.changeType == 1 ? '+' : '-'}}{{item.amount}}</u-td>
 				</u-tr>
 			</u-table>
-			<u-empty v-else text="暂无数据" mode="list"></u-empty>
+			<u-empty v-else :text="$t('noData')" mode="list"></u-empty>
 		</view>
 	</view>
 </template>
@@ -69,23 +79,24 @@
 				},
 				i18n: {
 					zh: {
-						cunKuanBao: '存款宝',
+						cunKuanBao: '存款寶',
 						DailyYield: "日收益",
-						CumulativeIncome: "累计收益",
-						totalAssets: '总资产',
+						CumulativeIncome: "累計收益",
+						totalAssets: '總資產',
 						all: '全部',
-						oneMonth: "一个月",
-						threeMonths: "三个月",
-						Withdrawalrecord: "提币记录",
-						Rechargerecord: "充币记录",
-						Transfer: "转入转出",
-						detail: "收支明细",
-						time: "时间",
-						currency: "币种",
+						oneMonth: "壹個月",
+						threeMonths: "三個月",
+						Withdrawalrecord: "提幣記錄",
+						Rechargerecord: "充幣記錄",
+						Transfer: "轉入/轉出",
+						detail: "收支明細",
+						time: "時間",
+						currency: "幣種",
 						recipient: "接收",
-						quantity: "数量",
-						digitalAccount: '钱包账户',
-						IncomeExpenditure: "收/支"
+						quantity: "數量",
+						digitalAccount: '錢包賬戶',
+						IncomeExpenditure: "收/支",
+						noData: "暫無消息"
 					},
 					en: {
 						totalAssets: 'Total Assets',
@@ -104,7 +115,8 @@
 						cunKuanBao: 'CunKuan Bao',
 						DailyYield: "Yield",
 						CumulativeIncome: "Cumulative",
-						IncomeExpenditure: "Income/Expenditure"
+						IncomeExpenditure: "Income/Expenditure",
+						noData: "No Data"
 					}
 				}
 			}
@@ -114,14 +126,13 @@
 		// },
 		filters: {
 			dateFormat(val) {
-				return dateFormat(val, 'Y-m-d H:i:s');
+				return dateFormat(val, 'Y-m-d');
 			}
 		},
 		created() {
 			this.getData();
 			this.getUserRate();
 			this.getUserAmount();
-			this.setNavBarTitle('cunKuanBao');
 		},
 		onPullDownRefresh() {
 			this.getData();
@@ -175,11 +186,18 @@
 <style lang="scss" scoped>
 	.game-account{
 		
-		/deep/ .u-tr{
+		/deep/ .u-tr:first-child{
 			border-bottom: 1px solid #eee;
+		}
+		/deep/ .u-tr{
+			border-bottom: 1px solid #f3f3f3;
 		}
 		/deep/ .u-th{
 			background-color: #fff;
+			padding: 20rpx 0!important;
+		}
+		/deep/ .u-td{
+			padding: 30rpx 0!important;
 		}
 		
 		.right-btn{
@@ -192,18 +210,28 @@
 		}
 		
 		.amount-wrap{
-			height: 280rpx;
-			padding: 60rpx 30rpx 60rpx 30rpx;
+			padding: 30rpx 40rpx 60rpx 40rpx;
 			color: #fff;
 			background:linear-gradient(180deg,rgba(246,211,101,1),rgba(253,160,133,1));
+			
+			.navbar{
+				margin-left: -40rpx;
+				margin-top: -30rpx;
+				margin-right: -40rpx;
+				
+				/deep/ .u-icon-wrap{
+					margin-top: -10rpx;
+				}
+			}
 			
 			.amount-top{
 				display: flex;
 				justify-content: space-between;
+				margin-top: 50rpx;
 			}
 			.current-type{
 				font-size: 28rpx;
-				margin-bottom: 10rpx;
+				margin-left: 20rpx;
 			}
 			.current-amount{
 				display: flex;
@@ -218,12 +246,12 @@
 			}
 			
 			.amount-bottom{
-				margin-top: 30rpx;
+				margin-top: 50rpx;
 				display: flex;
-				justify-content: center;
+				justify-content: space-around;
 				.income-item{
-					margin-left: 20rpx;
-					margin-right: 20rpx;
+					margin-left: 30rpx;
+					margin-right: 30rpx;
 					text-align: center;
 					
 					.label{
@@ -241,7 +269,7 @@
 			height: 100rpx;
 			align-items: center;
 			justify-content: space-between;
-			padding: 0 20rpx;
+			padding: 0 40rpx;
 			background-color: #F3F3F3;
 			
 			.date-tags{
@@ -256,8 +284,8 @@
 					margin-left: 16rpx;
 					line-height: 38rpx;
 					&.is-active{
-						color: $uni-color-primary;
-						border-color: $uni-color-primary;
+						color: #FF0000;
+						border-color: #FF0000;
 					}
 				}
 			}
@@ -277,7 +305,7 @@
 				}
 			}
 			.reward{
-				font-size: 28rpx;
+				font-size: 32rpx;
 				color: #333;
 			}
 		}
@@ -285,7 +313,13 @@
 		.withdrawal-amount{
 			color: #333;
 			&.is-add{
-				color: #FF0707;
+				color: #FF0707!important;
+			}
+		}
+		
+		.withdrawal-list.no-data{
+			/deep/ .u-empty{
+				min-height: 500rpx;
 			}
 		}
 	}

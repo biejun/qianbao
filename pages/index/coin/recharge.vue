@@ -29,7 +29,7 @@
 					<canvas canvas-id="qrcode" :style="{width: `150px`, height: `150px`}"/>
 				</view>
 				<view class="recharge-address">
-					{{$t('RechargeAddress')}}：{{rechargeAddress}}
+					{{$t('RechargeAddress')}}: {{rechargeAddress}}
 				</view>
 			</view>
 			<view class="copy-address">
@@ -52,13 +52,13 @@
 				rechargeAddress: null,
 				i18n: {
 					zh: {
-						SwitchCurrency: '切换币种',
+						SwitchCurrency: '切換幣種',
 						RechargeAddress: '充值地址',
-						CopyAddress: "复制地址",
-						recharge: "充币",
-						rechargeTip: "支持BTC、ETH、USDT等主流数字货币充入到区块玩家 身份下多链钱包中!",
-						Learnmore: "了解充币",
-						copySuccess: "复制成功"
+						CopyAddress: "復制地址",
+						recharge: "充幣",
+						rechargeTip: "支持BTC、ETH、USDT等主流數字貨幣充入到區塊玩家 身份下多鏈錢包中!",
+						Learnmore: "了解充幣",
+						copySuccess: "復制成功!"
 					},
 					en: {
 						SwitchCurrency: 'Switch Currency',
@@ -104,12 +104,9 @@
 					this.rechargeAddress = res.data.address;
 					qrcode.make({
 						canvasId: 'qrcode',
-						text: this.rechargeAddress,
-						size: 200,
+						text: res.data.address,
+						size: 160,
 						margin: 10,
-						success: res => {
-							console.log(res);
-						},
 						complete: () => {}
 					})
 				}, err => {
@@ -156,6 +153,9 @@
 				font-size: 32rpx;
 				background-color: #FFC000;
 				color: #fff;
+				&:after{
+					border-color: $uni-color-primary;
+				}
 			}
 		}
 		.recharge-coin{
@@ -170,7 +170,12 @@
 				background-color: #fff;
 			}
 			.recharge-address{
+				margin: auto;
+				width: 90%;
 				margin-top: 50rpx;
+				word-wrap: break-word;
+				word-break: break-all;
+				text-align: center;
 			}
 		}
 	}

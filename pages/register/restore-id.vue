@@ -1,39 +1,39 @@
 <template>
 	<view class="common-bg restore-page">
 		<view class="create-id">
-			<view class="create-DFEBV">您将会拥有区块链身份和身份下的多链钱包， 比如BTC、ETH、USDT、GCN…</view>
+			<view class="create-DFEBV">{{$t('tip1')}}</view>
 			<view class="create-YUS2">
-				<view class="input-D3GZ">密文</view>
+				<view class="input-D3GZ">{{$t('ciphertext')}}</view>
 				<view class="input-DDEW">
 					<u-input v-model="password" placeholder="" type="password"></u-input>
 				</view>
 			</view>
-			<view class="create-tips">密文尽量简短，易记，如：“区块玩家”，密文关系到货币转账安全，请妥善保存和记忆!</view>
+			<view class="create-tips">{{$t('tip2')}}</view>
 		</view>
 		<view class="zhuji">
 			<view class="zhuji-tip">
-				请按顺序填写您备份的助记词
+				{{$t('tip3')}}
 			</view>
 			<view class="zhuji-cardWall">
 				<view v-for="(item, index) in cards" class="zhuji-card">
-					<view class="card-inner">
+					<view class="card-inner" :class="{ hasError: item.hasError }">
 						<view class="card-no">{{index+1}}</view>
 						<view class="card-input">
-							<u-input v-model="item.value" placeholder="" input-align="center" :clearable="false"/>
+							<u-input v-model="item.value" :cursor-spacing="index < 3 ? 300 : index < 7 ? 200 : 120" placeholder="" input-align="center" :clearable="false"  @focus="item.hasError = false"/>
 						</view>
 					</view>
 				</view>
 			</view>
-			<button type="default" class="submit-button" @click="submit">确认</button>
-			<u-modal v-model="show" title="" :show-confirm-button="false">
+			<button type="default" class="submit-button" :disabled="password===''" @click="submit">{{$t('ok')}}</button>
+			<u-modal v-model="show" title="" :show-confirm-button="false" mask-close-able>
 				<view class="restore-res">
-					<view v-show="status === 1" class="verify-result">
+					<view v-show="statusMsg.type === 1" class="verify-result">
 						<image src="../../static/success.png" class="status-image"></image>
-						<view class="status-text">恢复身份完成!</view>
+						<view class="status-text">{{$t('tip4')}}</view>
 					</view>
-					<view v-show="status === 2" class="verify-result">
+					<view v-show="statusMsg.type === 2" class="verify-result">
 						<image src="../../static/error.png" class="status-image"></image>
-						<view class="status-text">助记词顺序错误，请重新输入!</view>
+						<view class="status-text">{{statusMsg.msg}}</view>
 					</view>
 				</view>
 			</u-modal>
@@ -47,18 +47,61 @@
 			return {
 				cards: new Array(12).fill('').map(v => {
 					return {
-						value : ''
+						value : '',
+						hasError: false
 					};
 				}),
 				password: '',
-				status: 0,
-				show: false
+				show: false,
+				statusMsg: {
+					type: 0,
+					msg: ''
+				},
+				i18n: {
+					zh: {
+						title: "恢復身份/地址",
+						tip1: "您將會擁有區塊鏈身份和身份下的多鏈錢包， 比如BTC、ETH、USDT、GCN…",
+						ciphertext: "密文",
+						tip2: "密文盡量簡短，易記，如：“區塊玩家”，密文關系到貨幣轉賬安全，請妥善保存和記憶!",
+						tip3: "請按順序填寫您備份的助記詞",
+						ok:"確認",
+						tip4: "恢復身份完成",
+						tip5: "助記詞錯誤，請重新輸入"
+					},
+					en: {
+						title: "Restore identity / address",
+						tip1: "You will have the blockchain identity and Multi Chain Wallet under the identity, such as BTC, ETH, usdt, GCN",
+						ciphertext: "Ciphertext",
+						tip2: "Ciphertext should be as short as possible and easy to remember, such as: \"block player\". Ciphertext is related to the security of money transfer, please keep and remember it properly!",
+						tip3: "Please fill in the mnemonics of your backup in order",
+						ok:"Confirm",
+						tip4: "Restore identity complete",
+						tip5:"Mnemonic error, please re-enter"
+					}
+				}
 			}
 		},
+		created() {
+			this.setNavBarTitle('title');
+		},
 		methods: {
+			handleInput(item) {
+				if(item.hasError) {
+					item.hasError = false;
+				}
+			},
 			submit() {
 				let password = this.password.trim();
 				if(password === '') return;
+				let status = true;
+				this.cards.forEach((v, i) => {
+					let val = v.value.trim();
+					if(val === '') {
+						this.cards[i].hasError = true;
+						status = false;
+					}
+				})
+				if(!status) return;
 				this.$u.post('/mnemonic/importAccount', {
 					password,
 					mnemonic: this.cards.map(v => v.value.trim()).join(' ')
@@ -69,15 +112,26 @@
 					this.$u.vuex('vuex_address', res.data.address)
 					this.$u.vuex('vuex_hasLogin', true);
 					this.show = true;
-					this.status = 1;
+					this.statusMsg = {
+						type: 1,
+						msg: 'err.msg'
+					},
 					setTimeout(() => {
+						this.show = false;
 						uni.switchTab({
 							url: '/pages/index/index'
 						})
-					}, 400)
+					}, 800)
 				}, err => {
 					this.show = true
-					this.status = 2;
+					this.statusMsg = {
+						type: 2,
+						msg: err.msg
+					},
+					this.password = '';
+					setTimeout(() => {
+						this.show = false;
+					}, 2000);
 				})
 			}
 		},
@@ -159,11 +213,7 @@
 					.card-inner{
 						position: relative;
 						background-color: #EBEAFF;
-						padding: 25rpx;
 						height: 120rpx;
-						display: flex;
-						align-items: center;
-						justify-content: center;
 						
 						.card-no{
 							position: absolute;
@@ -173,10 +223,24 @@
 							font-size: 22rpx;
 						}
 						.card-input{
-							margin-top: 20rpx;
 							font-size: 26rpx;
 							font-weight: bold;
-							color: #555454;
+							text-align: center;
+							padding: 0 12rpx;
+							
+							/deep/ .u-input__input{
+								padding-top: 15px;
+							}
+						}
+						
+						&.hasError{
+							background-color: #f9e6e6;
+							
+							.card-input{
+								/deep/ .u-input__input{
+									color: #cb6a6a;
+								}
+							}
 						}
 					}
 				}
@@ -186,6 +250,18 @@
 				font-size: 32rpx;
 				background-color: #FFC000;
 				color: #fff;
+				
+				&:after{
+					border-color: #FFC000;
+				}
+				
+				&[disabled]{
+					background-color: #F7DA79;
+					border-color: #F7DA79;
+					&:after{
+						border-color: #F7DA79;
+					}
+				}
 			}
 		}
 	}

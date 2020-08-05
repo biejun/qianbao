@@ -19,10 +19,10 @@
 			<view v-for="d in data1" class="data-box">
 				<view class="data-title">{{$t('OrderNo')}}：{{d.orderNo}}</view>
 				<u-cell-group v-for="item in d.currentOrderDTOList" :key="item.currentNumber">
-					<u-cell-item :title="$t('Period').replace('{0}', ymd(item.openTime))" :value="statusText(item.status)" :arrow="false">
+					<u-cell-item :title="$t('Period').replace('{0}', ymd(item.openTime))" :value="statusText(item.status) + (item.status == 1? '(￥'+item.rewardAmount+')': '')" :class="item.status == 1 ? 'havReward' : ''" :arrow="false" @click="openDetail2(item.rewards, ymd(item.openTime), item.orders[0].wayDesc || '')">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
-					<u-cell-item v-for="game in item.orders" @click="openDetail(game)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
+					<u-cell-item v-for="game in item.orders" @click="openDetail(game, ymd(item.openTime), game.wayDesc)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
 						<view slot="title" class="pn">{{game.wayDesc}}</view>
 					</u-cell-item>
 				</u-cell-group>
@@ -36,13 +36,13 @@
 			<view v-for="d in data2" class="data-box">
 				<view class="data-sum">
 					<view>{{$t('Period').replace('{0}', ymd(d.openTime))}}</view>
-					<view>{{statusText(d.status)}}</view>
+					<view :class="d.status == 1 ? 'havReward' : ''" @click="openDetail2(d.rewards, ymd(d.openTime), d.wayDesc || '')">{{statusText(d.status)}}{{d.status == 1 ? '￥('+d.rewardAmount+')' : ''}}</view>
 				</view>
 				<u-cell-group v-for="item in d.orderNoTwoDTOList">
 					<u-cell-item :title="$t('OrderNo')+': '+item.orderNo" :arrow="false">
 						<view slot="icon" class="sp"></view>
 					</u-cell-item>
-					<u-cell-item v-for="game in item.orders" @click="openDetail(game)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
+					<u-cell-item v-for="game in item.orders" @click="openDetail(game, ymd(d.openTime), game.wayDesc)" :value="$t('Bet').replace('{0}', game.stakeNumber)" :key="game.id">
 						<view slot="title" class="pn">{{game.wayDesc}}</view>
 					</u-cell-item>
 					<u-cell-item :title="$t('Total')" :value="item.stakeAmount+'GCN'" :arrow="false">
@@ -83,23 +83,47 @@
 			</view>
 		</u-popup>
 		<u-calendar v-model="showCalendar" mode="range" @change="changeDate"></u-calendar>
-		<u-modal v-model="showDetail" :confirm-text="$t('Close')" :title="$t('Detail')">
+		<u-modal v-model="showDetail" :show-confirm-button="false" mask-close-able :title="$t('Detail')">
 			<view v-if="detail" class="detail-view">
 				<view class="detail-title">
-					{{$t('Period').replace('{0}', detail.number)}}
+					{{$t('Period').replace('{0}', detail.openTime)}}
 					{{detail.wayDesc}}
 				</view>
-				<u-table class="detail-table">
+				<u-table border-color="#fff">
 					<u-tr>
 						<u-th>{{$t('BettingCode')}}</u-th>
 						<u-th>{{$t('NumberOfBets')}}</u-th>
 						<u-th>{{$t('WinningSituation')}}</u-th>
 					</u-tr>
+					<scroll-view class="detail-table" scroll-y="true" show-scrollbar>
 					<u-tr v-for="item in detail.details">
 						<u-td>{{item.stakeNo}}</u-td>
 						<u-td>{{$t('Bet').replace('{0}', item.stakeNumber)}}</u-td>
-						<u-td>{{statusText(item.status)}}</u-td>
+						<u-td :class="item.status == 1? 'havReward' : ''">{{statusText(item.status)}}</u-td>
 					</u-tr>
+					</scroll-view>
+				</u-table>
+			</view>
+		</u-modal>
+		<u-modal v-model="showDetail2" :show-confirm-button="false" mask-close-able :title="$t('Detail')">
+			<view v-if="detail2" class="detail-view">
+				<view class="detail-title">
+					{{$t('Period').replace('{0}', detail2.openTime)}}
+					{{detail2.wayDesc}}
+				</view>
+				<u-table border-color="#fff">
+					<u-tr>
+						<u-th>{{$t('BettingCode')}}</u-th>
+						<u-th>{{$t('NumberOfBets')}}</u-th>
+						<u-th>{{$t('WinningAmount')}}</u-th>
+					</u-tr>
+					<scroll-view class="detail-table" scroll-y="true" show-scrollbar>
+					<u-tr v-for="item in detail2.data">
+						<u-td class="havReward">{{item.stakeNo}}</u-td>
+						<u-td class="havReward">{{$t('Bet').replace('{0}', item.stakeNumber)}}</u-td>
+						<u-td class="havReward">{{statusText(item.status)}}</u-td>
+					</u-tr>
+					</scroll-view>
 				</u-table>
 			</view>
 		</u-modal>
@@ -123,28 +147,33 @@
 				endTime: '',
 				showDetail: false,
 				detail: null,
+				showDetail2: false,
+				detail2: {},
 				i18n: {
 					zh: {
 						Period: "{0} 期",
-						ByOrder: "按订单展示",
+						ByOrder: "按訂單展示",
 						ByNumber: "按分期展示",
-						OrderNo: "订单编号",
-						Total: "投注合计",
-						Detail: "投注详细",
-						Close: "关闭",
-						BettingCode: "投注码",
-						NumberOfBets:" 投注数",
-						WinningSituation: "投注情况",
-						Bet: "{0} 注",
-						NotWinning: "未中奖",
-						Win: "已中奖",
-						Waiting: "待开奖",
-						Settled: "已结算",
-						Filter: "筛选",
+						OrderNo: "訂單編號",
+						Total: "投註合計",
+						Detail: "投註詳細",
+						Close: "關閉",
+						BettingCode: "投註碼",
+						NumberOfBets:" 投註數",
+						WinningSituation: "中獎情況",
+						Bet: "{0} 註",
+						NotWinning: "未中獎",
+						Win: "已中獎",
+						Waiting: "待開獎",
+						Settled: "已結算",
+						Filter: "篩選",
 						Clear: "重置",
 						Play: "玩法",
-						Date: "时间筛选",
-						Submit: "确定"
+						Date: "時間篩選",
+						Submit: "確定",
+						Loading: "加載中...",
+						WinningAmount: "中獎金額",
+						MyBet: "我的投註"
 					},
 					en: {
 						Period: "No. {0}",
@@ -166,7 +195,10 @@
 						Clear: "Clear",
 						Play: "Play",
 						Date: "Date Filter",
-						Submit: "Search"
+						Submit: "Search",
+						Loading: "Loading...",
+						WinningAmount: "Winning amount",
+						MyBet: "My Bet",
 					}
 				},
 				noContent: false
@@ -174,6 +206,7 @@
 		},
 		created() {
 			this.getData();
+			this.setNavBarTitle('MyBet');
 		},
 		computed: {
 			dropdownText() {
@@ -206,9 +239,17 @@
 						return this.$t('Settled');
 				}
 			},
-			openDetail(item) {
+			openDetail(item, openTime, wayDesc) {
 				this.showDetail = true;
 				this.detail = item;
+				this.detail.wayDesc = wayDesc;
+				this.detail.openTime = openTime;
+			},
+			openDetail2(item, openTime, wayDesc) {
+				this.showDetail2 = true;
+				this.detail2.data = item;
+				this.detail2.wayDesc = wayDesc;
+				this.detail2.openTime = openTime;
 			},
 			changeDate(e) {
 				this.beginTime = e.startDate;
@@ -232,6 +273,9 @@
 				this.showFilter = false;
 			},
 			getData() {
+				uni.showLoading({
+				    title: this.$t('Loading')
+				});
 				let url = this.type === 1 ? '/gGameOrder/getOrderDetailWithOrder' : '/gGameOrder/getOrderDetailWithNumber';
 				this.noContent = false;
 				this.$u.post(url, {
@@ -243,9 +287,15 @@
 						this.data1 = res.data.map(v => {
 							let stakeAmount = 0;
 							v.currentOrderDTOList.forEach(c => {
-								let obj = {};
+								let obj = {}, openTime, rewardAmount = 0;
 								c.ggameOrderList.forEach((d, i) => {
+									if(d.status == 1) {
+										rewardAmount += d.rewardAmount;
+									}
 									stakeAmount += d.stakeAmount;
+									if(!openTime) {
+										openTime = d.openTime;
+									}
 									if(!obj[d.wayType]){
 									   obj[d.wayType] = {
 										   number: d.currentNumber,
@@ -259,6 +309,9 @@
 									}
 								});
 								c.orders = Object.values(obj);
+								c.openTime = openTime;
+								c.rewards = c.ggameOrderList.filter(v => v.status == 1);
+								c.rewardAmount = rewardAmount;
 							})
 							v.stakeAmount = stakeAmount;
 							return v;
@@ -269,10 +322,20 @@
 						console.log(this.data1)
 					} else if (this.type === 2) {
 						this.data2 = res.data.map(v => {
+							let openTime, rewardAmount = 0, rewards = [], wayDesc = '';
 							v.orderNoTwoDTOList.forEach(c => {
 								let obj = {}, stakeAmount = 0;
 								c.ggameOrderList.forEach((d, i) => {
+									if(d.status == 1) {
+										rewardAmount += d.rewardAmount;
+									}
+									if(!wayDesc) {
+										wayDesc = d.wayDesc
+									}
 									stakeAmount += d.stakeAmount;
+									if(!openTime) {
+										openTime = d.openTime;
+									}
 									if(!obj[d.wayType]){
 									   obj[d.wayType] = {
 										   number: d.currentNumber,
@@ -287,11 +350,21 @@
 								});
 								c.orders = Object.values(obj);
 								c.stakeAmount = stakeAmount;
+								rewards = c.ggameOrderList.filter(v => v.status == 1);
 							})
+							v.openTime = openTime;
+							v.rewards = rewards;
+							v.rewardAmount = rewardAmount;
+							v.wayDesc = wayDesc;
 							return v;
 						});
 						this.noContent = !this.data2.length;
+						console.log(this.data2);
 					}
+					
+					uni.hideLoading();
+				}, err => {
+					uni.hideLoading();
 				})
 			}
 		}
@@ -337,14 +410,14 @@
 			background-color: #fff;
 			width: 200rpx;
 			z-index: 99;
-			border: 2rpx solid rgba(165, 165, 165, 1);
+			border: 2rpx solid rgba(165, 165, 165, .5);
 			padding: 10rpx;
 			box-shadow: 0px 3px 7px 0px rgba(0, 0, 0, 0.08);
 			border-radius: 3rpx;
 
 			.dropdown-item {
 				font-size: 28rpx;
-				padding: 10rpx;
+				padding: 15rpx 10rpx;
 			}
 		}
 
@@ -363,6 +436,10 @@
 				padding: 12rpx 30rpx;
 				font-size: 30rpx;
 				color: #333;
+				
+				.havReward{
+					color: #FF0000;
+				}
 			}
 
 			.sp {
@@ -376,6 +453,12 @@
 				padding-left: 20rpx;
 				font-size: 28rpx;
 				color: #333;
+			}
+			
+			.havReward{
+				/deep/ .u-cell__value{
+					color: #FF0000;
+				}
 			}
 		}
 
@@ -430,8 +513,22 @@
 				text-align: center;
 			}
 			.detail-table{
-				height: 400rpx;
-				overflow: auto;
+				height: 450rpx;
+				//overflow: auto;
+			}
+			
+			/deep/ .u-tr:first-child{
+				border-bottom: 1px solid #eee;
+				border-top: 1px solid #eee;
+			}
+			/deep/ .u-tr{
+				border-bottom: 1px solid #f3f3f3;
+			}
+			/deep/ .u-th{
+				background-color: #fff;
+			}
+			/deep/ .u-td.havReward{
+				color: #FF0000!important;
 			}
 		}
 	}

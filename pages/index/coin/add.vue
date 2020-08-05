@@ -28,11 +28,20 @@
 					'color': '#333'
 				},
 				list: [],
-				coinName: ''
+				coinName: '',
+				i18n:{
+					zh: {
+						title: '添加幣種'
+					},
+					en: {
+						title: 'Add Coin'
+					}
+				}
 			}
 		},
 		created() {
 			this.getCoinList();
+			this.setNavBarTitle('title');
 		},
 		methods: {
 			setCoinName(item) {

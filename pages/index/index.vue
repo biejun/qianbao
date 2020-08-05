@@ -1,5 +1,5 @@
 <template>
-	<view class="index" @click="bodyClick">
+	<view class="index">
 		<view class="index-header">
 			<view class="header-status-bar">
 				<view class="is-fixed"></view>
@@ -7,15 +7,15 @@
 			<view class="header-navbar">
 				<view class="notify" @click="goUrl('user/notify')"></view>
 				<view class="notice">
-					<u-notice-bar mode="vertical" :list="listitem" type='none' :volume-icon="false" :more-icon="true" color="#fff"
+					<u-notice-bar v-if="listitem.length" mode="vertical" :list="listitem" type='none' :volume-icon="false" :more-icon="true" color="#fff"
 					 padding="12rpx 18rpx" @getMore="getMore">
 					</u-notice-bar>
 				</view>
-				<view class="i18n" @click.stop="dropdownShow = true"></view>
-				<view class="dropdown" v-show="dropdownShow">
+				<!-- <view class="i18n" @click.stop="dropdownShow = true"></view> -->
+<!-- 				<view class="dropdown" v-show="dropdownShow">
 					<view class="dropdown-item" @click="setLanguage('zh')">简体中文</view>
 					<view class="dropdown-item" @click="setLanguage('en')">English</view>
-				</view>
+				</view> -->
 				<view class="qr-icon" @click="scanCode"></view>
 			</view>
 			<view class="hedaer-assets">
@@ -29,7 +29,6 @@
 							</view>
 						</view>
 						<view class="account-item-number">
-							
 							<text>{{totalAmount}}</text>
 							<text class="account-item-unit">GCN</text>
 						</view>
@@ -46,7 +45,7 @@
 					</view>
 				</view>
 				<view class="account-wrap total-balance">
-					<view class="account-item" @click="goUrl('index/account/cunKuanBao?amount='+totalYBB)">
+					<view class="account-item" @click="goUrl('index/account/cunKuanBao')">
 						<view class="account-item-text">
 							<image src="../../static/index/content/icon_card.png" class="small-icon"></image>
 							{{$t('cunKuanBao')}}
@@ -59,14 +58,14 @@
 							<text class="account-item-unit">GCN</text>
 						</view>
 					</view>
-					<view class="account-item account-returns">
+					<view class="account-item account-returns" @click="goUrl('index/account/cunKuanBao')">
 						<view class="return-item">
 							<view class="return-item-name">{{$t('DailyYield')}}</view>
-							<view class="return-item-value">{{ckRate.yestodayEarn}} GCN</view>
+							<view class="return-item-value">+{{ckRate.yestodayEarn}} GCN</view>
 						</view>
 						<view class="return-item">
 							<view class="return-item-name">{{$t('CumulativeIncome')}}</view>
-							<view class="return-item-value">{{ckRate.totalEarn}} GCN</view>
+							<view class="return-item-value">+{{ckRate.totalEarn}} GCN</view>
 						</view>
 					</view>
 				</view>
@@ -128,29 +127,22 @@
 				</view> -->
 			</view>
 		</view>
-		<u-modal v-model="showWelcome" title="" :show-confirm-button="false">
+		<u-modal v-model="showWelcome" :show-title="false" :show-confirm-button="false">
 			<view class="welcome-use">
 				<image src="../../static/logo.png" class="app-logo"></image>
-				<view class="welcome-text">欢迎使用区块玩家</view>
-				<view class="welcome-text">您将在这里自由管理您的资产</view>
-				<button type="default" class="start-use" @click="startUse">开始使用</button>
+				<view class="welcome-text">{{$t('welcome')}}</view>
+				<view class="welcome-text">{{$t('welcomeDesc')}}</view>
+				<button class="start-use" @tap.stop="handleStartUse">{{$t('startUse')}}</button>
 			</view>
 		</u-modal>
-<!-- 		<u-popup v-model="show" mode="left" border-radius="14" length="50%">
-			<popup></popup>
-		</u-popup> -->
 	</view>
 </template>
 
 <script>
-	import popup from './subNVue/popup.nvue';
 	import {
-		accAdd
+		accAdd, toDecimal
 	} from '@/common/utils.js';
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				listitem: [],
@@ -165,22 +157,25 @@
 				showWelcome: false,
 				i18n: {
 					zh: {
-						totalAssets: '总资产',
-						digitalAccount: '钱包账户',
-						gameAccount: "游戏账户",
-						recharge: "充币",
-						withdrawal: "提币",
-						assetList: "货币兑换",
-						exchange: "兑换",
+						totalAssets: '總資產',
+						digitalAccount: '錢包賬戶',
+						gameAccount: "遊戲賬戶",
+						recharge: "充幣",
+						withdrawal: "提幣",
+						assetList: "貨幣兌換",
+						exchange: "兌換",
 						tabbar: {
-							wallet: "钱包",
-							ecology: "生态",
+							wallet: "錢包",
+							ecology: "遊戲",
 							my: "我的"
 						},
-						cunKuanBao: '存款宝',
+						cunKuanBao: '存款寶',
 						DailyYield: "日收益",
-						CumulativeIncome: "累计收益",
-						AnnualizedRate: "年化"
+						CumulativeIncome: "累計收益",
+						AnnualizedRate: "年化",
+						welcome: "歡迎使用區塊玩家",
+						welcomeDesc: "您將在這裏自由管理您的資產",
+						startUse: "開始使用"
 					},
 					en: {
 						totalAssets: 'Total Assets',
@@ -192,13 +187,16 @@
 						exchange: "Exchange",
 						tabbar: {
 							wallet: "Wallet",
-							ecology: "Ecology",
+							ecology: "Game",
 							my: "My"
 						},
 						cunKuanBao: 'CunKuan Bao',
 						DailyYield: "Yield",
 						CumulativeIncome: "Cumulative",
-						AnnualizedRate: "Annualized Rate"
+						AnnualizedRate: "Annualized Rate",
+						welcome: "Welcome to the block player",
+						welcomeDesc: "You will be free to manage your assets here",
+						startUse: "Getting started"
 					}
 				},
 				ckRate: {
@@ -208,22 +206,21 @@
 				}
 			}
 		},
-		onLoad() {
-			let checkLogin = this.checkLogin();
-			if(checkLogin) {
-				this.getNotifyData();
-			}
-		},
 		watch: {
 			vuex_lang() {
 				this.initTab();
 			}
 		},
+		onReady() {
+			if(!this.vuex_firstUse) {
+				this.initData();
+				this.getNotifyData();
+			}else{
+				this.showWelcome = true;
+			}
+		},
 		created() {
 			this.initTab();
-		},
-		onShow() {
-			this.initData();
 		},
 		onPullDownRefresh() {
 			this.initData();
@@ -234,14 +231,16 @@
 		methods: {
 			initData() {
 				this.getUserAmount();
-				this.getAmountByCoinName();
 				this.getUserRate();
 			},
 			scanCode() {
 				uni.scanCode({
 					success: function (res) {
-						console.log('条码类型：' + res.scanType);
-						console.log('条码内容：' + res.result);
+						if(res.result) {
+							uni.navigateTo({
+								url: '/pages/index/coin/withdraw?address='+res.result
+							})
+						}
 					}
 				});	
 			},
@@ -253,21 +252,15 @@
 			// 公告
 			getNotifyData() {
 				this.$u.get('/notice/getNotice').then(res => {
-					this.listitem = res.data.filter(v =>  v.noticeType === 2)
-						.map(v => v.noticeTitle);
+					if(res.data.length) {
+						this.listitem = res.data.filter(v =>  v.noticeType === 2)
+							.map(v => v.noticeTitle);
+					}
 				})
-				// this.$u.get('/gGameBase/getOrderReward').then(res => {
-				// 	this.listitem = res.data.map(v => v.userPhone + '中奖'+v.stakeAmount);
-				// })
 			},
 			getMore() {
 				uni.navigateTo({
 					url: '/pages/user/notify?type=2'
-				})
-			},
-			getAmountByCoinName() {
-				this.$u.api.getAmountByCoinName('GCN').then(res => {
-					
 				})
 			},
 			getUserRate() {
@@ -275,20 +268,14 @@
 					this.ckRate = res.data;
 				})
 			},
-			bodyClick() {
-				this.dropdownShow = false;
-			},
-			startUse() {
+			handleStartUse() {
 				this.showWelcome = false;
-				if (!this.vuex_hasLogin) {
-					uni.navigateTo({
-						url: '/pages/register/register'
-					})
-				}
+				this.$u.vuex('vuex_firstUse', false);
+				this.initData();
+				this.getNotifyData();
 			},
 			checkLogin() {
 				if (!this.vuex_hasLogin) {
-					this.showWelcome = true;
 					return false;
 				}
 				return true;
@@ -316,7 +303,7 @@
 						let cnyAmount = v.cnyAmount || 0;
 						let yubiBaoAmount = v.yubiBaoAmount || 0;
 						
-						totalAmount = accAdd(totalAmount, cnyAmount).toFixed(2); // 持有总USDT 相当于 GCN 的总资产
+						totalAmount = toDecimal(accAdd(totalAmount, cnyAmount),2); // 持有总USDT 相当于 GCN 的总资产
 						totalGameAmount = accAdd(totalGameAmount, gameAmount); // GCN 资产
 						//totalDigitalAmount = accAdd(totalDigitalAmount, usdtAmount).toFixed(2); // USDT 总资产
 						totalYBB = accAdd(totalYBB, yubiBaoAmount);
@@ -338,7 +325,7 @@
 			},
 			exchange(item) {
 				this.$u.vuex('vuex_exchange_image', item.coinIcon);
-				this.goUrl('index/coin/exchange?coinName=' + item.coinName + '&amount=' + item.amount)
+				this.goUrl('index/coin/exchange?coinName=' + item.coinName)
 			}
 		}
 	}
@@ -346,6 +333,8 @@
 
 <style lang="scss">
 	.index {
+		height: 100%;
+		overflow: hidden;
 		&-header {
 			background: linear-gradient(177deg, #F8C76C 0%, #FCAA7F 100%);
 			height: 350rpx;
@@ -708,7 +697,7 @@
 		// }
 		
 		.welcome-use{
-			padding: 10rpx 30rpx 60rpx 30rpx;
+			padding: 60rpx 30rpx 60rpx 30rpx;
 			text-align: center;
 			
 			.app-logo{

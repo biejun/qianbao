@@ -11,7 +11,7 @@
 						<image :src="vuex_exchange_image" class="exchange-coin-image"></image>
 						<text class="exchange-coin-name">{{coin}}</text>
 					</view>
-					<view class="exchange-btn" @click="isReverse = !isReverse">
+					<view class="exchange-btn" @click="translate">
 						<image src="../../../static/index/duihuan-icon.png" class="exchange-icon"></image>
 					</view>
 					<view class="exchange-coin is-right">
@@ -34,8 +34,8 @@
 						<input type="number" class="input" v-model="exNum" :placeholder="$t('quantity')">
 						<view class="item">
 							<text class="item-name">{{$t('Currentlyavailable')}}:</text>
-							<text class="item-value">{{amount}}</text>
-							<text class="item-btn-all">{{$t('all')}}</text>
+							<text class="item-value">{{currentAmount}}</text>
+							<text class="item-btn-all" @click="exNum = currentAmount">{{$t('all')}}</text>
 						</view>
 <!-- 						<view class="item">
 							<text class="item-name">手续费:</text>
@@ -50,7 +50,7 @@
 						<view class="item">
 							<text class="item-name">{{$t('exchangerate')}}:</text>
 							<text v-if="!isReverse" class="item-value">1{{coin}} = {{rate}}{{toCoin}}</text>
-							<text v-if="isReverse" class="item-value">1{{toCoin}} = {{unitRate}}{{coin}}</text>
+							<text v-if="isReverse" class="item-value">1{{toCoin}} = {{rate}}{{coin}}</text>
 						</view>
 <!-- 						<view class="item">
 							<text class="item-value">手续费将从兑出数量中扣减</text>
@@ -62,11 +62,23 @@
 				<button type="default" class="exchange-wrap-button" @click="submitEx" :disabled="disabled">{{$t('Confirm')}}</button>
 			</view>
 		</view>
+		<u-modal v-model="showStatus" title="" :show-confirm-button="false" mask-close-able>
+			<view class="modal-result">
+				<view v-show="status.type === 1" class="verify-result">
+					<image src="/static/success.png" class="status-image"></image>
+					<view class="status-text">{{status.msg}}</view>
+				</view>
+				<view v-show="status.type === 2" class="verify-result">
+					<image src="/static/error.png" class="status-image"></image>
+					<view class="status-text">{{status.msg}}</view>
+				</view>
+			</view>
+		</u-modal>
 	</view>
 </template>
 
 <script>
-	import { getNowTime, accMul, accDiv } from '@/common/utils.js';
+	import { getNowTime, accMul, accDiv, toDecimal } from '@/common/utils.js';
 	export default{
 		data() {
 			return {
@@ -79,22 +91,37 @@
 				fee: 0,
 				rate: 0,
 				amount: 0,
+				toAmount: 0,
 				coinList: [],
+				isSubmit: false,
+				decimal: {
+					BTC: 8,
+					ETH: 6,
+					USDT: 2,
+					GCN: 2
+				},
+				showStatus: false,
+				status:{
+					type: 1,
+					msg: ''
+				},
 				i18n: {
 					zh: {
-						Confirm: "确认兑换",
-						Currentlyavailable: "当前可用",
+						title: "貨幣兌換",
+						Confirm: "確認兌換",
+						Currentlyavailable: "當前可用",
 						all: "全部",
-						exchangerate: "汇率",
-						Learn: "了解兑换",
-						Support: "支持USDT、BTC、ETH等和GCN的兑换，免兑换手续费。",
-						Switchexchangedirection:"切换兑换方向",
-						click: "点击",
-						quantity: "兑换数量",
-						Demandquantity: "需求数量"
+						exchangerate: "匯率",
+						Learn: "了解兌換",
+						Support: "支持USDT、BTC、ETH等和GCN的兌換，免兌換手續費。",
+						Switchexchangedirection:"切換兌換方向",
+						click: "點擊",
+						quantity: "輸入數量",
+						Demandquantity: "需求數量"
 					},
 					en: {
-						Confirm: "Confirm",
+						title: "Currency Exchange",
+						Confirm: "Exchange",
 						Currentlyavailable: "Currently available",
 						all: "All",
 						exchangerate: "Exchange rate",
@@ -110,22 +137,44 @@
 		},
 		onLoad(options) {
 			this.coin = options.coinName;
-			this.amount = options.amount;
+			this.getAmountByCoinName(this.coin, 'amount');
 			this.getCoinList(this.coin);
 		},
 		computed: {
 			disabled() {
-				return this.exNum == '';
+				return this.exNum == '' || this.isSubmit;
 			},
 			needNum() {
 				if(!this.exNum) return 0;
-				return accMul(Number(this.exNum), this.rate);
+				return this.isReverse ? accMul(Number(this.exNum), this.rate) : accMul(Number(this.exNum), this.rate);
 			},
-			unitRate() {
-				return this.isReverse ? accDiv(1, this.rate).toFixed(2) : this.rate;
+			currentAmount() {
+				return this.isReverse ? this.toAmount : this.amount;
 			}
 		},
+		created() {
+			this.setNavBarTitle('title');
+		},
 		methods: {
+			translate() {
+				this.isReverse = !this.isReverse;
+				this.exNum = '';
+				let coinName = this.isReverse ? this.toCoin : this.coin;
+				this.$u.get('/wRecordRecharge/getExchange/'+coinName).then(res => {
+					res.data.forEach(v => {
+						if(this.isReverse && v.toCoin === this.coin) {
+							this.rate = toDecimal(v.rate, this.decimal[this.coin]);
+						}else if(v.toCoin === this.toCoin){
+							this.rate = toDecimal(v.rate, this.decimal[this.toCoin]);
+						}
+					})
+				})
+			},
+			autoCloseModal() {
+				setTimeout(() => {
+					this.showStatus = false;
+				}, 3000);
+			},
 			onClick() {
 				this.visible = false;
 			},
@@ -133,8 +182,15 @@
 				this.toCoin = item.toCoin;
 				this.toCoinIcon = item.toCoinIcon;
 				this.fee = item.fee;
-				this.rate = item.rate.toFixed(2);
+				this.rate = toDecimal(item.rate, this.decimal[item.toCoin]);
 				this.visible = false;
+				this.getAmountByCoinName(item.toCoin);
+			},
+			getAmountByCoinName(coinName, field = 'toAmount') {
+				this.$u.api.getAmountByCoinName(coinName).then(res => {
+					if(!res.data) return;
+					this[field] = res.data.amount;
+				})
 			},
 			getCoinList(coinName) {
 				this.$u.get('/wRecordRecharge/getExchange/'+coinName).then(res => {
@@ -144,27 +200,42 @@
 						this.toCoin = coin.toCoin;
 						this.toCoinIcon = coin.toCoinIcon;
 						this.fee = coin.fee;
-						this.rate = coin.rate.toFixed(2);
+						this.rate = toDecimal(coin.rate,this.decimal[coin.toCoin]);
+						this.getAmountByCoinName(coin.toCoin);
 					}
 				})
 			},
 			submitEx() {
-				if(this.needNum < 1) {
-					this.$u.toast('数量太少');
-					return;
-				}
+				this.isSubmit = true;
 				this.$u.post('/wRecordRecharge/exchangeCoin', {
-					coin: this.coin,
+					coin: this.isReverse ? this.toCoin : this.coin,
 					//createTime: getNowTime(),
 					exchangeAmount: this.exNum,
 					fee: this.fee,
 					rate: this.rate,
-					toCoin: this.toCoin,
+					toCoin: this.isReverse ? this.coin : this.toCoin,
 					toExchangeAmount: this.needNum
 				}).then(res => {
-					this.$u.toast(res.msg);
+					// this.$u.toast(res.msg);
+					this.isSubmit = false;
+					this.showStatus = true;
+					this.status = {
+						type: 1,
+						msg: res.msg
+					}
+					// 更新两边货币的余额
+					this.getAmountByCoinName(this.toCoin);
+					this.getAmountByCoinName(this.coin, 'amount');
+					this.autoCloseModal();
 				}, err => {
-					this.$u.toast(err.msg);
+					// this.$u.toast(err.msg);
+					this.isSubmit = false;
+					this.showStatus = true;
+					this.status = {
+						type: 2,
+						msg: err.msg
+					}
+					this.autoCloseModal();
 				})
 			}
 		},
@@ -177,6 +248,23 @@
 </script>
 
 <style lang="scss">
+	.modal-result{
+		padding-bottom: 50rpx;
+		.verify-result{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			.status-image{
+				width: 140rpx;
+				height: 158rpx;
+			}
+			.status-text{
+				margin-top: 15rpx;
+				color: #333;
+				font-size: 30rpx;
+			}
+		}
+	}
 	.coin-exchange{
 		.exchange-inner{
 			padding: 30rpx;
@@ -359,9 +447,15 @@
 					font-size: 32rpx;
 					background-color: $uni-color-primary;
 					color: #fff;
+					&:after{
+						border-color: $uni-color-primary;
+					}
 					&[disabled]{
 						background-color: #F7DA79;
 						border-color: #F7DA79;
+						&:after{
+							border-color: #F7DA79;
+						}
 					}
 				}
 			}

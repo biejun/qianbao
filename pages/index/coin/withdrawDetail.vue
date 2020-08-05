@@ -2,11 +2,11 @@
 	<view class="withdraw-records"  @click="dropdownShow = false,dropdownShow1 = false">
 		<view class="page-header">
 			<view class="select-group">
-				<view class="dropdown-button">
+				<view class="dropdown-button" v-if="coinName">
 					<view class="dropdown-button__text" @click.stop="dropdownShow1 = !dropdownShow1, dropdownShow = false">
 						{{coinName}}
 					</view>
-					<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
+					<u-icon @click.native.stop="dropdownShow1 = !dropdownShow1, dropdownShow = false" name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 					<view class="dropdown" v-show="dropdownShow1">
 						<view class="dropdown-item" v-for="item in coinList" @click="changeCoin(item)" :key="item.id">
 							{{item.coinName}}
@@ -18,7 +18,7 @@
 					  @click.stop="dropdownShow = !dropdownShow, dropdownShow1 = false">
 						{{dropdownText}}
 					</view>
-					<u-icon name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
+					<u-icon @click.native.stop="dropdownShow = !dropdownShow, dropdownShow1 = false" name="arrow-down-fill" class="dropdown-button__icon"></u-icon>
 					<view class="dropdown type-dropdown" v-show="dropdownShow">
 						<view class="dropdown-item" @click="type = 1">{{$t('Internal')}}</view>
 						<view class="dropdown-item" @click="type = 2">{{$t('External')}}</view>
@@ -26,18 +26,18 @@
 				</view>
 			</view>
 			<view class="date-tags">
-				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
-				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
-				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">{{$t('all')}}</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">{{$t('oneMonth')}}</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
 		<view v-if="type === 1" class="record-list">
 			<u-table v-if="data1.length" border-color="#fff">
 				<u-tr>
-					<u-th width="210rpx">时间</u-th>
-					<u-th>币种</u-th>
-					<u-th>接收</u-th>
-					<u-th>数量</u-th>
+					<u-th width="210rpx">{{$t('time')}}</u-th>
+					<u-th>{{$t('currency')}}</u-th>
+					<u-th>{{$t('toAddress')}}</u-th>
+					<u-th>{{$t('num')}}</u-th>
 					<u-th width="4%"></u-th>
 				</u-tr>
 				<u-tr v-for="(item, index) in data1" :key="item.id" 
@@ -46,7 +46,7 @@
 					<u-td>{{item.coinName}}</u-td>
 					<u-td class="text-ellipsis">{{item.toUserAddress}}</u-td>
 					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">
-					 <!-- {{item.changeType == 1 ? '+' : '-'}} -->{{item.amount}}
+					 -{{item.amount}}
 					</u-td>
 					<u-td width="4%"><u-icon name="arrow-right"></u-icon></u-td>
 				</u-tr>
@@ -55,10 +55,10 @@
 		<view v-if="type === 2" class="record-list">
 			<u-table v-if="data2.length" border-color="#fff">
 				<u-tr>
-					<u-th width="210rpx">时间</u-th>
-					<u-th>币种</u-th>
-					<u-th>接收</u-th>
-					<u-th>数量</u-th>
+					<u-th width="210rpx">{{$t('time')}}</u-th>
+					<u-th>{{$t('currency')}}</u-th>
+					<u-th>{{$t('toAddress')}}</u-th>
+					<u-th>{{$t('num')}}</u-th>
 					<u-th width="4%"></u-th>
 				</u-tr>
 				<u-tr v-for="(item, index) in data2" :key="item.id" 
@@ -66,8 +66,8 @@
 					<u-td width="210rpx">{{item.createTime | dateFormatYMD}}</u-td>
 					<u-td>{{item.coinName}}</u-td>
 					<u-td class="text-ellipsis">{{item.toAddress}}</u-td>
-					<u-td class="withdrawal-amount" :class="item.changeType == 1?'is-add':''">
-					 <!-- {{item.changeType == 1 ? '+' : '-'}} -->{{item.amount}}
+					<u-td>
+					 -{{item.amount}}
 					</u-td>
 					<u-td width="4%"><u-icon name="arrow-right"></u-icon></u-td>
 				</u-tr>
@@ -85,8 +85,8 @@
 				</view>
 			</view> -->
 		</view>
-		<u-empty v-if="noContent" text="暂无记录" mode="history"></u-empty>
-		<u-modal v-model="showDetail" confirm-text="关闭" :title="detail ? detail.coinName : '交易明细'">
+		<u-empty v-if="noContent" :text="$t('noData')" mode="history"></u-empty>
+<!-- 		<u-modal v-model="showDetail" confirm-text="关闭" :title="detail ? detail.coinName : '交易明细'" cancel-color="#6D6D6D">
 			<view v-if="detail && type === 1" class="detail-view">
 				<view class="detail-item mb-10">
 					<view class="itemName">
@@ -220,7 +220,7 @@
 					</view>
 				</view>
 			</view>
-		</u-modal>
+		</u-modal> -->
 	</view>
 </template>
 
@@ -239,23 +239,30 @@
 				detail: null,
 				i18n: {
 					zh: {
-						Internal: "区块玩家内互转",
-						External: "交易所/外部钱包",
-						formAddress: "转出地址",
+						title: '提幣記錄',
+						Internal: "區塊玩家內互轉",
+						External: "交易所/外部錢包",
+						formAddress: "轉出地址",
 						toAddress: "接收地址",
-						num: "数量",
-						fee: "矿工费",
-						status: "状态",
-						time: "时间",
-						createTime: "提交时间",
-						finishTime: "完成时间",
-						id: "交易序号",
-						flow: "货币流向",
-						withdrawAmount: "实际到账"
+						num: "數量",
+						fee: "礦工費",
+						status: "狀態",
+						time: "時間",
+						createTime: "提交時間",
+						finishTime: "完成時間",
+						id: "交易序號",
+						flow: "貨幣流向",
+						withdrawAmount: "實際到賬",
+						all: '全部',
+						oneMonth: "壹個月",
+						threeMonths: "三個月",
+						currency: "幣種",
+						noData: '暫無記錄'
 					},
 					en: {
-						Internal: "Internal",
-						External: "External",
+						title: 'Withdrawal Records',
+						Internal: "Block player inter turn",
+						External: "Exchange / External Wallet",
 						formAddress: "Form Address",
 						toAddress: "To Address",
 						num: "Quantity",
@@ -266,7 +273,12 @@
 						finishTime: "Finish Time",
 						id: "ID",
 						flow:"Direction",
-						withdrawAmount: "Withdraw Amount"
+						withdrawAmount: "Withdraw Amount",
+						all: 'All',
+						oneMonth: "One Mon",
+						threeMonths: "Three Mos.",
+						currency: "Currency",
+						noData: 'No data'
 					}
 				},
 				coinList: [],
@@ -275,11 +287,12 @@
 			}
 		},
 		onLoad(options) {
-			this.coinName = options.coinName;
+			this.coinName = options.coinName || '';
 		},
 		created() {
-			this.getData();
 			this.getCoinList();
+			this.getData();
+			this.setNavBarTitle('title');
 		},
 		computed: {
 			dropdownText() {
@@ -292,27 +305,6 @@
 			},
 			dateFormat(val) {
 				return typeof val === 'number' ? dateFormat(val, 'Y-m-d H:i:s') : '';
-			},
-			statusText(val) {
-				// 0待审核 1转账中 2确认中 3转账成功 4审批拒绝 5转账失败 6发送交易中 7打包中
-				switch(val) {
-					case 0:
-						return '待审核';
-					case 1:
-						return '转账中';
-					case 2:
-						return '确认中';
-					case 3:
-						return '转账成功';
-					case 4:
-						return '审批拒绝';
-					case 5:
-						return '转账失败';
-					case 6:
-						return '发送交易中';
-					case 7:
-						return '打包中';
-				}
 			}
 		},
 		watch: {
@@ -321,6 +313,28 @@
 			}
 		},
 		methods: {
+			// statusText(val) {
+			// 	// 0待审核 1转账中 2确认中 3转账成功 4审批拒绝 5转账失败 6发送交易中 7打包中
+				
+			// 	switch(val) {
+			// 		case 0:
+			// 			return '待审核';
+			// 		case 1:
+			// 			return '转账中';
+			// 		case 2:
+			// 			return '确认中';
+			// 		case 3:
+			// 			return '转账成功';
+			// 		case 4:
+			// 			return '审批拒绝';
+			// 		case 5:
+			// 			return '转账失败';
+			// 		case 6:
+			// 			return '发送交易中';
+			// 		case 7:
+			// 			return '打包中';
+			// 	}
+			// },
 			changeCoin(item) {
 				this.coinName = item.coinName;
 				this.getData();
@@ -328,16 +342,26 @@
 			getCoinList() {
 				this.$u.post('/wRecordTransferOut/withDrawCoins').then(res => {
 					this.coinList = res.data;
+					if(res.data.length && this.coinName == '') {
+						this.coinName = res.data[0].coinName;
+						this.getData();
+					}
 				})
 			},
 			changeDateType(type) {
 				this.dateType = type;
 			},
 			openDetail(item) {
-				this.showDetail = true;
-				this.detail = item;
+				// this.showDetail = true;
+				// this.detail = item;
+				let type = this.type;
+				uni.navigateTo({
+					url: './withdrawSingleDetail?detail='+JSON.stringify(item)+'&type='+type+'&flow='+this.dropdownText
+				})
 			},
 			getData() {
+				
+				if(!this.coinName) return;
 				let url = this.type === 1 ? '/wRecordTransferIn/getTransferIn/' : '/wRecordTransferOut/getTransferOut/';
 				this.noContent = false;
 				this.$u.get(url + this.coinName+'/'+this.dateType).then(res => {
@@ -387,7 +411,7 @@
 			align-items: center;
 			&__text{
 				color: #333;
-				font-size: 22rpx;
+				font-size: 26rpx;
 				max-width: 100rpx;
 				height: 30rpx;
 				line-height: 30rpx;
@@ -433,8 +457,8 @@
 				margin-left: 16rpx;
 				line-height: 38rpx;
 				&.is-active{
-					color: $uni-color-primary;
-					border-color: $uni-color-primary;
+					color: #FF0707;;
+					border-color: #FF0707;;
 				}
 			}
 		}
@@ -475,10 +499,6 @@
 			padding-bottom: 10rpx;
 		}
 		
-		.bold{
-			font-weight: bold;
-		}
-		
 		.detail-view{
 			padding: 20rpx;
 			
@@ -505,11 +525,18 @@
 			}
 		}
 		
-		/deep/ .u-tr{
+		/deep/ .u-tr:first-child{
 			border-bottom: 1px solid #eee;
+		}
+		/deep/ .u-tr{
+			border-bottom: 1px solid #f3f3f3;
 		}
 		/deep/ .u-th{
 			background-color: #fff;
+			padding: 20rpx 0!important;
+		}
+		/deep/ .u-td{
+			padding: 30rpx 0!important;
 		}
 	}
 </style>

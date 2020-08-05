@@ -1,7 +1,7 @@
 <template>
 	<view class="game-page">
 		<view class="game-loadImg">
-			<image src="../../static/game-logo.png" class="game-logo"></image>
+			<image src="/static/game-logo.png" class="game-logo"></image>
 		</view>
 		<view class="game-process-wrap">
 			<view class="game-process-bar">
@@ -20,7 +20,7 @@
 				process: 0,
 				i18n:{
 					zh: {
-						Loading: '正在载入'
+						Loading: '正在载入',
 					},
 					en: {
 						Loading: 'Loading'
@@ -28,27 +28,42 @@
 				}
 			}
 		},
-		onShow() {
+		onReady() {
 			if(this.process === 0) {
 				this.loadProcess();
-			}else{
-				uni.navigateTo({
-					url: '/pages/ecology/lecai/index'
-				})
+			}
+		},
+		onShow() {
+			if(this.process === 100) {
+				setTimeout(() => {
+					uni.navigateTo({
+						url: '/pages/ecology/lecai/index'
+					})
+				}, 450)
 			}
 		},
 		methods: {
 			loadProcess() {
-				let _timer = setInterval(() => {
-					if(this.process === 100) {
-						clearInterval(_timer);
-						uni.navigateTo({
-							url: '/pages/ecology/lecai/index'
-						})
-						return;
-					}
-					this.process++;
-				}, 50);
+				if(!this._timer) {
+					this._timer = setInterval(() => {
+						if(this.process === 100) {
+							clearInterval(this._timer);
+							this._timer = null;
+							uni.navigateTo({
+								url: '/pages/ecology/lecai/index'
+							})
+							return;
+						}
+						this.process++;
+					}, 20);
+				}
+
+			}
+		},
+		beforeDestroy() {
+			if(this._timer) {
+				clearInterval(this._timer);
+				this._timer = null;
 			}
 		}
 	}

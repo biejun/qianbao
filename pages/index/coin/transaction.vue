@@ -2,25 +2,25 @@
 	<view class="common-bg transaction">
 		<view class="filter">
 			<view class="date-tags">
-				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">全部</view>
-				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">一个月</view>
-				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">三个月</view>
+				<view class="date-tag" @click="changeDateType(0)" :class="dateType === 0 ? 'is-active' : ''">{{$t('all')}}</view>
+				<view class="date-tag" @click="changeDateType(1)" :class="dateType === 1 ? 'is-active' : ''">{{$t('oneMonth')}}</view>
+				<view class="date-tag" @click="changeDateType(2)" :class="dateType === 2 ? 'is-active' : ''">{{$t('threeMonths')}}</view>
 			</view>
 		</view>
 		<view v-if="list.length" class="data-flow">
 			<view v-for="item in list" class="data-flow-item" :key="item.id">
 				<view class="space data-header">
 					<view class="coin-name">{{item.coin}}</view>
-					<view><u-icon name="arrow-rightward"></u-icon></view>
+					<view><image src="/static/arrow.png" class="arrow"></image></view>
 					<view class="coin-name">{{item.toCoin}}</view>
 				</view>
 				<view class="space data-body">
-					<text class="price">{{item.num}}</text>
-					<text class="price red">{{item.toNum}}</text>
+					<text class="price">-{{item.num}}</text>
+					<text class="price red">+{{item.toNum}}</text>
 				</view>
 				<view class="space data-footer">
 					<text class="text">
-						手续费: {{item.fee}}
+						{{$t('fee')}}: {{item.fee}}
 					</text>
 					<text class="text">
 						{{item.createTime | dateFormat}}
@@ -28,7 +28,7 @@
 				</view>
 			</view>
 		</view>
-		<u-empty v-else text="暂无数据" mode="list"></u-empty>
+		<u-empty v-else :text="$t('noData')" mode="list"></u-empty>
 	</view>
 </template>
 
@@ -39,10 +39,45 @@
 			return {
 				list: [],
 				dateType: 0,
+				i18n: {
+					zh: {
+						all: '全部',
+						oneMonth: "壹個月",
+						threeMonths: "三個月",
+						title: '兌換記錄',
+						time: "時間",
+						noData: '暫無記錄',
+						currency: "幣種",
+						amount: "金額",
+						fee: "手續費",
+						helpText: '\ue614 了解兌換'
+					},
+					en: {
+						all: 'All',
+						oneMonth: "One Mon",
+						threeMonths: "Three Mos.",
+						title: 'Exchange Records',
+						time: "Time",
+						noData: 'No data',
+						currency: "Currency",
+						amount: "Amount",
+						fee: "Fee",
+						helpText: '\ue614 Learn'
+					}
+				},
 			}
 		},
 		created() {
 			this.getRecords();
+			this.setNavBarTitle('title');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(0, {
+				text: this.$t('helpText')
+			})
+			// #endif
 		},
 		filters: {
 			dateFormat(val) {
@@ -89,8 +124,8 @@
 				margin-left: 16rpx;
 				line-height: 38rpx;
 				&.is-active{
-					color: $uni-color-primary;
-					border-color: $uni-color-primary;
+					color: #FF0707;
+					border-color: #FF0707;
 				}
 			}
 		}
@@ -117,10 +152,10 @@
 				.price{
 					font-size: 34rpx;
 					font-weight: bold;
-					color: #666666;
+					color: #383838;
 					
 					&.red{
-						color: $uni-color-primary;
+						color: #FF0707;
 					}
 				}
 				
@@ -129,6 +164,11 @@
 					color: #A5A5A5;
 				}
 			}
+		}
+		.arrow{
+			width: 236rpx;
+			height: 28rpx;
+			vertical-align: -10rpx;
 		}
 	}
 </style>

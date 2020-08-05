@@ -4,6 +4,10 @@
 	},
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
+			"path": "pages/register/register",
+			"style": {}
+		},
+		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
@@ -24,6 +28,10 @@
 				// 	}]  
 				// }
 			}
+		},
+		{
+			"path": "pages/ecology/gameLoad",
+			"style": {}
 		},
 		{
 			"path": "pages/index/coin/add",
@@ -49,13 +57,15 @@
 		{
 			"path": "pages/index/coin/learnRecharge",
 			"style": {
-				"navigationBarTitleText": "了解充币"
+				"navigationBarTitleText": "了解充币",
+				"navigationBarBackgroundColor": "#F2F3FE"
 			}
 		},
 		{
 			"path": "pages/index/coin/learnEx",
 			"style": {
-				"navigationBarTitleText": "了解兑换"
+				"navigationBarTitleText": "了解兑换",
+				"navigationBarBackgroundColor": "#F2F3FE"
 			}
 		},
 		{
@@ -68,8 +78,7 @@
 			"path": "pages/index/account/digitalAccount",
 			"style": {
 				"navigationBarTitleText": "数字账户",
-				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"titleNView": {
@@ -87,17 +96,12 @@
 			"path": "pages/index/account/gameAccount",
 			"style": {
 				"navigationBarTitleText": "游戏账户",
-				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white",
+				//"navigationBarBackgroundColor": "#F6D365",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
 				// "app-plus": {
 				// 	"titleNView": {
-				// 		"buttons": [{
-				// 			"text": "\ue716",
-				// 			"fontSrc": "/static/iconfont.ttf",
-				// 			"fontSize": "24px",
-				// 			"width": "35px"
-				// 		}]
+				// 		"type" : "default"
 				// 	}
 				// }
 			}
@@ -106,8 +110,9 @@
 			"path": "pages/index/account/cunKuanBao",
 			"style": {
 				"navigationBarTitleText": "存款宝",
-				"navigationBarBackgroundColor": "#F6D365",
-				"navigationBarTextStyle": "white",
+				//"navigationBarBackgroundColor": "#F6D365",
+				//"navigationBarTextStyle": "white",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -149,13 +154,29 @@
 				"navigationBarTitleText": "提币",
 				"app-plus": {
 					"titleNView": {
-						"buttons": [{
-							"text": "\ue64a",
-							"fontSrc": "/static/iconfont.ttf",
-							"fontSize": "24px"
-						}]
+						"buttons": [
+							{
+								"text": "\ue64a",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "24px"
+							},
+							{
+								"text": "\ue614 了解提币",
+								"fontSrc": "/static/iconfont.ttf",
+								"fontSize": "14px",
+								"color": "#C04546",
+								"width": "auto"
+							}
+						]
 					}
 				}
+			}
+		},
+		{
+			"path": "pages/index/coin/learnWithdraw",
+			"style": {
+				"navigationBarTitleText": "了解提币",
+				"navigationBarBackgroundColor": "#F2F3FE"
 			}
 		},
 		{
@@ -168,6 +189,18 @@
 			"path": "pages/index/coin/rechargeDetail",
 			"style": {
 				"navigationBarTitleText": "充币记录"
+			}
+		},
+		{
+			"path": "pages/index/coin/rechargeSingleDetail",
+			"style": {
+				"navigationBarTitleText": "充值明细"
+			}
+		},
+		{
+			"path": "pages/index/coin/withdrawSingleDetail",
+			"style": {
+				"navigationBarTitleText": "交易明细"
 			}
 		},
 		// {
@@ -282,6 +315,12 @@
 			}
 		},
 		{
+			"path": "pages/ecology/my/qianbao",
+			"style": {
+				"navigationBarTitleText": "转出"
+			}
+		},
+		{
 			"path": "pages/ecology/bet/my",
 			"style": {
 				"navigationBarTitleText": "我的投注"
@@ -325,6 +364,12 @@
 			"path": "pages/ecology/bet/way",
 			"style": {
 				"navigationBarTitleText": "玩法介绍"
+			}
+		},
+		{
+			"path": "pages/ecology/bet/history",
+			"style": {
+				"navigationBarTitleText": "开奖历史"
 			}
 		},
 		{
@@ -390,14 +435,12 @@
 				"navigationBarTitleText": "",
 				"navigationBarBackgroundColor": "#F4BA23"
 			}
-		}, {
-			"path": "pages/register/register",
-			"style": {}
 		},
 		{
 			"path": "pages/user/idAndAddress",
 			"style": {
-				"navigationBarTitleText": "身份/地址"
+				"navigationBarTitleText": "身份/地址",
+				"navigationBarBackgroundColor": "#F2F3FE"
 			}
 		},
 		{
@@ -436,7 +479,8 @@
 		{
 			"path": "pages/register/learn-more",
 			"style": {
-				"navigationBarTitleText": "如何创建身份/地址？"
+				"navigationBarTitleText": "如何创建身份/地址？",
+				"navigationBarBackgroundColor": "#F2F3FE"
 			}
 		},
 		{
@@ -505,14 +549,11 @@
 					}
 				}
 			}
-		}, {
-			"path": "pages/ecology/gameLoad",
-			"style": {}
 		}
 	],
 	"tabBar": {
 		"color": "#f5d98a",
-		"selectedColor": "#ecb416",
+		"selectedColor": "#AF8100",
 		"backgroundColor": "#ffffff",
 		"list": [{
 				"pagePath": "pages/index/index",
@@ -530,7 +571,7 @@
 				"pagePath": "pages/user/index",
 				"iconPath": "static/tabbar/icon_miyou@2x.png",
 				"selectedIconPath": "static/tabbar/icon_miyouxz@2x.png",
-				"text": "个人中心"
+				"text": "我的"
 			}
 		]
 	},

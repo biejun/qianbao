@@ -1,15 +1,15 @@
 <template>
 	<view class="common-bg create-id">
-		<view class="create-DFEBV">您将会拥有区块链身份和身份下的多链钱包， 比如BTC、ETH、USDT、GCN…</view>
+		<view class="create-DFEBV">{{$t('tip1')}}</view>
 		<view class="create-YUS2">
-			<view class="input-D3GZ">密文</view>
+			<view class="input-D3GZ">{{$t('ciphertext')}}</view>
 			<view class="input-DDEW">
 				<u-input v-model="password" placeholder="" type="password" password-icon/>
 			</view>
 		</view>
-		<view class="create-tips">密文尽量简短，易记，如：“区块玩家”，密文关系到货币转账安全，请妥善保存和记忆!</view>
+		<view class="create-tips">{{$t('tip2')}}</view>
 		<button type="default" class="submit-button" :disabled="isSubmit" @click="submit">
-			{{isSubmit ? '创建中...' : '创建'}}</button>
+			{{isSubmit ? $t('Creating') : $t('create')}}</button>
 	</view>
 </template>
 
@@ -18,8 +18,47 @@
 		data() {
 			return {
 				password: '',
-				isSubmit: false
+				isSubmit: false,
+				i18n: {
+					zh: {
+						title: "創建身份/地址",
+						tip1: "您將會擁有區塊鏈身份和身份下的多鏈錢包， 比如BTC、ETH、USDT、GCN…",
+						ciphertext: "密文",
+						tip2: "密文盡量簡短，易記，如：“區塊玩家”，密文關系到貨幣轉賬安全，請妥善保存和記憶!",
+						tip3: "請按順序填寫您備份的助記詞",
+						ok:"確認",
+						tip4: "創建身份完成",
+						tip5: "助記詞錯誤，請重新輸入",
+						create: "創建",
+						Creating:"創建中..",
+						helpText: "\ue614 身份/地址"
+					},
+					en: {
+						title: "Create",
+						tip1: "You will have the blockchain identity and Multi Chain Wallet under the identity, such as BTC, ETH, usdt, GCN",
+						ciphertext: "Ciphertext",
+						tip2: "Ciphertext should be as short as possible and easy to remember, such as: \"block player\". Ciphertext is related to the security of money transfer, please keep and remember it properly!",
+						tip3: "Please fill in the mnemonics of your backup in order",
+						ok:"Confirm",
+						tip4: "Restore identity complete",
+						tip5:"Mnemonic error, please re-enter",
+						create: "Create",
+						Creating:"Creating",
+						helpText: "\ue614 Identity/Address"
+					}
+				}
 			}
+		},
+		created() {
+			this.setNavBarTitle('title');
+			// #ifdef APP-PLUS
+			let pages = getCurrentPages();
+			let page = pages[pages.length - 1];
+			let currentWebview = page.$getAppWebview();
+			currentWebview.setTitleNViewButtonStyle(0, {
+				text: this.$t('helpText')
+			})
+			// #endif
 		},
 		methods: {
 			submit() {
@@ -96,5 +135,17 @@
 		font-size: 32rpx;
 		background-color: #FFC000;
 		color: #fff;
+		
+		&:after{
+			border-color: #FFC000;
+		}
+		
+		&[disabled]{
+			background-color: #F7DA79;
+			border-color: #F7DA79;
+			&:after{
+				border-color: #F7DA79;
+			}
+		}
 	}
 </style>

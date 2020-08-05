@@ -9,6 +9,9 @@ import httpApi from '@/service/http.api.js';
 Vue.config.productionTip = false;
 
 Vue.use(uView);
+
+App.mpType = 'app';
+
 Vue.mixin(vuexStore);
 Vue.mixin({
 	methods: {
@@ -44,8 +47,6 @@ Vue.mixin({
 	}
 })
 
-App.mpType = 'app';
-
 const app = new Vue({
 	store,
     ...App
@@ -55,5 +56,4 @@ const app = new Vue({
 Vue.use(httpInterceptor, app)
 // http接口API抽离，免于写url或者一些固定的参数
 Vue.use(httpApi, app)
-
 app.$mount();
